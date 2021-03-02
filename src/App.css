@@ -1,38 +1,43 @@
-.App {
-  text-align: center;
+.login-form {
+    padding: 2em;
+    width: 40%;
+}
+.new-project-form {
+    padding: 2em;
+    width: 40%;
+}
+.new-employee-form {
+    padding: 2em;
+    width: 40%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Skills list delete button */
+.dynamic-delete-button {
+    position: relative;
+    top: 4px;
+    margin: 0 8px;
+    color: #999;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.dynamic-delete-button:hover {
+    color: #777;
+}
+.dynamic-delete-button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.dashboard-content {
+    display: grid;
+    margin: 2em;
+    gap: 1.2em;
+    grid-template-columns: auto auto auto;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.card {
+    border-radius: 1em;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.card-title {
+    padding: 24px 24px 0px 24px;
 }
