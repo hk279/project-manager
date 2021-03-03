@@ -45,5 +45,12 @@
     padding: 2em;
 }
 .team-members-table-cell {
-    padding: 1em;
+    padding: 0.5em 1em;
+}
+.project-view-tasks {
+    width: 40%;
+}
+.status-icon {
+    font-size: x-large;
+    float: right;
 }
