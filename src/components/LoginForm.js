@@ -14,20 +14,25 @@ const LoginForm = (props) => {
     const [isError, setIsError] = useState(false);
 
     // Login handler
-    const handleSubmit = async (values) => {
-        const response = await axios.post("http://localhost:3001/auth/login", { ...values });
-        const user = response.data;
+    const handleSubmit = (values) => {
+        let user;
 
-        console.log(user);
+        axios
+            .post("http://localhost:3001/auth/login", { ...values })
+            .then((res) => {
+                user = res.data;
+                console.log(user);
 
-        if (user !== "") {
-            console.log("Login successful");
-            setAuthTokens(user);
-            setLoggedIn(true);
-        } else {
-            console.log("Login failed");
-            setIsError(true);
-        }
+                if (user !== "") {
+                    console.log("Login successful");
+                    setAuthTokens(user);
+                    setLoggedIn(true);
+                } else {
+                    console.log("Login failed");
+                    setIsError(true);
+                }
+            })
+            .catch((err) => console.log(err));
     };
 
     // Redirect after being logged in

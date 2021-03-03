@@ -1,6 +1,27 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { Card, Progress } from "antd";
 
-const ProjectCard = ({ title, client, description, deadline, employees, tasks }) => {
+const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
+    const [employees, setEmployees] = useState([]);
+
+    useEffect(() => {
+        getEmployees();
+    }, []);
+
+    const getEmployees = () => {
+        // Saves all unique employee IDs here
+        const employeeIds = [];
+        team.forEach((member) => {
+            employeeIds.push(member);
+        });
+
+        // Request data for a group of employees
+        axios.post("http://localhost:3001/api/employeeGroup/", { group: employeeIds }).then((res) => {
+            setEmployees(res.data);
+        });
+    };
+
     const titleWithClient = (
         <div className="card-title">
             <h3>{title}</h3>
@@ -8,23 +29,23 @@ const ProjectCard = ({ title, client, description, deadline, employees, tasks })
         </div>
     );
 
-    let completedTasks = 0;
+    /*     let completedTasks = 0;
     tasks.forEach((task) => {
         if (task.completed === true) {
             completedTasks++;
         }
     });
-    const progress = Math.round((completedTasks / tasks.length) * 100);
+    const progress = Math.round((completedTasks / tasks.length) * 100); */
 
     return (
         <Card className="card" cover={titleWithClient} hoverable>
             <p>{description}</p>
-            <Progress percent={progress} />
+            <Progress percent={30} />
             <p>Deadline: {deadline}</p>
             <p>Team members:</p>
             <ul>
                 {employees.map((employee) => (
-                    <li key={employee}>{employee}</li>
+                    <li key={employee.id}>{`${employee.firstName} ${employee.lastName}`}</li>
                 ))}
             </ul>
         </Card>

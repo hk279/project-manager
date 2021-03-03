@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
 import NewEmployee from "./pages/NewEmployee";
+import ProjectView from "./pages/ProjectView";
 
 function App() {
     // Tries to get auth tokens stored in local storage
@@ -35,6 +36,7 @@ function App() {
                     <Route path="/login" component={Login} />
                     <PrivateRoute path="/new_project" component={NewProject} />
                     <PrivateRoute path="/new_employee" component={NewEmployee} />
+                    <PrivateRoute path="/project" component={ProjectView} />
                 </Switch>
             </Router>
         </AuthContext.Provider>

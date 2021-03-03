@@ -1,14 +1,23 @@
-import { useState } from "react";
+import axios from "axios";
+import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
 import { Layout, Form, Input, Button, Divider } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
-const { Item, List, ErrorList } = Form;
+const { Item, List, ErrorList, useForm } = Form;
 
 const NewEmployee = () => {
+    const { authTokens } = useAuth();
+    const [form] = useForm();
+
     const handleSubmit = (values) => {
-        console.log(values);
+        axios
+            .post("http://localhost:3001/api/employees", { ...values, organization: authTokens.organization })
+            .then((res) => console.log(res.data))
+            .catch((err) => console.log(err));
+
+        form.resetFields();
     };
 
     return (
@@ -17,17 +26,17 @@ const NewEmployee = () => {
                 <Navigation />
             </Sider>
             <Content>
-                <Form className="new-employee-form" layout="vertical" onFinish={handleSubmit}>
-                    <Item label="First Name" name="firstname">
+                <Form className="new-employee-form" layout="vertical" form={form} onFinish={handleSubmit}>
+                    <Item label="First Name" name="firstName">
                         <Input />
                     </Item>
-                    <Item label="Last Name" name="lastname">
+                    <Item label="Last Name" name="lastName">
                         <Input />
                     </Item>
                     <Item label="Department" name="department">
                         <Input />
                     </Item>
-                    <Divider>Skills</Divider>
+                    <Divider orientation="left">Skills</Divider>
                     <List name="skills">
                         {(fields, { add, remove }, { errors }) => (
                             <>

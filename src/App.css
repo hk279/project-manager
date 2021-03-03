@@ -41,3 +41,9 @@
 .card-title {
     padding: 24px 24px 0px 24px;
 }
+.project-view {
+    padding: 2em;
+}
+.team-members-table-cell {
+    padding: 1em;
+}

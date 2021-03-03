@@ -1,11 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../context/auth";
 import ProjectCard from "../components/ProjectCard";
 import { Layout } from "antd";
 import Navigation from "../components/Navigation";
-import testProjects from "../testProjects";
 
 const Dashboard = () => {
-    const [projects, setProjects] = useState(testProjects);
+    const [projects, setProjects] = useState([]);
+
+    const { authTokens } = useAuth();
+
+    useEffect(() => {
+        getProjects();
+    }, []);
+
+    const getProjects = () => {
+        axios.get(`http://localhost:3001/api/projects/${authTokens.organization}`).then((res) => {
+            console.log(res.data);
+            setProjects(res.data);
+        });
+    };
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
