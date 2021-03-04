@@ -36,7 +36,8 @@ function App() {
                     <Route path="/login" component={Login} />
                     <PrivateRoute path="/new_project" component={NewProject} />
                     <PrivateRoute path="/new_employee" component={NewEmployee} />
-                    <PrivateRoute path="/project" component={ProjectView} />
+                    {/* <PrivateRoute path="/project" component={ProjectView} /> */}
+                    <PrivateRoute path="/project/:id" children={<ProjectView />} />
                 </Switch>
             </Router>
         </AuthContext.Provider>

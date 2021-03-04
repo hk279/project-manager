@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Progress } from "antd";
 
-const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
+const ProjectCard = ({ title, client, description, deadline, team }) => {
     const [employees, setEmployees] = useState([]);
 
     useEffect(() => {

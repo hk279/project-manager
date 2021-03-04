@@ -1,52 +1,41 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Collapse, Divider, Layout } from "antd";
+import { useParams } from "react-router-dom";
+import { Button, Collapse, Divider, Layout, Spin } from "antd";
 import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
+import AddTask from "../components/AddTask";
 
 const { Sider, Content } = Layout;
 const { Panel } = Collapse;
 
 const ProjectView = () => {
-    const exampleProject = {
-        id: "603ebbbe8921794ad4059b3b",
-        team: ["603eb3566d4a620b34d138bf", "603eb9746d4a620b34d138c0"],
-        tasks: [
-            {
-                title: "Create a color palette",
-                estimatedCompletion: "1.4.2021",
-                members: ["603eb3566d4a620b34d138bf"],
-                status: "Completed",
-            },
-            {
-                title: "Create the navbar",
-                estimatedCompletion: "1.5.2021",
-                members: ["603eb9746d4a620b34d138c0", "603eb3566d4a620b34d138bf"],
-                status: "Doing",
-            },
-            {
-                title: "Design the frontpage",
-                estimatedCompletion: "1.7.2021",
-                members: ["603eb9746d4a620b34d138c0"],
-                status: "Not started",
-            },
-        ],
-        title: "Appointment booking app",
-        client: "Mehiläinen",
-        description:
-            "Non tempor velit id minim ex cupidatat laboris non eiusmod amet. Nisi esse voluptate in pariatur Lorem.",
-        deadline: "6.10.2021",
-        organization: "Test Company",
-    };
-
-    const [project, setProject] = useState(exampleProject);
+    const [project, setProject] = useState();
     const [employees, setEmployees] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    let { id } = useParams();
 
     useEffect(() => {
-        getEmployees();
+        getProject(id);
     }, []);
 
+    useEffect(() => {
+        if (project) {
+            getEmployees();
+        }
+    }, [project]);
+
+    const getProject = (id) => {
+        axios
+            .get(`http://localhost:3001/api/projects/id/${id}`)
+            .then((res) => setProject(res.data))
+            .catch((err) => console.log(err));
+    };
+
     const getEmployees = () => {
+        console.log(project);
+
         // Saves all unique employee IDs here
         const employeeIds = [];
         project.team.forEach((member) => {
@@ -54,10 +43,13 @@ const ProjectView = () => {
         });
 
         // Request data for a group of employees
-        axios.post("http://localhost:3001/api/employeeGroup/", { group: employeeIds }).then((res) => {
-            console.log(res.data);
-            setEmployees(res.data);
-        });
+        axios
+            .post("http://localhost:3001/api/employeeGroup/", { group: employeeIds })
+            .then((res) => {
+                console.log(res.data);
+                setEmployees(res.data);
+            })
+            .catch((err) => console.log(err));
     };
 
     // Get the name of an employee with the param id
@@ -67,6 +59,18 @@ const ProjectView = () => {
                 return `${employees[i].firstName} ${employees[i].lastName}`;
             }
         }
+    };
+
+    const onFinishAdd = (values) => {
+        const etc = values.estimatedCompletion.format("D.M.Y");
+        const newTask = { ...values, estimatedCompletion: etc };
+
+        const body = { ...project, tasks: [...project.tasks, newTask] };
+
+        axios
+            .put("http://localhost:3001/api/projects/", body)
+            .then(() => setModalVisible(false))
+            .catch((err) => console.log(err));
     };
 
     const statusStyle = (task) => {
@@ -87,59 +91,78 @@ const ProjectView = () => {
         }
     };
 
-    return (
-        <Layout style={{ minHeight: "100vh" }}>
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-            <Content className="project-view">
-                <h2>{project.title}</h2>
-                <h3>{project.client}</h3>
-                <Divider />
-                <p>{project.description}</p>
-                <p>
-                    Project deadline: <b>{project.deadline}</b>
-                </p>
-                <Divider orientation="left">Team</Divider>
-                <table>
-                    <tbody>
-                        {employees.map((employee) => (
-                            <tr key={employee.id}>
-                                <td className="team-members-table-cell">{`${employee.firstName} ${employee.lastName}`}</td>
-                                <td className="team-members-table-cell">{employee.department}</td>
-                            </tr>
+    if (!project) {
+        return <Spin size="large" />;
+    } else {
+        return (
+            <Layout style={{ minHeight: "100vh" }}>
+                <Sider collapsible>
+                    <Navigation />
+                </Sider>
+                <Content className="project-view">
+                    <h2>{project.title}</h2>
+                    <h3>{project.client}</h3>
+                    <Divider />
+                    <p>{project.description}</p>
+                    <p>
+                        Project deadline: <b>{project.deadline}</b>
+                    </p>
+                    <Divider orientation="left">Team</Divider>
+                    <table>
+                        <tbody>
+                            {employees.map((employee) => (
+                                <tr key={employee.id}>
+                                    <td className="team-members-table-cell">{`${employee.firstName} ${employee.lastName}`}</td>
+                                    <td className="team-members-table-cell">{employee.department}</td>
+                                </tr>
+                            )) ?? []}
+                        </tbody>
+                    </table>
+                    <Divider orientation="left">Tasks</Divider>
+                    <Collapse className="project-view-tasks">
+                        {project.tasks.map((task) => (
+                            <Panel
+                                header={
+                                    <div>
+                                        {task.title}
+                                        {statusIcon(task)}
+                                    </div>
+                                }
+                                style={statusStyle(task)}
+                                key={task.title}
+                            >
+                                <p>Estimated completion: {task.estimatedCompletion}</p>
+                                <p>Assigned to:</p>
+                                <ul className="task-members">
+                                    {task.taskTeam.map((member) => (
+                                        <li key={member}>{getEmployeeName(member)}</li>
+                                    ))}
+                                </ul>
+                            </Panel>
                         ))}
-                    </tbody>
-                </table>
-                <Divider orientation="left">Tasks</Divider>
-                <Collapse className="project-view-tasks">
-                    {project.tasks.map((task) => (
-                        <Panel
-                            header={
-                                <div>
-                                    {task.title}
-                                    {statusIcon(task)}
-                                </div>
-                            }
-                            style={statusStyle(task)}
-                            key={task.title}
-                        >
-                            <p>Estimated completion: {task.estimatedCompletion}</p>
-                            <p>Assigned to:</p>
-                            <ul className="task-members">
-                                {task.members.map((member) => (
-                                    <li key={member}>{getEmployeeName(member)}</li>
-                                ))}
-                            </ul>
-                        </Panel>
-                    ))}
-                </Collapse>
-                <Button type="primary" style={{ marginTop: "2em" }}>
-                    New Task
-                </Button>
-            </Content>
-        </Layout>
-    );
+                    </Collapse>
+                    <Button
+                        type="primary"
+                        style={{ marginTop: "2em" }}
+                        onClick={() => {
+                            setModalVisible(true);
+                        }}
+                    >
+                        New Task
+                    </Button>
+                    <AddTask
+                        visible={modalVisible}
+                        onFinishAdd={onFinishAdd}
+                        onCancel={() => {
+                            setModalVisible(false);
+                        }}
+                        project={project}
+                        team={employees}
+                    />
+                </Content>
+            </Layout>
+        );
+    }
 };
 
 export default ProjectView;

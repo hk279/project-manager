@@ -1,6 +1,22 @@
+.login-column {
+    display: flex;
+    vertical-align: middle;
+    background: rgb(2, 0, 36);
+    float: left;
+    width: 50%;
+    height: 100vh;
+}
+.login-column:nth-child(2) {
+    background-image: url(./assets/images/landing_image_01.jpg);
+    background-size: cover;
+}
+.login-container {
+    margin: auto;
+    width: 50%;
+    border-radius: 1em;
+}
 .login-form {
-    padding: 2em;
-    width: 40%;
+    padding: 1em;
 }
 .new-project-form {
     padding: 2em;
@@ -53,4 +69,7 @@
 .status-icon {
     font-size: x-large;
     float: right;
+}
+a {
+    display: inline-flex;
 }

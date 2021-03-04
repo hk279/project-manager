@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
 import ProjectCard from "../components/ProjectCard";
 import { Layout } from "antd";
@@ -15,7 +16,7 @@ const Dashboard = () => {
     }, []);
 
     const getProjects = () => {
-        axios.get(`http://localhost:3001/api/projects/${authTokens.organization}`).then((res) => {
+        axios.get(`http://localhost:3001/api/projects/org/${authTokens.organization}`).then((res) => {
             console.log(res.data);
             setProjects(res.data);
         });
@@ -28,7 +29,17 @@ const Dashboard = () => {
             </Layout.Sider>
             <Layout.Content className="dashboard-content">
                 {projects.map((project) => (
-                    <ProjectCard {...project} key={project.title} />
+                    <Link
+                        key={project.id}
+                        to={{
+                            pathname: `/project/${project.id}`,
+                            projectProps: {
+                                id: project.id,
+                            },
+                        }}
+                    >
+                        <ProjectCard {...project} />
+                    </Link>
                 ))}
             </Layout.Content>
         </Layout>

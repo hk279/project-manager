@@ -40,7 +40,14 @@ const Navigation = () => {
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g4">
-                <Menu.Item key="6" icon={<LogoutOutlined />} onClick={() => setAuthTokens()}>
+                <Menu.Item
+                    key="6"
+                    icon={<LogoutOutlined />}
+                    onClick={() => {
+                        setAuthTokens();
+                        window.location.href = "/";
+                    }}
+                >
                     Logout
                 </Menu.Item>
             </Menu.ItemGroup>

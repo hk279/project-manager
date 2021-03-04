@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom";
 import { Form, Input, Button } from "antd";
 import { useAuth } from "../context/auth";
 
-const LoginForm = (props) => {
+const LoginForm = () => {
     const { Item } = Form;
     const { Password } = Input;
 
@@ -50,7 +50,7 @@ const LoginForm = (props) => {
             </Item>
             <Item>
                 <Button type="primary" htmlType="submit">
-                    Submit
+                    Login
                 </Button>
             </Item>
         </Form>
