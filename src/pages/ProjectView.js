@@ -2,23 +2,24 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Button, Collapse, Divider, Layout, Spin } from "antd";
-import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import AddTask from "../components/AddTask";
+import Task from "../components/Task";
 
 const { Sider, Content } = Layout;
-const { Panel } = Collapse;
 
 const ProjectView = () => {
     const [project, setProject] = useState();
     const [employees, setEmployees] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    // Helps trigger re-render when task is added or deleted
+    const [trigger, setTrigger] = useState(false);
 
     let { id } = useParams();
 
     useEffect(() => {
         getProject(id);
-    }, []);
+    }, [trigger]);
 
     useEffect(() => {
         if (project) {
@@ -34,8 +35,6 @@ const ProjectView = () => {
     };
 
     const getEmployees = () => {
-        console.log(project);
-
         // Saves all unique employee IDs here
         const employeeIds = [];
         project.team.forEach((member) => {
@@ -46,49 +45,51 @@ const ProjectView = () => {
         axios
             .post("http://localhost:3001/api/employeeGroup/", { group: employeeIds })
             .then((res) => {
-                console.log(res.data);
                 setEmployees(res.data);
             })
             .catch((err) => console.log(err));
-    };
-
-    // Get the name of an employee with the param id
-    const getEmployeeName = (id) => {
-        for (let i = 0; i < employees.length; i++) {
-            if (employees[i].id === id) {
-                return `${employees[i].firstName} ${employees[i].lastName}`;
-            }
-        }
     };
 
     const onFinishAdd = (values) => {
         const etc = values.estimatedCompletion.format("D.M.Y");
         const newTask = { ...values, estimatedCompletion: etc };
 
-        const body = { ...project, tasks: [...project.tasks, newTask] };
+        const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
         axios
-            .put("http://localhost:3001/api/projects/", body)
-            .then(() => setModalVisible(false))
+            .put("http://localhost:3001/api/projects/", updatedProject)
+            .then(() => {
+                setModalVisible(false);
+                setTrigger(!trigger);
+            })
             .catch((err) => console.log(err));
     };
 
-    const statusStyle = (task) => {
-        if (task.status === "Completed") {
-            return { backgroundColor: "#95de64" };
-        } else if (task.status === "Doing") {
-            return { backgroundColor: "#69c0ff" };
-        }
+    /* Changes the status of a task. First, creates an updated task. 
+    Then removes the old task from the list. 
+    Then creates a new list with the updated task added. */
+
+    const setStatus = (project, changingTask, status) => {
+        const updatedTask = { ...changingTask, status: status };
+        const tasksOldRemoved = [...project.tasks].filter((task) => task.title !== changingTask.title);
+        const updatedTasks = [...tasksOldRemoved, updatedTask];
+        const updatedProject = { ...project, tasks: updatedTasks };
+
+        axios
+            .put("http://localhost:3001/api/projects/", updatedProject)
+            .then(() => setTrigger(!trigger))
+            .catch((err) => console.log(err));
     };
 
-    const statusIcon = (task) => {
-        if (task.status === "Completed") {
-            return <CheckCircleTwoTone className="status-icon" twoToneColor="#73d13d" />;
-        } else if (task.status === "Doing") {
-            return <ClockCircleTwoTone className="status-icon" twoToneColor="#40a9ff" />;
-        } else {
-            return <PauseCircleTwoTone className="status-icon" twoToneColor="#bfbfbf" />;
-        }
+    // Delete a task
+    const deleteTask = (project, taskToBeDeleted) => {
+        const updatedTasks = [...project.tasks].filter((task) => task.title !== taskToBeDeleted.title);
+        const updatedProject = { ...project, tasks: updatedTasks };
+
+        axios
+            .put("http://localhost:3001/api/projects/", updatedProject)
+            .then(() => setTrigger(!trigger))
+            .catch((err) => console.log(err));
     };
 
     if (!project) {
@@ -119,28 +120,18 @@ const ProjectView = () => {
                         </tbody>
                     </table>
                     <Divider orientation="left">Tasks</Divider>
-                    <Collapse className="project-view-tasks">
+                    <div className="project-view-tasks">
                         {project.tasks.map((task) => (
-                            <Panel
-                                header={
-                                    <div>
-                                        {task.title}
-                                        {statusIcon(task)}
-                                    </div>
-                                }
-                                style={statusStyle(task)}
+                            <Task
                                 key={task.title}
-                            >
-                                <p>Estimated completion: {task.estimatedCompletion}</p>
-                                <p>Assigned to:</p>
-                                <ul className="task-members">
-                                    {task.taskTeam.map((member) => (
-                                        <li key={member}>{getEmployeeName(member)}</li>
-                                    ))}
-                                </ul>
-                            </Panel>
+                                task={task}
+                                project={project}
+                                employees={employees}
+                                deleteTask={deleteTask}
+                                setStatus={setStatus}
+                            />
                         ))}
-                    </Collapse>
+                    </div>
                     <Button
                         type="primary"
                         style={{ marginTop: "2em" }}

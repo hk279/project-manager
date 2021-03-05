@@ -5,9 +5,11 @@
     float: left;
     width: 50%;
     height: 100vh;
+    background-image: url(./assets/images/login_background_02.jpg);
+    background-size: cover;
 }
 .login-column:nth-child(2) {
-    background-image: url(./assets/images/landing_image_01.jpg);
+    background-image: url(./assets/images/login_image_01.jpg);
     background-size: cover;
 }
 .login-container {
@@ -51,6 +53,9 @@
     gap: 1.2em;
     grid-template-columns: auto auto auto;
 }
+a {
+    display: inline-flex;
+}
 .card {
     border-radius: 1em;
 }
@@ -65,11 +70,22 @@
 }
 .project-view-tasks {
     width: 40%;
+    min-width: 30em;
 }
 .status-icon {
     font-size: x-large;
     float: right;
 }
-a {
-    display: inline-flex;
+.task-details-table {
+    margin: auto;
+    width: 100%;
+}
+.task-details-cell {
+    padding: 0.5em 1em;
+}
+.task-buttons-cell {
+    padding: 1em 1em 0.5em 1em;
+}
+.delete-task {
+    float: right;
 }

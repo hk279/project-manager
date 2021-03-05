@@ -3,7 +3,7 @@ import { Modal, Form, Input, DatePicker, Select } from "antd";
 const { Item } = Form;
 const { Option } = Select;
 
-const AddTask = ({ visible, onFinishAdd, onCancel, project, team }) => {
+const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
     const [form] = Form.useForm();
 
     return (
