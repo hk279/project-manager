@@ -53,17 +53,22 @@
     gap: 1.2em;
     grid-template-columns: auto auto auto;
 }
-a {
-    display: inline-flex;
+.project-card-link {
+    display: grid;
 }
-.card {
+.project-card {
     border-radius: 1em;
 }
 .card-title {
     padding: 24px 24px 0px 24px;
 }
+
+/* Project view */
 .project-view {
     padding: 2em;
+}
+.delete-project {
+    margin-left: 2em;
 }
 .team-members-table-cell {
     padding: 0.5em 1em;
@@ -72,6 +77,8 @@ a {
     width: 40%;
     min-width: 30em;
 }
+
+/* Task item */
 .status-icon {
     font-size: x-large;
     float: right;

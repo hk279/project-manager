@@ -17,7 +17,6 @@ const Dashboard = () => {
 
     const getProjects = () => {
         axios.get(`http://localhost:3001/api/projects/org/${authTokens.organization}`).then((res) => {
-            console.log(res.data);
             setProjects(res.data);
         });
     };
@@ -30,6 +29,7 @@ const Dashboard = () => {
             <Layout.Content className="dashboard-content">
                 {projects.map((project) => (
                     <Link
+                        className="project-card-link"
                         key={project.id}
                         to={{
                             pathname: `/project/${project.id}`,

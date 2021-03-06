@@ -1,9 +1,9 @@
-import { Button, Collapse } from "antd";
+import { Button, Collapse, Popconfirm } from "antd";
 import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone, DeleteOutlined } from "@ant-design/icons";
 
 const { Panel } = Collapse;
 
-const Task = ({ project, task, employees, deleteTask, setStatus }) => {
+const Task = ({ project, task, employees, deleteTask, setTaskStatus }) => {
     // Get the name of an employee with the param id
     const getEmployeeName = (id) => {
         for (let i = 0; i < employees.length; i++) {
@@ -65,29 +65,31 @@ const Task = ({ project, task, employees, deleteTask, setStatus }) => {
                                     className="task-status"
                                     type={task.status === "Completed" ? "primary" : "default"}
                                     icon={<CheckCircleTwoTone twoToneColor="#73d13d" />}
-                                    onClick={() => setStatus(project, task, "Completed")}
+                                    onClick={() => setTaskStatus(project, task, "Completed")}
                                 />
                                 <Button
                                     className="task-status"
                                     type={task.status === "Doing" ? "primary" : "default"}
                                     icon={<ClockCircleTwoTone twoToneColor="#40a9ff" />}
-                                    onClick={() => setStatus(project, task, "Doing")}
+                                    onClick={() => setTaskStatus(project, task, "Doing")}
                                 />
                                 <Button
                                     className="task-status"
                                     type={task.status === "Not started" ? "primary" : "default"}
                                     icon={<PauseCircleTwoTone twoToneColor="#bfbfbf" />}
-                                    onClick={() => setStatus(project, task, "Not started")}
+                                    onClick={() => setTaskStatus(project, task, "Not started")}
                                 />
                             </td>
+
                             <td className="task-buttons-cell">
-                                <Button
-                                    className="delete-task"
-                                    type="primary"
-                                    danger
-                                    icon={<DeleteOutlined />}
-                                    onClick={() => deleteTask(project, task)}
-                                />
+                                <Popconfirm
+                                    title="Confirm delete task"
+                                    onConfirm={() => deleteTask(project, task)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button className="delete-task" type="primary" danger icon={<DeleteOutlined />} />
+                                </Popconfirm>
                             </td>
                         </tr>
                     </tbody>

@@ -39,11 +39,9 @@ const NewProject = () => {
     };
 
     const handleSubmit = (values) => {
-        const deadline = values.deadline.format("D.M.Y");
+        const deadline = typeof values.deadline !== "undefined" ? values.deadline.format("D.M.Y") : "";
 
         const body = { ...values, deadline, organization: authTokens.organization, tasks: [] };
-
-        console.log(body);
 
         axios
             .post("http://localhost:3001/api/projects", body)
@@ -71,7 +69,7 @@ const NewProject = () => {
                         <TextArea />
                     </Item>
                     <Item label="Deadline" name="deadline">
-                        <DatePicker />
+                        <DatePicker format="DD/MM/YYYY" />
                     </Item>
                     <Item label="Team" name="team">
                         <Transfer

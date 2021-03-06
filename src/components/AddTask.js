@@ -25,13 +25,21 @@ const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
             }}
         >
             <Form form={form} layout="vertical" name="addTask" initialValues={{ status: "Not started" }}>
-                <Item name="title" label="Title">
+                <Item name="title" label="Title" rules={[{ required: true, message: "Title required" }]}>
                     <Input />
                 </Item>
-                <Item name="estimatedCompletion" label="Estimated completion">
+                <Item
+                    name="estimatedCompletion"
+                    label="Estimated completion"
+                    rules={[{ required: true, message: "Date required" }]}
+                >
                     <DatePicker />
                 </Item>
-                <Item name="taskTeam" label="Task team">
+                <Item
+                    name="taskTeam"
+                    label="Task team"
+                    rules={[{ required: true, message: "At least one person required" }]}
+                >
                     <Select mode="multiple" placeholder="Select members">
                         {team.map((member) => (
                             <Option
@@ -41,7 +49,7 @@ const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
                         ))}
                     </Select>
                 </Item>
-                <Item name="status" label="Status">
+                <Item name="status" label="Status" rules={[{ required: true, message: "Status required" }]}>
                     <Select placeholder="Status">
                         <Option value="Not started">Not started</Option>
                         <Option value="Doing">Doing</Option>

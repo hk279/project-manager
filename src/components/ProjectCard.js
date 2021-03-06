@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Progress } from "antd";
 
-const ProjectCard = ({ title, client, description, deadline, team }) => {
+const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
     const [employees, setEmployees] = useState([]);
 
     useEffect(() => {
@@ -29,18 +29,18 @@ const ProjectCard = ({ title, client, description, deadline, team }) => {
         </div>
     );
 
-    /*     let completedTasks = 0;
+    let completedTasks = 0;
     tasks.forEach((task) => {
-        if (task.completed === true) {
+        if (task.status === "Completed") {
             completedTasks++;
         }
     });
-    const progress = Math.round((completedTasks / tasks.length) * 100); */
+    const progress = Math.round((completedTasks / tasks.length) * 100);
 
     return (
-        <Card className="card" cover={titleWithClient} hoverable>
+        <Card className="project-card" cover={titleWithClient} hoverable>
             <p>{description}</p>
-            <Progress percent={30} />
+            <Progress percent={progress} />
             <p>Deadline: {deadline}</p>
             <p>Team members:</p>
             <ul>

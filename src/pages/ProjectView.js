@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import { Button, Collapse, Divider, Layout, Spin } from "antd";
+import { useHistory, useParams } from "react-router-dom";
+import { Button, Divider, Layout, Spin, Popconfirm } from "antd";
+import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import AddTask from "../components/AddTask";
 import Task from "../components/Task";
+import EditProject from "../components/EditProject";
 
 const { Sider, Content } = Layout;
 
@@ -12,10 +14,12 @@ const ProjectView = () => {
     const [project, setProject] = useState();
     const [employees, setEmployees] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [editMode, setEditMode] = useState(false);
     // Helps trigger re-render when task is added or deleted
     const [trigger, setTrigger] = useState(false);
 
     let { id } = useParams();
+    const history = useHistory();
 
     useEffect(() => {
         getProject(id);
@@ -69,7 +73,7 @@ const ProjectView = () => {
     Then removes the old task from the list. 
     Then creates a new list with the updated task added. */
 
-    const setStatus = (project, changingTask, status) => {
+    const setTaskStatus = (project, changingTask, status) => {
         const updatedTask = { ...changingTask, status: status };
         const tasksOldRemoved = [...project.tasks].filter((task) => task.title !== changingTask.title);
         const updatedTasks = [...tasksOldRemoved, updatedTask];
@@ -92,8 +96,40 @@ const ProjectView = () => {
             .catch((err) => console.log(err));
     };
 
+    const editProject = (newData) => {
+        console.log("New data to be sent to the server:");
+        console.log(newData);
+
+        axios
+            .put("http://localhost:3001/api/projects/", newData)
+            .then((res) => {
+                setEditMode(false);
+                setTrigger(!trigger);
+                console.log(res.status);
+            })
+            .catch((err) => console.log(err));
+    };
+
+    const deleteProject = (id) => {
+        axios
+            .delete(`http://localhost:3001/api/projects/id/${id}`)
+            .then(() => history.push("/"))
+            .catch((err) => console.log(err));
+    };
+
     if (!project) {
         return <Spin size="large" />;
+    } else if (editMode) {
+        return (
+            <Layout style={{ minHeight: "100vh" }}>
+                <Sider collapsible>
+                    <Navigation />
+                </Sider>
+                <Content className="project-view">
+                    <EditProject project={project} editProject={editProject} />
+                </Content>
+            </Layout>
+        );
     } else {
         return (
             <Layout style={{ minHeight: "100vh" }}>
@@ -128,19 +164,34 @@ const ProjectView = () => {
                                 project={project}
                                 employees={employees}
                                 deleteTask={deleteTask}
-                                setStatus={setStatus}
+                                setTaskStatus={setTaskStatus}
                             />
                         ))}
                     </div>
                     <Button
                         type="primary"
                         style={{ marginTop: "2em" }}
+                        icon={<PlusOutlined />}
                         onClick={() => {
                             setModalVisible(true);
                         }}
                     >
                         New Task
                     </Button>
+                    <Divider />
+                    <Button type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)}>
+                        Edit Project
+                    </Button>
+                    <Popconfirm
+                        title="Confirm delete project"
+                        onConfirm={() => deleteProject(project.id)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button className="delete-project" type="primary" danger icon={<DeleteOutlined />}>
+                            Delete Project
+                        </Button>
+                    </Popconfirm>
                     <AddTask
                         visible={modalVisible}
                         onFinishAdd={onFinishAdd}
