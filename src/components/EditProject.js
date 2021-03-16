@@ -12,9 +12,6 @@ const EditProject = ({ project, editProject }) => {
 
     const [targetKeys, setTargetKeys] = useState(project.team);
     const [selectedKeys, setSelectedKeys] = useState([]);
-    const [initialDatePickerValue, setinitialDatePickerValue] = useState(
-        moment(project.deadline.replace((/\./g, "-")), "DD-MM-YYYY")
-    );
 
     const { authTokens } = useAuth();
     const [form] = useForm();
@@ -24,7 +21,7 @@ const EditProject = ({ project, editProject }) => {
     }, []);
 
     const getEmployees = async () => {
-        let url = `http://localhost:3001/api/employees/${authTokens.organization}`;
+        let url = `http://localhost:3001/api/employees/org/${authTokens.organization}`;
         // Format the URL in case the company name contains spaces.
         let formattedUrl = url.replace(/ /g, "%20");
 
@@ -63,7 +60,7 @@ const EditProject = ({ project, editProject }) => {
                 title: project.title,
                 client: project.client,
                 description: project.description,
-                deadline: initialDatePickerValue,
+                deadline: moment(project.deadline.replace((/\./g, "-")), "DD-MM-YYYY"),
                 team: project.team,
             }}
         >

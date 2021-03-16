@@ -4,7 +4,7 @@ import {
     DashboardOutlined,
     FileAddOutlined,
     UserAddOutlined,
-    ApartmentOutlined,
+    ProfileOutlined,
     TeamOutlined,
     LogoutOutlined,
 } from "@ant-design/icons";
@@ -19,23 +19,23 @@ const Navigation = () => {
                 <Menu.Item key="1" icon={<DashboardOutlined />}>
                     <Link to="/">Dashboard</Link>
                 </Menu.Item>
+                <Menu.Item key="2" icon={<TeamOutlined />}>
+                    <Link to="/employees">Employees</Link>
+                </Menu.Item>
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g2">
-                <Menu.Item key="2" icon={<FileAddOutlined />}>
+                <Menu.Item key="3" icon={<FileAddOutlined />}>
                     <Link to="/new_project">New Project</Link>
                 </Menu.Item>
-                <Menu.Item key="3" icon={<UserAddOutlined />}>
+                <Menu.Item key="4" icon={<UserAddOutlined />}>
                     <Link to="/new_employee">New Employee</Link>
                 </Menu.Item>
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g3">
-                <Menu.Item key="4" icon={<ApartmentOutlined />}>
-                    Organization
-                </Menu.Item>
-                <Menu.Item key="5" icon={<TeamOutlined />}>
-                    Employees
+                <Menu.Item key="5" icon={<ProfileOutlined />}>
+                    Profile
                 </Menu.Item>
             </Menu.ItemGroup>
 

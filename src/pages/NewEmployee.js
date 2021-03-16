@@ -1,15 +1,18 @@
 import axios from "axios";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
-import { Layout, Form, Input, Button, Divider } from "antd";
+import { Layout, Form, Input, Button, Divider, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
 const { Item, List, ErrorList, useForm } = Form;
+const { Option } = Select;
 
 const NewEmployee = () => {
     const { authTokens } = useAuth();
     const [form] = useForm();
+
+    const departments = ["Web Development", "UX Design", "Network Maintenance", "Finance", "HR", "Sales"];
 
     const handleSubmit = (values) => {
         axios
@@ -34,15 +37,19 @@ const NewEmployee = () => {
                         <Input />
                     </Item>
                     <Item label="Department" name="department">
-                        <Input />
+                        <Select>
+                            {departments.map((item) => (
+                                <Option key={item}>{item}</Option>
+                            ))}
+                        </Select>
                     </Item>
                     <Divider orientation="left">Skills</Divider>
                     <List name="skills">
                         {(fields, { add, remove }, { errors }) => (
                             <>
                                 {fields.map((field) => (
-                                    <Form.Item required={false} key={field.key}>
-                                        <Form.Item
+                                    <Item required={false} key={field.key}>
+                                        <Item
                                             {...field}
                                             validateTrigger={["onChange", "onBlur"]}
                                             rules={[
@@ -55,16 +62,16 @@ const NewEmployee = () => {
                                             noStyle
                                         >
                                             <Input style={{ width: "60%" }} />
-                                        </Form.Item>
+                                        </Item>
                                         {fields.length > 0 ? (
                                             <MinusCircleOutlined
                                                 className="dynamic-delete-button"
                                                 onClick={() => remove(field.name)}
                                             />
                                         ) : null}
-                                    </Form.Item>
+                                    </Item>
                                 ))}
-                                <Form.Item>
+                                <Item>
                                     <Button
                                         type="dashed"
                                         onClick={() => add()}
@@ -74,7 +81,7 @@ const NewEmployee = () => {
                                         Add Skill
                                     </Button>
                                     <ErrorList errors={errors} />
-                                </Form.Item>
+                                </Item>
                             </>
                         )}
                     </List>

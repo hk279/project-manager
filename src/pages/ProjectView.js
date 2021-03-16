@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Divider, Layout, Spin, Popconfirm } from "antd";
+import { Button, Divider, Layout, Popconfirm } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import AddTask from "../components/AddTask";
 import Task from "../components/Task";
 import EditProject from "../components/EditProject";
+import Loading from "../components/Loading";
 
 const { Sider, Content } = Layout;
 
@@ -97,15 +98,11 @@ const ProjectView = () => {
     };
 
     const editProject = (newData) => {
-        console.log("New data to be sent to the server:");
-        console.log(newData);
-
         axios
             .put("http://localhost:3001/api/projects/", newData)
             .then((res) => {
                 setEditMode(false);
                 setTrigger(!trigger);
-                console.log(res.status);
             })
             .catch((err) => console.log(err));
     };
@@ -118,7 +115,7 @@ const ProjectView = () => {
     };
 
     if (!project) {
-        return <Spin size="large" />;
+        return <Loading />;
     } else if (editMode) {
         return (
             <Layout style={{ minHeight: "100vh" }}>

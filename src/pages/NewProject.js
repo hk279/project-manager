@@ -22,7 +22,7 @@ const NewProject = () => {
     }, []);
 
     const getEmployees = async () => {
-        let url = `http://localhost:3001/api/employees/${authTokens.organization}`;
+        let url = `http://localhost:3001/api/employees/org/${authTokens.organization}`;
         // Format the URL in case the company name contains spaces.
         let formattedUrl = url.replace(/ /g, "%20");
 
