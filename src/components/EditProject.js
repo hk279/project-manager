@@ -7,7 +7,7 @@ import { useAuth } from "../context/auth";
 const { Item, useForm } = Form;
 const { TextArea } = Input;
 
-const EditProject = ({ project, editProject }) => {
+const EditProject = ({ project, editProject, cancelEdit }) => {
     const [employees, setEmployees] = useState([]);
 
     const [targetKeys, setTargetKeys] = useState(project.team);
@@ -97,6 +97,9 @@ const EditProject = ({ project, editProject }) => {
                 <Button type="primary" htmlType="submit">
                     Save
                 </Button>
+            </Item>
+            <Item>
+                <Button onClick={() => cancelEdit()}>Back</Button>
             </Item>
         </Form>
     );

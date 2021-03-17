@@ -29,14 +29,22 @@ const NewEmployee = () => {
                 <Navigation />
             </Sider>
             <Content>
-                <Form className="new-employee-form" layout="vertical" form={form} onFinish={handleSubmit}>
-                    <Item label="First Name" name="firstName">
+                <Form
+                    className="new-employee-form"
+                    layout="vertical"
+                    form={form}
+                    onFinish={handleSubmit}
+                    validateMessages={{
+                        required: "${label} is required!",
+                    }}
+                >
+                    <Item label="First name" name="firstName" rules={[{ required: true }]}>
                         <Input />
                     </Item>
-                    <Item label="Last Name" name="lastName">
+                    <Item label="Last name" name="lastName" rules={[{ required: true }]}>
                         <Input />
                     </Item>
-                    <Item label="Department" name="department">
+                    <Item label="Department" name="department" rules={[{ required: true }]}>
                         <Select>
                             {departments.map((item) => (
                                 <Option key={item}>{item}</Option>

@@ -58,11 +58,19 @@ const NewProject = () => {
                 <Navigation />
             </Sider>
             <Content>
-                <Form className="new-project-form" layout="vertical" form={form} onFinish={handleSubmit}>
-                    <Item label="Title" name="title">
+                <Form
+                    className="new-project-form"
+                    layout="vertical"
+                    form={form}
+                    onFinish={handleSubmit}
+                    validateMessages={{
+                        required: "${label} is required!",
+                    }}
+                >
+                    <Item label="Title" name="title" rules={[{ required: true }]}>
                         <Input />
                     </Item>
-                    <Item label="Client" name="client">
+                    <Item label="Client" name="client" rules={[{ required: true }]}>
                         <Input />
                     </Item>
                     <Item label="Description" name="description">

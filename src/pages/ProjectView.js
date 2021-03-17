@@ -114,6 +114,10 @@ const ProjectView = () => {
             .catch((err) => console.log(err));
     };
 
+    const cancelEdit = () => {
+        setEditMode(false);
+    };
+
     if (!project) {
         return <Loading />;
     } else if (editMode) {
@@ -123,7 +127,7 @@ const ProjectView = () => {
                     <Navigation />
                 </Sider>
                 <Content className="project-view">
-                    <EditProject project={project} editProject={editProject} />
+                    <EditProject project={project} editProject={editProject} cancelEdit={cancelEdit} />
                 </Content>
             </Layout>
         );

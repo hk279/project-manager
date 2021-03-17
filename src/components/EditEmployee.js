@@ -5,7 +5,7 @@ import { useAuth } from "../context/auth";
 const { Item, List, useForm, ErrorList } = Form;
 const { Option } = Select;
 
-const EditEmployee = ({ employee, editEmployee }) => {
+const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
     const { authTokens } = useAuth();
     const [form] = useForm();
 
@@ -35,14 +35,17 @@ const EditEmployee = ({ employee, editEmployee }) => {
                 department: employee.department,
                 skills: employee.skills,
             }}
+            validateMessages={{
+                required: "${label} is required!",
+            }}
         >
-            <Item label="First Name" name="firstName">
+            <Item label="First Name" name="firstName" rules={[{ required: true }]}>
                 <Input />
             </Item>
-            <Item label="Last Name" name="lastName">
+            <Item label="Last Name" name="lastName" rules={[{ required: true }]}>
                 <Input />
             </Item>
-            <Item label="Department" name="department">
+            <Item label="Department" name="department" rules={[{ required: true }]}>
                 <Select>
                     {departments.map((item) => (
                         <Option key={item}>{item}</Option>
@@ -97,7 +100,7 @@ const EditEmployee = ({ employee, editEmployee }) => {
                 </Button>
             </Item>
             <Item>
-                <Button htmlType="submit">Back</Button>
+                <Button onClick={() => cancelEdit()}>Back</Button>
             </Item>
         </Form>
     );

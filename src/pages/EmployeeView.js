@@ -64,6 +64,10 @@ const EmployeeView = () => {
             .catch((err) => console.log(err));
     };
 
+    const cancelEdit = () => {
+        setEditMode(false);
+    };
+
     if (editMode) {
         return (
             <Layout style={{ minHeight: "100vh" }}>
@@ -71,7 +75,7 @@ const EmployeeView = () => {
                     <Navigation />
                 </Sider>
                 <Content className="project-view">
-                    <EditEmployee employee={employee} editEmployee={editEmployee} />
+                    <EditEmployee employee={employee} editEmployee={editEmployee} cancelEdit={cancelEdit} />
                 </Content>
             </Layout>
         );
