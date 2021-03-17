@@ -1,12 +1,15 @@
-import { Form, Input, Button, Divider } from "antd";
+import { Form, Input, Select, Button, Divider } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAuth } from "../context/auth";
 
 const { Item, List, useForm, ErrorList } = Form;
+const { Option } = Select;
 
 const EditEmployee = ({ employee, editEmployee }) => {
     const { authTokens } = useAuth();
     const [form] = useForm();
+
+    const departments = ["Web Development", "UX Design", "Network Maintenance", "Finance", "HR", "Sales"];
 
     const handleSubmit = (values) => {
         const newData = {
@@ -14,6 +17,8 @@ const EditEmployee = ({ employee, editEmployee }) => {
             ...values,
             organization: authTokens.organization,
         };
+
+        console.log(newData);
 
         editEmployee(newData);
     };
@@ -38,7 +43,11 @@ const EditEmployee = ({ employee, editEmployee }) => {
                 <Input />
             </Item>
             <Item label="Department" name="department">
-                <Input />
+                <Select>
+                    {departments.map((item) => (
+                        <Option key={item}>{item}</Option>
+                    ))}
+                </Select>
             </Item>
             <Divider orientation="left">Skills</Divider>
             <List name="skills">
