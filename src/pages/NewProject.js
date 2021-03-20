@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
 import { Layout, Form, Input, DatePicker, Transfer, Button } from "antd";
@@ -15,6 +16,7 @@ const NewProject = () => {
     const [selectedKeys, setSelectedKeys] = useState([]);
 
     const { authTokens } = useAuth();
+    const history = useHistory();
     const [form] = useForm();
 
     useEffect(() => {
@@ -31,25 +33,26 @@ const NewProject = () => {
         });
     };
 
+    /* Used for transfer component */
     const onChange = (nextTargetKeys) => {
         setTargetKeys(nextTargetKeys);
     };
+    /* Used for transfer component */
     const onSelectChange = (sourceSelectedKeys, targetSelectedKeys) => {
         setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
     };
 
     const handleSubmit = (values) => {
+        // Deadline defaults to empty string if none selected. If one is given, it's formatted to D.M.Y.
         const deadline = typeof values.deadline !== "undefined" ? values.deadline.format("D.M.Y") : "";
 
+        // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
         const body = { ...values, deadline, organization: authTokens.organization, tasks: [] };
 
         axios
             .post("http://localhost:3001/api/projects", body)
-            .then((res) => console.log(res.data))
+            .then(() => history.push("/"))
             .catch((err) => console.log(err));
-
-        form.resetFields();
-        setTargetKeys([]);
     };
 
     return (

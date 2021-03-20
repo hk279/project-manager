@@ -63,11 +63,14 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
                 deadline: moment(project.deadline.replace((/\./g, "-")), "DD-MM-YYYY"),
                 team: project.team,
             }}
+            validateMessages={{
+                required: "${label} is required!",
+            }}
         >
-            <Item label="Title" name="title">
+            <Item label="Title" name="title" rules={[{ required: true }]}>
                 <Input />
             </Item>
-            <Item label="Client" name="client">
+            <Item label="Client" name="client" rules={[{ required: true }]}>
                 <Input />
             </Item>
             <Item label="Description" name="description">

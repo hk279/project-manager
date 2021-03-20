@@ -11,24 +11,18 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
 
     const getEmployees = () => {
         // Saves all unique employee IDs here
-        const employeeIds = [];
+        let employeeIds = [];
         team.forEach((member) => {
             employeeIds.push(member);
         });
 
-        // Request data for a group of employees
+        // Request data for a group of employees. Is post request suitable here?
         axios.post("http://localhost:3001/api/employeeGroup/", { group: employeeIds }).then((res) => {
             setEmployees(res.data);
         });
     };
 
-    const titleWithClient = (
-        <div className="card-title">
-            <h3>{title}</h3>
-            <h4>{client}</h4>
-        </div>
-    );
-
+    // Calculates the progress of the project
     let completedTasks = 0;
     tasks.forEach((task) => {
         if (task.status === "Completed") {
@@ -36,6 +30,13 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
         }
     });
     const progress = Math.round((completedTasks / tasks.length) * 100);
+
+    const titleWithClient = (
+        <div className="card-title">
+            <h3>{title}</h3>
+            <h4>{client}</h4>
+        </div>
+    );
 
     return (
         <Card className="project-card" cover={titleWithClient} hoverable>
