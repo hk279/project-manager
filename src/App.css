@@ -27,12 +27,16 @@
 .login-form {
     padding: 1em;
 }
-.new-project-form {
+.new-project {
     padding: 2em;
+}
+.new-project-form {
     width: 40%;
 }
-.new-employee-form {
+.new-employee {
     padding: 2em;
+}
+.new-employee-form {
     width: 40%;
 }
 
@@ -105,8 +109,12 @@
 }
 
 /* Employees list */
-.employees-table {
+.employees {
     padding: 2em;
+}
+.employees-search {
+    width: 40%;
+    margin-bottom: 2em;
 }
 
 /* Employee view */
@@ -122,4 +130,13 @@
 }
 .delete-employee {
     margin-left: 2em;
+}
+
+/* Profile */
+.profile {
+    padding: 2em;
+}
+.profile-table {
+    border-collapse: separate;
+    border-spacing: 2em;
 }

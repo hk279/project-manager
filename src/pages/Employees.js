@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Layout, Table, Space } from "antd";
+import { Layout, Table, Space, Input } from "antd";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 import Loading from "../components/Loading";
@@ -9,6 +9,8 @@ const { Sider, Content } = Layout;
 
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
+    const [filteredEmployees, setFilteredEmployees] = useState([]);
+    const [searchWord, setSearchWord] = useState("");
 
     const { authTokens } = useAuth();
 
@@ -52,6 +54,29 @@ const Employees = () => {
         getEmployees();
     }, []);
 
+    useEffect(() => {
+        setFilteredEmployees(employees);
+    }, [employees]);
+
+    const handleChange = (e) => {
+        filterEmployees(e.target.value);
+    };
+
+    /* Filter the data array by matching names with the search field value */
+    const filterEmployees = (searchWord) => {
+        const filteredEmployees = employees.filter((employee) => {
+            const firstName = employee.firstName.toLowerCase();
+            const lastName = employee.lastName.toLowerCase();
+
+            if (firstName.includes(searchWord) || lastName.includes(searchWord)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        setFilteredEmployees(filteredEmployees);
+    };
+
     const getEmployees = () => {
         // Request data for a group of employees
         axios
@@ -71,8 +96,9 @@ const Employees = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content>
-                <Table className="employees-table" rowKey="id" columns={columns} dataSource={employees} />
+            <Content className="employees">
+                <Input className="employees-search" placeholder="Search" onChange={(e) => handleChange(e)} />
+                <Table className="employees-table" rowKey="id" columns={columns} dataSource={filteredEmployees} />
             </Content>
         </Layout>
     );

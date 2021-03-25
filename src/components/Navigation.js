@@ -26,16 +26,16 @@ const Navigation = () => {
 
             <Menu.ItemGroup key="g2">
                 <Menu.Item key="3" icon={<FileAddOutlined />}>
-                    <Link to="/new_project">New Project</Link>
+                    <Link to="/new_project">New project</Link>
                 </Menu.Item>
                 <Menu.Item key="4" icon={<UserAddOutlined />}>
-                    <Link to="/new_employee">New Employee</Link>
+                    <Link to="/new_employee">New employee</Link>
                 </Menu.Item>
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g3">
                 <Menu.Item key="5" icon={<ProfileOutlined />}>
-                    Profile
+                    <Link to="/profile">Profile</Link>
                 </Menu.Item>
             </Menu.ItemGroup>
 

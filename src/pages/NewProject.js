@@ -3,7 +3,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
-import { Layout, Form, Input, DatePicker, Transfer, Button } from "antd";
+import { Layout, Form, Input, DatePicker, Transfer, Button, Divider } from "antd";
 
 const { Sider, Content } = Layout;
 const { Item, useForm } = Form;
@@ -43,7 +43,7 @@ const NewProject = () => {
     };
 
     const handleSubmit = (values) => {
-        // Deadline defaults to empty string if none selected. If one is given, it's formatted to D.M.Y.
+        // Deadline defaults to empty string if none selected. If one is selected, it's formatted to D.M.Y.
         const deadline = typeof values.deadline !== "undefined" ? values.deadline.format("D.M.Y") : "";
 
         // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
@@ -60,7 +60,9 @@ const NewProject = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content>
+            <Content className="new-project">
+                <h1>New project</h1>
+                <Divider />
                 <Form
                     className="new-project-form"
                     layout="vertical"

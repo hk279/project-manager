@@ -28,7 +28,9 @@ const NewEmployee = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content>
+            <Content className="new-employee">
+                <h1>New employee</h1>
+                <Divider />
                 <Form
                     className="new-employee-form"
                     layout="vertical"
