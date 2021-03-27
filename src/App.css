@@ -145,5 +145,14 @@
 .profile {
     padding: 2em;
 }
-.profile-table {
+.grid-container {
+    display: grid;
+    grid-template-rows: auto auto auto;
+}
+.grid-row {
+    display: flex;
+    flex-direction: row;
+}
+.grid-item {
+    width: 20%;
 }

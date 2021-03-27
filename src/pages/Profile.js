@@ -1,4 +1,4 @@
-import { Layout, Button } from "antd";
+import { Layout, Button, Divider } from "antd";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 
@@ -14,23 +14,19 @@ const Profile = () => {
             </Sider>
             <Content className="profile">
                 <h1>Profile</h1>
-                <table className="profile-table">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <b>Email:</b>
-                            </td>
-                            <td>{authTokens.email}</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>Organization:</b>
-                            </td>
-                            <td>{authTokens.organization}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <Button type="primary">Change password</Button>
+                <Divider />
+                <div className="grid-container">
+                    <div className="grid-row">
+                        <b className="grid-item">Email:</b>
+                        <p className="grid-item">{authTokens.email}</p>
+                    </div>
+                    <div className="grid-row">
+                        <b className="grid-item">Organization:</b>
+                        <p className="grid-item">{authTokens.organization}</p>
+                    </div>
+                </div>
+                <Divider />
+                <Button type="primary">Change password (Not implemented)</Button>
             </Content>
         </Layout>
     );
