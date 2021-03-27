@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Divider, Layout, Popconfirm } from "antd";
+import { Button, Divider, Layout, Popconfirm, Switch, Space } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import AddTask from "../components/AddTask";
@@ -15,6 +15,7 @@ const ProjectView = () => {
     const [project, setProject] = useState();
     const [employees, setEmployees] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [showCompleted, setShowCompleted] = useState(false);
     const [editMode, setEditMode] = useState(false);
     // Helps trigger re-render when task is added or deleted
     const [trigger, setTrigger] = useState(false);
@@ -53,6 +54,15 @@ const ProjectView = () => {
                 setEmployees(res.data);
             })
             .catch((err) => console.log(err));
+    };
+
+    // Show completed tasks toggle switch controller
+    const onSwitchChange = (checked) => {
+        if (checked) {
+            setShowCompleted(true);
+        } else {
+            setShowCompleted(false);
+        }
     };
 
     const onFinishAdd = (values) => {
@@ -157,17 +167,37 @@ const ProjectView = () => {
                         </tbody>
                     </table>
                     <Divider orientation="left">Tasks</Divider>
+                    <Space size="middle" style={{ marginBottom: "16px" }}>
+                        <p style={{ display: "inline" }}>Show completed</p>
+                        <Switch defaultChecked={false} style={{ display: "inline" }} onChange={onSwitchChange} />
+                    </Space>
                     <div className="project-view-tasks">
-                        {project.tasks.map((task) => (
-                            <Task
-                                key={task.title}
-                                task={task}
-                                project={project}
-                                employees={employees}
-                                deleteTask={deleteTask}
-                                setTaskStatus={setTaskStatus}
-                            />
-                        ))}
+                        {
+                            // Conditional rendering according to whether or not show completed tasks is toggled on
+                            showCompleted
+                                ? project.tasks.map((task) => (
+                                      <Task
+                                          key={task.title}
+                                          task={task}
+                                          project={project}
+                                          employees={employees}
+                                          deleteTask={deleteTask}
+                                          setTaskStatus={setTaskStatus}
+                                      />
+                                  ))
+                                : project.tasks
+                                      .filter((task) => task.status !== "Completed")
+                                      .map((task) => (
+                                          <Task
+                                              key={task.title}
+                                              task={task}
+                                              project={project}
+                                              employees={employees}
+                                              deleteTask={deleteTask}
+                                              setTaskStatus={setTaskStatus}
+                                          />
+                                      ))
+                        }
                     </div>
                     <Button
                         type="primary"
