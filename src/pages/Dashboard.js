@@ -5,6 +5,7 @@ import { useAuth } from "../context/auth";
 import { Layout } from "antd";
 import ProjectCard from "../components/ProjectCard";
 import Navigation from "../components/Navigation";
+import { checkIfDeadlinePassed } from "../utils/helper";
 
 const Dashboard = () => {
     const [projects, setProjects] = useState([]);
@@ -17,7 +18,14 @@ const Dashboard = () => {
 
     const getProjects = () => {
         axios.get(`http://localhost:3001/api/projects/org/${authTokens.organization}`).then((res) => {
-            setProjects(res.data);
+            // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
+            const activeProjects = res.data.filter((project) => {
+                if (project.deadline === "") {
+                    return true;
+                }
+                return !checkIfDeadlinePassed(project.deadline);
+            });
+            setProjects(activeProjects);
         });
     };
 
