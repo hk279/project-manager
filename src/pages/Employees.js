@@ -10,7 +10,6 @@ const { Sider, Content } = Layout;
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
     const [filteredEmployees, setFilteredEmployees] = useState([]);
-    const [searchWord, setSearchWord] = useState("");
 
     const { authTokens } = useAuth();
 
@@ -62,29 +61,28 @@ const Employees = () => {
         filterEmployees(e.target.value);
     };
 
-    /* Filter the data array by matching names with the search field value */
-    const filterEmployees = (searchWord) => {
-        const filteredEmployees = employees.filter((employee) => {
-            const firstName = employee.firstName.toLowerCase();
-            const lastName = employee.lastName.toLowerCase();
-
-            if (firstName.includes(searchWord) || lastName.includes(searchWord)) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        setFilteredEmployees(filteredEmployees);
-    };
-
     const getEmployees = () => {
-        // Request data for a group of employees
         axios
             .get(`http://localhost:3001/api/employees/org/${authTokens.organization}`)
             .then((res) => {
                 setEmployees(res.data);
             })
             .catch((err) => console.log(err));
+    };
+
+    /* Filter the data array by matching names with the search field value */
+    const filterEmployees = (searchWord) => {
+        const filteredEmployees = employees.filter((employee) => {
+            const firstName = employee.firstName.toLowerCase();
+            const lastName = employee.lastName.toLowerCase();
+
+            if (firstName.includes(searchWord.toLowerCase()) || lastName.includes(searchWord.toLowerCase())) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        setFilteredEmployees(filteredEmployees);
     };
 
     if (!employees) {

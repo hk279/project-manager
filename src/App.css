@@ -132,11 +132,18 @@
     margin-left: 2em;
 }
 
+/* Project history */
+.project-history {
+    padding: 2em;
+}
+.project-history-search {
+    width: 40%;
+    margin-bottom: 2em;
+}
+
 /* Profile */
 .profile {
     padding: 2em;
 }
 .profile-table {
-    border-collapse: separate;
-    border-spacing: 2em;
 }

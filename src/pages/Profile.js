@@ -13,13 +13,9 @@ const Profile = () => {
                 <Navigation />
             </Sider>
             <Content className="profile">
+                <h1>Profile</h1>
                 <table className="profile-table">
                     <tbody>
-                        <tr>
-                            <td>
-                                <h1>Profile</h1>
-                            </td>
-                        </tr>
                         <tr>
                             <td>
                                 <b>Email:</b>

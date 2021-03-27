@@ -44,7 +44,8 @@ const NewProject = () => {
 
     const handleSubmit = (values) => {
         // Deadline defaults to empty string if none selected. If one is selected, it's formatted to D.M.Y.
-        const deadline = typeof values.deadline !== "undefined" ? values.deadline.format("D.M.Y") : "";
+        const deadline =
+            typeof values.deadline !== "undefined" || values.deadline === null ? values.deadline.format("D.M.Y") : "";
 
         // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
         const body = { ...values, deadline, organization: authTokens.organization, tasks: [] };
