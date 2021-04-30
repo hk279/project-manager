@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { Layout, Button, Divider } from "antd";
+import ChangePassword from "../components/ChangePassword";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 
 const { Sider, Content } = Layout;
 
 const Profile = () => {
+    const [modalVisible, setModalVisible] = useState(false);
+
     const { authTokens } = useAuth();
+
+    const onFinishChangePassword = (values) => {};
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
@@ -26,7 +32,21 @@ const Profile = () => {
                     </div>
                 </div>
                 <Divider />
-                <Button type="primary">Change password (Not implemented)</Button>
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setModalVisible(true);
+                    }}
+                >
+                    Change password
+                </Button>
+                <ChangePassword
+                    visible={modalVisible}
+                    onFinishAdd={onFinishChangePassword}
+                    onCancel={() => {
+                        setModalVisible(false);
+                    }}
+                />
             </Content>
         </Layout>
     );
