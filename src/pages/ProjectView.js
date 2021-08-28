@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
 import { Button, Divider, Layout, Popconfirm, Switch, Space } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -148,12 +149,32 @@ const ProjectView = () => {
                     <Navigation />
                 </Sider>
                 <Content className="project-view">
-                    <h2>{project.title}</h2>
+                    <h2 className="project-view-title">{project.title}</h2>
+                    <div className="action-buttons-container">
+                        <Button
+                            className="action-button"
+                            type="primary"
+                            icon={<EditOutlined />}
+                            onClick={() => setEditMode(true)}
+                        >
+                            Edit
+                        </Button>
+                        <Popconfirm
+                            title="Confirm delete project"
+                            onConfirm={() => deleteProject(project.id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button className="action-button" type="primary" danger icon={<DeleteOutlined />}>
+                                Delete
+                            </Button>
+                        </Popconfirm>
+                    </div>
                     <h3>{project.client}</h3>
                     <Divider />
                     <p>{project.description}</p>
                     <p>
-                        Project deadline: <b>{project.deadline}</b>
+                        Project deadline: <b>{moment(project.deadline).format("D.M.Y")}</b>
                     </p>
                     <Divider orientation="left">Team</Divider>
                     <table>
@@ -209,20 +230,6 @@ const ProjectView = () => {
                     >
                         New Task
                     </Button>
-                    <Divider />
-                    <Button type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)}>
-                        Edit Project
-                    </Button>
-                    <Popconfirm
-                        title="Confirm delete project"
-                        onConfirm={() => deleteProject(project.id)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button className="delete-project" type="primary" danger icon={<DeleteOutlined />}>
-                            Delete Project
-                        </Button>
-                    </Popconfirm>
                     <AddTask
                         visible={modalVisible}
                         onFinishAdd={onFinishAdd}

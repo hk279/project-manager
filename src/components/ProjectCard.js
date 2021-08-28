@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Progress } from "antd";
+import moment from "moment";
 
 const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
     const [employees, setEmployees] = useState([]);
@@ -42,7 +43,7 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
         <Card className="project-card" cover={titleWithClient} hoverable>
             <p>{description}</p>
             <Progress percent={progress} />
-            <p>Deadline: {deadline}</p>
+            <p>Deadline: {moment(deadline).format("D.M.Y")}</p>
             <p>Team members:</p>
             <ul>
                 {employees.map((employee) => (

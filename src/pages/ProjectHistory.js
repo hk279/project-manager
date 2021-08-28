@@ -4,6 +4,7 @@ import axios from "axios";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 import { checkIfDeadlinePassed } from "../utils/helper";
+import moment from "moment";
 
 const { Sider, Content } = Layout;
 
@@ -45,6 +46,7 @@ const ProjectHistory = () => {
             title: "Deadline",
             dataIndex: "deadline",
             key: "deadline",
+            render: (deadline) => moment(deadline).format("D.M.Y"),
         },
         {
             title: "Action",

@@ -85,8 +85,15 @@
 .project-view {
     padding: 2em;
 }
-.delete-project {
+.project-view-title {
+    display: inline-block;
+}
+.action-buttons-container {
+    display: inline-block;
     margin-left: 2em;
+}
+.action-button {
+    margin-right: 1em;
 }
 .team-members-table-cell {
     padding: 0.5em 1em;
@@ -128,15 +135,15 @@
 .employee-view {
     padding: 2em;
 }
+.employee-view-title {
+    display: inline-block;
+}
 .employee-view-columns-container {
     display: flex;
     flex-direction: row;
 }
 .employee-view-column {
     flex: 1;
-}
-.delete-employee {
-    margin-left: 2em;
 }
 
 /* Project history */

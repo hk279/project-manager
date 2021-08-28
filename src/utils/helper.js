@@ -1,34 +1,10 @@
-const checkIfDeadlinePassed = (deadline) => {
+export const checkIfDeadlinePassed = (deadline) => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
+    const deadlineDate = new Date(deadline);
 
-    // Deadline is in format: D.M.Y
-    const deadlineSplit = deadline.split(".");
-
-    // Cleaner way of doing this?
-    if (year > deadlineSplit[2]) {
+    if (today > deadlineDate) {
         return true;
-    } else if (year < deadlineSplit[2]) {
-        return false;
     } else {
-        if (month > deadlineSplit[1]) {
-            return true;
-        } else if (month < deadlineSplit[1]) {
-            return false;
-        } else {
-            if (day > deadlineSplit[0]) {
-                return true;
-            } else if (day < deadlineSplit[0]) {
-                return false;
-            } else {
-                return false;
-            }
-        }
+        return false;
     }
-};
-
-module.exports = {
-    checkIfDeadlinePassed,
 };

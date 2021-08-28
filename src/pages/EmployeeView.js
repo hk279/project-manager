@@ -86,9 +86,29 @@ const EmployeeView = () => {
                     <Navigation />
                 </Sider>
                 <Content className="employee-view">
-                    <h2>
+                    <h2 className="employee-view-title">
                         {employee.firstName} {employee.lastName}
                     </h2>
+                    <div className="action-buttons-container">
+                        <Button
+                            className="action-button"
+                            type="primary"
+                            icon={<EditOutlined />}
+                            onClick={() => setEditMode(true)}
+                        >
+                            Edit
+                        </Button>
+                        <Popconfirm
+                            title="Confirm delete employee"
+                            onConfirm={() => deleteEmployee(id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button className="action-button" type="primary" danger icon={<DeleteOutlined />}>
+                                Delete
+                            </Button>
+                        </Popconfirm>
+                    </div>
                     <h3>{employee.department}</h3>
                     <Divider />
                     <div className="employee-view-columns-container">
@@ -112,20 +132,6 @@ const EmployeeView = () => {
                             />
                         </div>
                     </div>
-                    <Divider />
-                    <Button type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)}>
-                        Edit Employee
-                    </Button>
-                    <Popconfirm
-                        title="Confirm delete employee"
-                        onConfirm={() => deleteEmployee(id)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button className="delete-employee" type="primary" danger icon={<DeleteOutlined />}>
-                            Delete Employee
-                        </Button>
-                    </Popconfirm>
                 </Content>
             </Layout>
         );
