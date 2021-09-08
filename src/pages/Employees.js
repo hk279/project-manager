@@ -76,11 +76,7 @@ const Employees = () => {
             const firstName = employee.firstName.toLowerCase();
             const lastName = employee.lastName.toLowerCase();
 
-            if (firstName.includes(searchWord.toLowerCase()) || lastName.includes(searchWord.toLowerCase())) {
-                return true;
-            } else {
-                return false;
-            }
+            return firstName.includes(searchWord.toLowerCase()) || lastName.includes(searchWord.toLowerCase()) ? true : false;
         });
         setFilteredEmployees(filteredEmployees);
     };

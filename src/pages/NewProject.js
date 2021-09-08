@@ -43,7 +43,6 @@ const NewProject = () => {
     };
 
     const handleSubmit = (values) => {
-        // Deadline defaults to empty string if none selected. If one is selected, it's formatted to D.M.Y.
         console.log(values.deadline);
         const deadline = typeof values.deadline === "undefined" || values.deadline === null ? "" : values.deadline;
 

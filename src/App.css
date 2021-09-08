@@ -64,6 +64,13 @@
     gap: 1.2em;
     grid-template-columns: auto auto auto;
 }
+.dashboard-search {
+    width: 40%;
+    margin: 2em 2em 0em 2em;
+}
+.dashboard-team-select {
+    width: 10%;
+}
 .empty-dashboard {
     display: flex;
     min-height: 100vh;
