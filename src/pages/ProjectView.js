@@ -36,7 +36,7 @@ const ProjectView = () => {
 
     const getProject = (id) => {
         axios
-            .get(`http://localhost:3001/api/projects/id/${id}`)
+            .get(`http://localhost:3001/projects/id/${id}`)
             .then((res) => setProject(res.data))
             .catch((err) => console.log(err));
     };
@@ -50,7 +50,7 @@ const ProjectView = () => {
 
         // Request data for a group of employees
         axios
-            .post("http://localhost:3001/api/employeeGroup/", { group: employeeIds })
+            .post("http://localhost:3001/employees/employeeGroup/", { group: employeeIds })
             .then((res) => {
                 setEmployees(res.data);
             })
@@ -73,7 +73,7 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
         axios
-            .put("http://localhost:3001/api/projects/", updatedProject)
+            .put("http://localhost:3001/projects/", updatedProject)
             .then(() => {
                 setModalVisible(false);
                 setTrigger(!trigger);
@@ -92,7 +92,7 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put("http://localhost:3001/api/projects/", updatedProject)
+            .put("http://localhost:3001/projects/", updatedProject)
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
@@ -103,14 +103,14 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put("http://localhost:3001/api/projects/", updatedProject)
+            .put("http://localhost:3001/projects/", updatedProject)
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
 
     const editProject = (newData) => {
         axios
-            .put("http://localhost:3001/api/projects/", newData)
+            .put("http://localhost:3001/projects/", newData)
             .then((res) => {
                 setEditMode(false);
                 setTrigger(!trigger);
@@ -120,7 +120,7 @@ const ProjectView = () => {
 
     const deleteProject = (id) => {
         axios
-            .delete(`http://localhost:3001/api/projects/id/${id}`)
+            .delete(`http://localhost:3001/projects/id/${id}`)
             .then(() => history.push("/"))
             .catch((err) => console.log(err));
     };

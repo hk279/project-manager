@@ -27,14 +27,14 @@ const EmployeeView = () => {
 
     const getEmployee = (id) => {
         axios
-            .get(`http://localhost:3001/api/employees/id/${id}`)
+            .get(`http://localhost:3001/employees/id/${id}`)
             .then((res) => setEmployee(res.data))
             .catch((err) => console.log(err));
     };
 
     const getEmployeeProjects = (id) => {
         axios
-            .get(`http://localhost:3001/api/projects/org/${authTokens.organization}`)
+            .get(`http://localhost:3001/projects/org/${authTokens.organization}`)
             .then((res) => {
                 let projectMatches = [];
                 res.data.forEach((project) => {
@@ -49,7 +49,7 @@ const EmployeeView = () => {
 
     const editEmployee = (newData) => {
         axios
-            .put("http://localhost:3001/api/employees/", newData)
+            .put("http://localhost:3001/employees/", newData)
             .then((res) => {
                 setEditMode(false);
                 setTrigger(!trigger);
@@ -59,7 +59,7 @@ const EmployeeView = () => {
 
     const deleteEmployee = (id) => {
         axios
-            .delete(`http://localhost:3001/api/employees/${id}`)
+            .delete(`http://localhost:3001/employees/${id}`)
             .then(() => history.push("/employees"))
             .catch((err) => console.log(err));
     };

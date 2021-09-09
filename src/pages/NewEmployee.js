@@ -16,7 +16,7 @@ const NewEmployee = () => {
 
     const handleSubmit = (values) => {
         axios
-            .post("http://localhost:3001/api/employees", { ...values, organization: authTokens.organization })
+            .post("http://localhost:3001/employees", { ...values, organization: authTokens.organization })
             .then((res) => console.log(res.data))
             .catch((err) => console.log(err));
 

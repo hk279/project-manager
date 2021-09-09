@@ -18,7 +18,7 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
         });
 
         // Request data for a group of employees. Is post request suitable here?
-        axios.post("http://localhost:3001/api/employeeGroup/", { group: employeeIds }).then((res) => {
+        axios.post("http://localhost:3001/employees/employeeGroup/", { group: employeeIds }).then((res) => {
             setEmployees(res.data);
         });
     };

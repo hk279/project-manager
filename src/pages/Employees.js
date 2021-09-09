@@ -63,7 +63,7 @@ const Employees = () => {
 
     const getEmployees = () => {
         axios
-            .get(`http://localhost:3001/api/employees/org/${authTokens.organization}`)
+            .get(`http://localhost:3001/employees/org/${authTokens.organization}`)
             .then((res) => {
                 setEmployees(res.data);
             })
@@ -76,7 +76,9 @@ const Employees = () => {
             const firstName = employee.firstName.toLowerCase();
             const lastName = employee.lastName.toLowerCase();
 
-            return firstName.includes(searchWord.toLowerCase()) || lastName.includes(searchWord.toLowerCase()) ? true : false;
+            return firstName.includes(searchWord.toLowerCase()) || lastName.includes(searchWord.toLowerCase())
+                ? true
+                : false;
         });
         setFilteredEmployees(filteredEmployees);
     };
