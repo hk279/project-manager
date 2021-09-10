@@ -87,11 +87,6 @@ const Dashboard = () => {
                 <Layout.Content>
                     <div className="dashboard-filters">
                         <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
-                        {/* Placeholder - Todo: on team select, reset the search value to empty */}
-                        <Select className="dashboard-team-select" defaultValue="Team1">
-                            <Option value="Team1">Team1</Option>
-                            <Option value="Team2">Team2</Option>
-                        </Select>
                     </div>
                     <Divider />
                     <div className="dashboard-content">

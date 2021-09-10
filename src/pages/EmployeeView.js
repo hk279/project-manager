@@ -49,7 +49,7 @@ const EmployeeView = () => {
 
     const editEmployee = (newData) => {
         axios
-            .put("http://localhost:3001/employees/", newData)
+            .put(`http://localhost:3001/employees/${employee.id}`, newData)
             .then((res) => {
                 setEditMode(false);
                 setTrigger(!trigger);

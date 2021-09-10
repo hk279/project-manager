@@ -33,7 +33,6 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     const handleSubmit = (values) => {
         const deadline = typeof values.deadline == "undefined" || values.deadline === null ? "" : values.deadline;
         const newData = {
-            id: project.id,
             ...values,
             deadline,
             tasks: project.tasks,

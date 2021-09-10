@@ -3,7 +3,7 @@ import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone, DeleteOutli
 
 const { Panel } = Collapse;
 
-const Task = ({ project, task, employees, deleteTask, setTaskStatus }) => {
+const Task = ({ task, employees, deleteTask, setTaskStatus }) => {
     // Get the name of an employee with the param id
     const getEmployeeName = (id) => {
         for (let i = 0; i < employees.length; i++) {
@@ -65,26 +65,26 @@ const Task = ({ project, task, employees, deleteTask, setTaskStatus }) => {
                                     className="task-status"
                                     type={task.status === "Completed" ? "primary" : "default"}
                                     icon={<CheckCircleTwoTone twoToneColor="#73d13d" />}
-                                    onClick={() => setTaskStatus(project, task, "Completed")}
+                                    onClick={() => setTaskStatus(task, "Completed")}
                                 />
                                 <Button
                                     className="task-status"
                                     type={task.status === "Doing" ? "primary" : "default"}
                                     icon={<ClockCircleTwoTone twoToneColor="#40a9ff" />}
-                                    onClick={() => setTaskStatus(project, task, "Doing")}
+                                    onClick={() => setTaskStatus(task, "Doing")}
                                 />
                                 <Button
                                     className="task-status"
                                     type={task.status === "Not started" ? "primary" : "default"}
                                     icon={<PauseCircleTwoTone twoToneColor="#bfbfbf" />}
-                                    onClick={() => setTaskStatus(project, task, "Not started")}
+                                    onClick={() => setTaskStatus(task, "Not started")}
                                 />
                             </td>
 
                             <td className="task-buttons-cell">
                                 <Popconfirm
                                     title="Confirm delete task"
-                                    onConfirm={() => deleteTask(project, task)}
+                                    onConfirm={() => deleteTask(task)}
                                     okText="Yes"
                                     cancelText="No"
                                 >

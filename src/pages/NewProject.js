@@ -43,14 +43,13 @@ const NewProject = () => {
     };
 
     const handleSubmit = (values) => {
-        console.log(values.deadline);
         const deadline = typeof values.deadline === "undefined" || values.deadline === null ? "" : values.deadline;
 
         // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
         const body = { ...values, deadline, organizationId: authTokens.organizationId, tasks: [] };
 
         axios
-            .post("http://localhost:3001/api/projects", body)
+            .post("http://localhost:3001/projects", body)
             .then(() => history.push("/"))
             .catch((err) => console.log(err));
     };
@@ -96,6 +95,12 @@ const NewProject = () => {
                             titles={["Employees", "Team"]}
                             targetKeys={targetKeys}
                             selectedKeys={selectedKeys}
+                            showSearch
+                            // filterOption is needed to make search case-insensitive
+                            filterOption={(input, option) => {
+                                const fullName = `${option.firstName} ${option.lastName}`;
+                                return fullName.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                            }}
                             onChange={onChange}
                             onSelectChange={onSelectChange}
                             render={(item) => `${item.firstName} ${item.lastName}`}

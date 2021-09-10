@@ -10,11 +10,22 @@ const { Sider, Content } = Layout;
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [organization, setOrganization] = useState(null);
+    const [showSuccessToast, setShowSuccessToast] = useState(false); //TODO
 
-    const { authTokens } = useAuth();
+    const { authTokens, setAuthTokens } = useAuth();
 
-    //TODO
-    const onFinishChangePassword = (values) => {};
+    const onFinishChangePassword = (values) => {
+        axios
+            .put(`http://localhost:3001/users/change-password/${authTokens.id}`, { password: values.newPassword })
+            .then((res) => {
+                const user = res.data;
+                setAuthTokens({ ...user, password: values.newPassword });
+                setShowSuccessToast(true);
+            })
+            .catch((err) => console.log(err));
+
+        setModalVisible(false);
+    };
 
     // Get organization data
     useEffect(() => {
@@ -53,7 +64,7 @@ const Profile = () => {
                 </Button>
                 <ChangePassword
                     visible={modalVisible}
-                    onFinishAdd={onFinishChangePassword}
+                    onFinishChangePassword={onFinishChangePassword}
                     onCancel={() => {
                         setModalVisible(false);
                     }}

@@ -13,12 +13,9 @@ const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
 
     const handleSubmit = (values) => {
         const newData = {
-            id: employee.id,
             ...values,
             organizationId: authTokens.organizationId,
         };
-
-        console.log(newData);
 
         editEmployee(newData);
     };

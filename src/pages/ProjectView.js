@@ -72,7 +72,7 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
         axios
-            .put("http://localhost:3001/projects/", updatedProject)
+            .put(`http://localhost:3001/projects/${project.id}`, updatedProject)
             .then(() => {
                 setModalVisible(false);
                 setTrigger(!trigger);
@@ -84,32 +84,32 @@ const ProjectView = () => {
     Then removes the old task from the list. 
     Then creates a new list with the updated task added. */
 
-    const setTaskStatus = (project, changingTask, status) => {
+    const setTaskStatus = (changingTask, status) => {
         const updatedTask = { ...changingTask, status: status };
         const tasksOldRemoved = [...project.tasks].filter((task) => task.title !== changingTask.title);
         const updatedTasks = [...tasksOldRemoved, updatedTask];
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put("http://localhost:3001/projects/", updatedProject)
+            .put(`http://localhost:3001/projects/${project.id}`, updatedProject)
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
 
     // Delete a task
-    const deleteTask = (project, taskToBeDeleted) => {
+    const deleteTask = (taskToBeDeleted) => {
         const updatedTasks = [...project.tasks].filter((task) => task.title !== taskToBeDeleted.title);
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put("http://localhost:3001/projects/", updatedProject)
+            .put(`http://localhost:3001/projects/${project.id}`, updatedProject)
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
 
     const editProject = (newData) => {
         axios
-            .put("http://localhost:3001/projects/", newData)
+            .put(`http://localhost:3001/projects/${project.id}`, newData)
             .then((res) => {
                 setEditMode(false);
                 setTrigger(!trigger);

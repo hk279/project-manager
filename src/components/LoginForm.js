@@ -18,7 +18,7 @@ const LoginForm = () => {
         let user;
 
         axios
-            .post("http://localhost:3001/auth/login", { ...values })
+            .post("http://localhost:3001/users/login", { ...values })
             .then((res) => {
                 user = res.data;
                 console.log(user);
