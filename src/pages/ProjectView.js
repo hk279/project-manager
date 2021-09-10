@@ -18,8 +18,7 @@ const ProjectView = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [showCompleted, setShowCompleted] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    // Helps trigger re-render when task is added or deleted
-    const [trigger, setTrigger] = useState(false);
+    const [trigger, setTrigger] = useState(false); // Helps trigger re-render when task is added or deleted
 
     let { id } = useParams();
     const history = useHistory();

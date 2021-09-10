@@ -21,7 +21,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     }, []);
 
     const getEmployees = async () => {
-        let url = `http://localhost:3001/employees/org/${authTokens.organization}`;
+        let url = `http://localhost:3001/employees/org/${authTokens.organizationId}`;
         // Format the URL in case the company name contains spaces.
         let formattedUrl = url.replace(/ /g, "%20");
 
@@ -37,7 +37,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
             ...values,
             deadline,
             tasks: project.tasks,
-            organization: authTokens.organization,
+            organizationId: authTokens.organizationId,
         };
 
         editProject(newData);

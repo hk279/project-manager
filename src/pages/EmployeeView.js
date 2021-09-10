@@ -34,7 +34,7 @@ const EmployeeView = () => {
 
     const getEmployeeProjects = (id) => {
         axios
-            .get(`http://localhost:3001/projects/org/${authTokens.organization}`)
+            .get(`http://localhost:3001/projects/org/${authTokens.organizationId}`)
             .then((res) => {
                 let projectMatches = [];
                 res.data.forEach((project) => {

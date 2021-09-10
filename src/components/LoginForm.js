@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Alert } from "antd";
 import { useAuth } from "../context/auth";
 
 const LoginForm = () => {
@@ -24,11 +24,11 @@ const LoginForm = () => {
                 console.log(user);
 
                 if (user !== "") {
-                    console.log("Login successful");
+                    setIsError(false);
                     setAuthTokens(user);
                     setLoggedIn(true);
                 } else {
-                    console.log("Login failed");
+                    console.log("error");
                     setIsError(true);
                 }
             })
@@ -53,6 +53,15 @@ const LoginForm = () => {
                     Login
                 </Button>
             </Item>
+            {isError ? (
+                <Alert
+                    message="Login failed"
+                    description="Wrong username or password."
+                    type="error"
+                    closable
+                    onClose={() => setIsError(false)}
+                />
+            ) : null}
         </Form>
     );
 };

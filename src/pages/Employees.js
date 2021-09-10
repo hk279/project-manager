@@ -63,7 +63,7 @@ const Employees = () => {
 
     const getEmployees = () => {
         axios
-            .get(`http://localhost:3001/employees/org/${authTokens.organization}`)
+            .get(`http://localhost:3001/employees/org/${authTokens.organizationId}`)
             .then((res) => {
                 setEmployees(res.data);
             })

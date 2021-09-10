@@ -24,7 +24,7 @@ const NewProject = () => {
     }, []);
 
     const getEmployees = async () => {
-        let url = `http://localhost:3001/employees/org/${authTokens.organization}`;
+        let url = `http://localhost:3001/employees/org/${authTokens.organizationId}`;
         // Format the URL in case the company name contains spaces.
         let formattedUrl = url.replace(/ /g, "%20");
 
@@ -47,7 +47,7 @@ const NewProject = () => {
         const deadline = typeof values.deadline === "undefined" || values.deadline === null ? "" : values.deadline;
 
         // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
-        const body = { ...values, deadline, organization: authTokens.organization, tasks: [] };
+        const body = { ...values, deadline, organizationId: authTokens.organizationId, tasks: [] };
 
         axios
             .post("http://localhost:3001/api/projects", body)

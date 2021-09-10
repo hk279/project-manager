@@ -15,7 +15,7 @@ const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
         const newData = {
             id: employee.id,
             ...values,
-            organization: authTokens.organization,
+            organizationId: authTokens.organizationId,
         };
 
         console.log(newData);

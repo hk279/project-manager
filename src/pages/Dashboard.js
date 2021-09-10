@@ -24,7 +24,7 @@ const Dashboard = () => {
     }, [projects]);
 
     const getProjects = () => {
-        axios.get(`http://localhost:3001/projects/org/${authTokens.organization}`).then((res) => {
+        axios.get(`http://localhost:3001/projects/org/${authTokens.organizationId}`).then((res) => {
             // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
             const activeProjects = res.data.filter((project) => {
                 if (project.deadline === "") {
