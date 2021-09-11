@@ -73,13 +73,13 @@ const NewProject = () => {
                     }}
                 >
                     <Item label="Title" name="title" rules={[{ required: true }]}>
-                        <Input />
+                        <Input maxLength={80} />
                     </Item>
                     <Item label="Client" name="client" rules={[{ required: true }]}>
-                        <Input />
+                        <Input maxLength={80} />
                     </Item>
                     <Item label="Description" name="description">
-                        <TextArea />
+                        <TextArea maxLength={300} />
                     </Item>
                     <Item label="Deadline" name="deadline">
                         <DatePicker format="DD/MM/YYYY" />

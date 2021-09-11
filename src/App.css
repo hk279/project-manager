@@ -62,14 +62,11 @@
     display: grid;
     margin: 2em;
     gap: 1.2em;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 .dashboard-search {
     width: 40%;
     margin: 2em 2em 0em 2em;
-}
-.dashboard-team-select {
-    width: 10%;
 }
 .empty-dashboard {
     display: flex;
@@ -80,12 +77,19 @@
 }
 .project-card-link {
     display: grid;
+    max-width: 30vw;
 }
 .project-card {
     border-radius: 1em;
+    max-width: inherit;
 }
-.card-title {
-    padding: 24px 24px 0px 24px;
+.project-card-header {
+    padding: 2em 2em 0em 2em;
+}
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* Project view */

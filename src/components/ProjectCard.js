@@ -33,9 +33,9 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
     const progress = Math.round((completedTasks / tasks.length) * 100);
 
     const titleWithClient = (
-        <div className="card-title">
-            <h3>{title}</h3>
-            <h4>{client}</h4>
+        <div className="project-card-header">
+            <h3 className="ellipsis">{title}</h3>
+            <h4 className="ellipsis">{client}</h4>
         </div>
     );
 
