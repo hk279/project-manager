@@ -119,7 +119,7 @@ const ProjectView = () => {
 
     const deleteProject = (id) => {
         axios
-            .delete(`http://localhost:3001/projects/id/${id}`)
+            .delete(`http://localhost:3001/projects/${id}`)
             .then(() => history.push("/"))
             .catch((err) => console.log(err));
     };
@@ -173,7 +173,8 @@ const ProjectView = () => {
                     <Divider />
                     <p>{project.description}</p>
                     <p>
-                        Project deadline: <b>{moment(project.deadline).format("D.M.Y")}</b>
+                        Project deadline:{" "}
+                        <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
                     </p>
                     <Divider orientation="left">Team</Divider>
                     <table>

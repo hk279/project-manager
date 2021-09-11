@@ -43,7 +43,8 @@ const NewProject = () => {
     };
 
     const handleSubmit = (values) => {
-        const deadline = typeof values.deadline === "undefined" || values.deadline === null ? "" : values.deadline;
+        console.log(values.deadline);
+        const deadline = typeof values.deadline === "undefined" || values.deadline === null ? null : values.deadline;
 
         // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
         const body = { ...values, deadline, organizationId: authTokens.organizationId, tasks: [] };

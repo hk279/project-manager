@@ -13,7 +13,6 @@ const Dashboard = () => {
     const [filteredProjects, setFilteredProjects] = useState([]);
 
     const { authTokens } = useAuth();
-    const { Option } = Select;
 
     useEffect(() => {
         getProjects();
@@ -27,30 +26,37 @@ const Dashboard = () => {
         axios.get(`http://localhost:3001/projects/org/${authTokens.organizationId}`).then((res) => {
             // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
             const activeProjects = res.data.filter((project) => {
-                if (project.deadline === "") {
+                if (project.deadline === null) {
                     return true;
                 }
                 return !checkIfDeadlinePassed(project.deadline);
             });
 
-            /* Sorting by deadline */
-            let sortedProjects = activeProjects.sort((a, b) => {
-                var dateMomentObject1 = moment(a.deadline, "D.M.Y");
-                var dateObject1 = dateMomentObject1.toDate();
-
-                var dateMomentObject2 = moment(b.deadline, "D.M.Y");
-                var dateObject2 = dateMomentObject2.toDate();
-
-                if (dateObject1 < dateObject2) {
-                    return -1;
-                }
-                if (dateMomentObject1 > dateMomentObject2) {
-                    return 1;
-                }
-                return 0;
-            });
-
+            let sortedProjects = sortProjects(activeProjects);
             setProjects(sortedProjects);
+        });
+    };
+
+    const sortProjects = (projects) => {
+        return projects.sort((a, b) => {
+            let dateObject1 = a.deadline ? moment(a.deadline).toDate() : null;
+            let dateObject2 = b.deadline ? moment(b.deadline).toDate() : null;
+
+            // Sorting by date while taking into account null deadline values.
+            // Can this be simplified?
+            if (!dateObject1 && !dateObject2) {
+                return 0;
+            } else if (!dateObject1) {
+                return 1;
+            } else if (!dateObject2) {
+                return -1;
+            } else if (dateObject1 < dateObject2) {
+                return -1;
+            } else if (dateObject1 > dateObject2) {
+                return 1;
+            } else {
+                return 0;
+            }
         });
     };
 

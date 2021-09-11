@@ -43,7 +43,7 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
         <Card className="project-card" cover={titleWithClient} hoverable>
             <p>{description}</p>
             <Progress percent={progress} />
-            <p>Deadline: {moment(deadline).format("D.M.Y")}</p>
+            <p>{deadline ? `Deadline: ${moment(deadline).format("D.M.Y")}` : "No deadline"}</p>
             <p>Team members:</p>
             <ul>
                 {employees.map((employee) => (

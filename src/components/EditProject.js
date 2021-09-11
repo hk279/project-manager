@@ -31,7 +31,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     };
 
     const handleSubmit = (values) => {
-        const deadline = typeof values.deadline == "undefined" || values.deadline === null ? "" : values.deadline;
+        const deadline = typeof values.deadline == "undefined" || values.deadline === null ? null : values.deadline;
         const newData = {
             ...values,
             deadline,
@@ -59,7 +59,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
                 title: project.title,
                 client: project.client,
                 description: project.description,
-                deadline: moment(project.deadline),
+                deadline: project.deadline ? moment(project.deadline) : null,
                 team: project.team,
             }}
             validateMessages={{
