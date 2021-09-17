@@ -109,7 +109,10 @@
 .team-members-table-cell {
     padding: 0.5em 2em 0.5em 0em;
 }
-.project-view-tasks {
+.tasks-list-actions {
+    margin-bottom: 1em;
+}
+.tasks-list {
     width: 40%;
     min-width: 30em;
 }

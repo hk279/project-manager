@@ -13,7 +13,7 @@ const { Option } = Select;
 
 const NewProject = () => {
     const [employees, setEmployees] = useState([]);
-    const [tags, setTags] = useState([]);
+    const [existingTags, setExistingTags] = useState([]);
 
     const [targetKeys, setTargetKeys] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState([]);
@@ -24,7 +24,7 @@ const NewProject = () => {
 
     useEffect(() => {
         getEmployees();
-        getTags();
+        getExistingTags();
     }, []);
 
     const getEmployees = () => {
@@ -34,10 +34,10 @@ const NewProject = () => {
         });
     };
 
-    const getTags = () => {
+    const getExistingTags = () => {
         const url = `${URLroot}/projects/tags/${authTokens.organizationId}`;
         axios.get(url).then((res) => {
-            setTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
+            setExistingTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
     };
 
@@ -51,8 +51,8 @@ const NewProject = () => {
     };
 
     const handleSubmit = (values) => {
-        console.log(values.deadline);
-        const deadline = typeof values.deadline === "undefined" || values.deadline === null ? null : values.deadline;
+        const deadline = typeof values.deadline === "undefined" ? null : values.deadline;
+        const tags = typeof values.tags === "undefined" ? [] : values.tags.sort();
 
         // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
         const body = {
@@ -60,7 +60,7 @@ const NewProject = () => {
             deadline,
             organizationId: authTokens.organizationId,
             tasks: [],
-            tags: values.tags.sort(),
+            tags,
         };
 
         axios
@@ -99,7 +99,7 @@ const NewProject = () => {
                         <DatePicker format="DD/MM/YYYY" />
                     </Item>
                     <Item label="Tags" name="tags">
-                        <Select mode="tags">{tags}</Select>
+                        <Select mode="tags">{existingTags}</Select>
                     </Item>
                     <Item label="Team" name="team">
                         <Transfer

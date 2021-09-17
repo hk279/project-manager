@@ -173,10 +173,9 @@ const ProjectView = () => {
                     <h3>{project.client}</h3>
                     <Divider />
                     <p>{project.description}</p>
-                    <p>
-                        Project deadline:{" "}
-                        <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
-                    </p>
+                    <Space size="middle">
+                        Deadline: <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
+                    </Space>
                     <Divider orientation="left">Tags</Divider>
                     {project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : "No tags"}
                     <Divider orientation="left">Team</Divider>
@@ -191,11 +190,22 @@ const ProjectView = () => {
                         </tbody>
                     </table>
                     <Divider orientation="left">Tasks</Divider>
-                    <Space size="middle" style={{ marginBottom: "16px" }}>
-                        <p style={{ display: "inline" }}>Show completed</p>
-                        <Switch defaultChecked={false} style={{ display: "inline" }} onChange={onSwitchChange} />
-                    </Space>
-                    <div className="project-view-tasks">
+                    <div className="tasks-list-actions">
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => {
+                                setModalVisible(true);
+                            }}
+                        >
+                            New Task
+                        </Button>
+                        <Space size="middle" style={{ marginLeft: "2em" }}>
+                            Show completed
+                            <Switch defaultChecked={false} onChange={onSwitchChange} />
+                        </Space>
+                    </div>
+                    <div className="tasks-list">
                         {
                             // Conditional rendering according to whether or not show completed tasks is toggled on
                             showCompleted
@@ -223,16 +233,6 @@ const ProjectView = () => {
                                       ))
                         }
                     </div>
-                    <Button
-                        type="primary"
-                        style={{ marginTop: "2em" }}
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                            setModalVisible(true);
-                        }}
-                    >
-                        New Task
-                    </Button>
                     <AddTask
                         visible={modalVisible}
                         onFinishAdd={onFinishAdd}
