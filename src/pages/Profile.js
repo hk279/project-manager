@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Layout, Button, Divider } from "antd";
+import { Layout, Button, Divider, notification } from "antd";
 import ChangePassword from "../components/ChangePassword";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
@@ -10,7 +10,6 @@ const { Sider, Content } = Layout;
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [organization, setOrganization] = useState(null);
-    const [showSuccessToast, setShowSuccessToast] = useState(false); //TODO
 
     const { authTokens, setAuthTokens } = useAuth();
 
@@ -20,7 +19,9 @@ const Profile = () => {
             .then((res) => {
                 const user = res.data;
                 setAuthTokens({ ...user, password: values.newPassword });
-                setShowSuccessToast(true);
+                notification.success({
+                    message: "Password change successful!",
+                });
             })
             .catch((err) => console.log(err));
 

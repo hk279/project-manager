@@ -13,7 +13,7 @@ const Task = ({ task, employees, deleteTask, setTaskStatus }) => {
         }
     };
 
-    const statusStyle = (task) => {
+    const statusStyle = () => {
         if (task.status === "Completed") {
             return { backgroundColor: "#95de64" };
         } else if (task.status === "Doing") {
@@ -21,7 +21,7 @@ const Task = ({ task, employees, deleteTask, setTaskStatus }) => {
         }
     };
 
-    const statusIcon = (task) => {
+    const statusIcon = () => {
         if (task.status === "Completed") {
             return <CheckCircleTwoTone className="status-icon" twoToneColor="#73d13d" />;
         } else if (task.status === "Doing") {
@@ -36,12 +36,8 @@ const Task = ({ task, employees, deleteTask, setTaskStatus }) => {
     return (
         <Collapse>
             <Panel
-                header={
-                    <div>
-                        {task.title}
-                        {statusIcon(task)}
-                    </div>
-                }
+                header={<p className="task-title">{task.title}</p>}
+                extra={statusIcon(task)}
                 style={statusStyle(task)}
             >
                 <table className="task-details-table">

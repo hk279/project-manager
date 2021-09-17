@@ -178,7 +178,7 @@ const ProjectView = () => {
                         <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
                     </p>
                     <Divider orientation="left">Tags</Divider>
-                    {project.tags.length > 0 ? project.tags.map((tag) => <Tag>{tag}</Tag>) : "No tags"}
+                    {project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : "No tags"}
                     <Divider orientation="left">Team</Divider>
                     <table>
                         <tbody>

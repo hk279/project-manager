@@ -82,6 +82,7 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
                 </Item>
                 {isError ? (
                     <Alert
+                        style={{ marginTop: "24px" }}
                         message="Password change failed"
                         description={errorMessage}
                         type="error"
