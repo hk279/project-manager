@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import { Layout, Button, Input, Divider, Select } from "antd";
+import { Layout, Button, Input, Divider } from "antd";
 import ProjectCard from "../components/ProjectCard";
 import Navigation from "../components/Navigation";
 import { checkIfDeadlinePassed } from "../utils/helper";

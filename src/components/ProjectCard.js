@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, Progress } from "antd";
+import { Card, Progress, Tag } from "antd";
 import moment from "moment";
+import URLroot from "../config/config";
 
-const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
+const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }) => {
     const [employees, setEmployees] = useState([]);
 
     useEffect(() => {
@@ -18,7 +19,7 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
         });
 
         // Request data for a group of employees. Is post request suitable here?
-        axios.post("http://localhost:3001/employees/employeeGroup/", { group: employeeIds }).then((res) => {
+        axios.post(`${URLroot}/employees/employeeGroup`, { group: employeeIds }).then((res) => {
             setEmployees(res.data);
         });
     };
@@ -44,6 +45,11 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks }) => {
             <p>{description}</p>
             <Progress percent={progress} />
             <p>{deadline ? `Deadline: ${moment(deadline).format("D.M.Y")}` : "No deadline"}</p>
+            <p>
+                {tags.map((tag) => (
+                    <Tag key={tag}>{tag}</Tag>
+                ))}
+            </p>
             <p>Team members:</p>
             <ul>
                 {employees.map((employee) => (

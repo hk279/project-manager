@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Divider, Layout, Popconfirm, Switch, Space } from "antd";
+import { Button, Divider, Layout, Popconfirm, Switch, Space, Tag } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import AddTask from "../components/AddTask";
 import Task from "../components/Task";
 import EditProject from "../components/EditProject";
 import Loading from "../components/Loading";
+import URLroot from "../config/config";
 
 const { Sider, Content } = Layout;
 
@@ -35,7 +36,7 @@ const ProjectView = () => {
 
     const getProject = (id) => {
         axios
-            .get(`http://localhost:3001/projects/id/${id}`)
+            .get(`${URLroot}/projects/id/${id}`)
             .then((res) => setProject(res.data))
             .catch((err) => console.log(err));
     };
@@ -49,7 +50,7 @@ const ProjectView = () => {
 
         // Request data for a group of employees
         axios
-            .post("http://localhost:3001/employees/employeeGroup/", { group: employeeIds })
+            .post(`${URLroot}/employees/employeeGroup`, { group: employeeIds })
             .then((res) => {
                 setEmployees(res.data);
             })
@@ -72,7 +73,7 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
         axios
-            .put(`http://localhost:3001/projects/${project.id}`, updatedProject)
+            .put(`${URLroot}/projects/${project.id}`, updatedProject)
             .then(() => {
                 setModalVisible(false);
                 setTrigger(!trigger);
@@ -91,7 +92,7 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put(`http://localhost:3001/projects/${project.id}`, updatedProject)
+            .put(`${URLroot}/projects/${project.id}`, updatedProject)
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
@@ -102,14 +103,14 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put(`http://localhost:3001/projects/${project.id}`, updatedProject)
+            .put(`${URLroot}/projects/${project.id}`, updatedProject)
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
 
     const editProject = (newData) => {
         axios
-            .put(`http://localhost:3001/projects/${project.id}`, newData)
+            .put(`${URLroot}/projects/${project.id}`, newData)
             .then((res) => {
                 setEditMode(false);
                 setTrigger(!trigger);
@@ -119,7 +120,7 @@ const ProjectView = () => {
 
     const deleteProject = (id) => {
         axios
-            .delete(`http://localhost:3001/projects/${id}`)
+            .delete(`${URLroot}/projects/${id}`)
             .then(() => history.push("/"))
             .catch((err) => console.log(err));
     };
@@ -176,6 +177,8 @@ const ProjectView = () => {
                         Project deadline:{" "}
                         <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
                     </p>
+                    <Divider orientation="left">Tags</Divider>
+                    {project.tags.length > 0 ? project.tags.map((tag) => <Tag>{tag}</Tag>) : "No tags"}
                     <Divider orientation="left">Team</Divider>
                     <table>
                         <tbody>

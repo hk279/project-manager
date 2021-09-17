@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import URLroot from "../config/config";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
-import { Layout, Form, Input, DatePicker, Transfer, Button, Divider } from "antd";
+import { Layout, Form, Input, DatePicker, Transfer, Button, Divider, Select } from "antd";
 
 const { Sider, Content } = Layout;
 const { Item, useForm } = Form;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const NewProject = () => {
     const [employees, setEmployees] = useState([]);
+    const [tags, setTags] = useState([]);
 
     const [targetKeys, setTargetKeys] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState([]);
@@ -21,15 +24,20 @@ const NewProject = () => {
 
     useEffect(() => {
         getEmployees();
+        getTags();
     }, []);
 
-    const getEmployees = async () => {
-        let url = `http://localhost:3001/employees/org/${authTokens.organizationId}`;
-        // Format the URL in case the company name contains spaces.
-        let formattedUrl = url.replace(/ /g, "%20");
-
-        axios.get(formattedUrl).then((res) => {
+    const getEmployees = () => {
+        const url = `${URLroot}/employees/org/${authTokens.organizationId}`;
+        axios.get(url).then((res) => {
             setEmployees(res.data);
+        });
+    };
+
+    const getTags = () => {
+        const url = `${URLroot}/projects/tags/${authTokens.organizationId}`;
+        axios.get(url).then((res) => {
+            setTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
     };
 
@@ -47,10 +55,16 @@ const NewProject = () => {
         const deadline = typeof values.deadline === "undefined" || values.deadline === null ? null : values.deadline;
 
         // Forms the complete data with form values, formatted deadline, organization and and empty tasks array.
-        const body = { ...values, deadline, organizationId: authTokens.organizationId, tasks: [] };
+        const body = {
+            ...values,
+            deadline,
+            organizationId: authTokens.organizationId,
+            tasks: [],
+            tags: values.tags.sort(),
+        };
 
         axios
-            .post("http://localhost:3001/projects", body)
+            .post(`${URLroot}/projects`, body)
             .then(() => history.push("/"))
             .catch((err) => console.log(err));
     };
@@ -84,15 +98,15 @@ const NewProject = () => {
                     <Item label="Deadline" name="deadline">
                         <DatePicker format="DD/MM/YYYY" />
                     </Item>
+                    <Item label="Tags" name="tags">
+                        <Select mode="tags">{tags}</Select>
+                    </Item>
                     <Item label="Team" name="team">
                         <Transfer
                             listStyle={{ width: "100%", minWidth: "15em" }}
-                            dataSource={
-                                // Returns an empty array when employees is not yet defined
-                                employees.map((employee) => {
-                                    return { ...employee, key: employee.id };
-                                }) ?? []
-                            }
+                            dataSource={employees.map((employee) => {
+                                return { ...employee, key: employee.id };
+                            })}
                             titles={["Employees", "Team"]}
                             targetKeys={targetKeys}
                             selectedKeys={selectedKeys}

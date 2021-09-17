@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Form, Input, Transfer, DatePicker, Button } from "antd";
+import { Form, Input, Transfer, DatePicker, Button, Select } from "antd";
 import { useAuth } from "../context/auth";
+import URLroot from "../config/config";
 
 const { Item, useForm } = Form;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const EditProject = ({ project, editProject, cancelEdit }) => {
     const [employees, setEmployees] = useState([]);
+    const [tags, setTags] = useState([]);
 
     const [targetKeys, setTargetKeys] = useState(project.team);
     const [selectedKeys, setSelectedKeys] = useState([]);
@@ -20,13 +23,17 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
         getEmployees();
     }, []);
 
-    const getEmployees = async () => {
-        let url = `http://localhost:3001/employees/org/${authTokens.organizationId}`;
-        // Format the URL in case the company name contains spaces.
-        let formattedUrl = url.replace(/ /g, "%20");
-
-        axios.get(formattedUrl).then((res) => {
+    const getEmployees = () => {
+        let url = `${URLroot}/employees/org/${authTokens.organizationId}`;
+        axios.get(url).then((res) => {
             setEmployees(res.data);
+        });
+    };
+
+    const getTags = () => {
+        const url = `${URLroot}/projects/tags/${authTokens.organizationId}`;
+        axios.get(url).then((res) => {
+            setTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
     };
 
@@ -37,6 +44,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
             deadline,
             tasks: project.tasks,
             organizationId: authTokens.organizationId,
+            tags: values.tags.sort(),
         };
 
         editProject(newData);
@@ -61,6 +69,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
                 description: project.description,
                 deadline: project.deadline ? moment(project.deadline) : null,
                 team: project.team,
+                tags: project.tags,
             }}
             validateMessages={{
                 required: "${label} is required!",
@@ -77,6 +86,9 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
             </Item>
             <Item label="Deadline" name="deadline">
                 <DatePicker format="DD/MM/YYYY" />
+            </Item>
+            <Item label="Tags" name="tags">
+                <Select mode="tags">{tags}</Select>
             </Item>
             <Item label="Team" name="team">
                 <Transfer
