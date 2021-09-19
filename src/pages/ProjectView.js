@@ -10,6 +10,7 @@ import Task from "../components/Task";
 import EditProject from "../components/EditProject";
 import Loading from "../components/Loading";
 import URLroot from "../config/config";
+import FileUpload from "../components/FileUpload";
 
 const { Sider, Content } = Layout;
 
@@ -173,11 +174,10 @@ const ProjectView = () => {
                     <h3>{project.client}</h3>
                     <Divider />
                     <p>{project.description}</p>
+                    <p>{project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : "No tags"}</p>
                     <Space size="middle">
                         Deadline: <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
                     </Space>
-                    <Divider orientation="left">Tags</Divider>
-                    {project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : "No tags"}
                     <Divider orientation="left">Team</Divider>
                     <table>
                         <tbody>
@@ -189,6 +189,8 @@ const ProjectView = () => {
                             )) ?? []}
                         </tbody>
                     </table>
+                    <Divider orientation="left">Files</Divider>
+                    <FileUpload projectId={id} files={project.files ?? []} />
                     <Divider orientation="left">Tasks</Divider>
                     <div className="tasks-list-actions">
                         <Button
