@@ -5,7 +5,9 @@
     justify-content: center;
     text-align: center;
 }
-.login-column {
+
+/* Login & Sign up*/
+.half-page-column {
     display: flex;
     vertical-align: middle;
     background: rgb(2, 0, 36);
@@ -15,24 +17,33 @@
     background-image: url(./assets/images/login_background_02.jpg);
     background-size: cover;
 }
-.login-column:nth-child(2) {
+.half-page-column:nth-child(2) {
     background-image: url(./assets/images/login_image_01.jpg);
     background-size: cover;
 }
-.login-container {
+.login-card {
+    padding: 1em;
     margin: auto;
     width: 50%;
     border-radius: 1em;
 }
-.login-form {
+.sign-up-card {
     padding: 1em;
+    margin: auto;
+    border-radius: 1em;
+    min-width: 60%;
+    max-width: 80%;
 }
+
+/* New project */
 .new-project {
     padding: 2em;
 }
 .new-project-form {
     width: 40%;
 }
+
+/* New employee */
 .new-employee {
     padding: 2em;
 }

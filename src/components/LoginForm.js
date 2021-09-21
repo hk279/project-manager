@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { Redirect } from "react-router-dom";
-import { Form, Input, Button, Alert } from "antd";
+import { Link, Redirect } from "react-router-dom";
+import { Form, Input, Button, Alert, Space } from "antd";
 import { useAuth } from "../context/auth";
 
 const LoginForm = () => {
@@ -41,7 +41,7 @@ const LoginForm = () => {
     }
 
     return (
-        <Form className="login-form" layout="vertical" onFinish={handleSubmit}>
+        <Form layout="vertical" onFinish={handleSubmit}>
             <Item label="Email" name="email">
                 <Input />
             </Item>
@@ -49,10 +49,14 @@ const LoginForm = () => {
                 <Password />
             </Item>
             <Item>
-                <Button type="primary" htmlType="submit">
-                    Login
-                </Button>
+                <Space size="middle">
+                    <Button type="primary" htmlType="submit">
+                        Login
+                    </Button>
+                    <Link to="/sign-up">Sign up</Link>
+                </Space>
             </Item>
+
             {isError ? (
                 <Alert
                     message="Login failed"

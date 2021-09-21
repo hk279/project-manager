@@ -1,12 +1,12 @@
 import { Card } from "antd";
-import LoginForm from "../components/LoginForm";
+import SignUpForm from "../components/SignUpForm";
 
-const Login = () => {
+const SignUp = () => {
     return (
         <div>
             <div className="half-page-column">
-                <Card className="login-card">
-                    <LoginForm />
+                <Card className="sign-up-card">
+                    <SignUpForm></SignUpForm>
                 </Card>
             </div>
             <div className="half-page-column"></div>
@@ -14,4 +14,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default SignUp;
