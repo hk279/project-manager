@@ -1,4 +1,4 @@
-import { Form, Input, Select, Button, Divider } from "antd";
+import { Form, Input, Select, Button, Divider, Space } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAuth } from "../context/auth";
 
@@ -92,12 +92,14 @@ const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
                 )}
             </List>
             <Item>
-                <Button type="primary" htmlType="submit">
-                    Save
-                </Button>
-            </Item>
-            <Item>
-                <Button onClick={() => cancelEdit()}>Back</Button>
+                <Space size="middle">
+                    <Button type="primary" htmlType="submit">
+                        Save
+                    </Button>
+                    <Button onClick={() => cancelEdit()} htmlType="button">
+                        Back
+                    </Button>
+                </Space>
             </Item>
         </Form>
     );

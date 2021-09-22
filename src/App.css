@@ -106,6 +106,8 @@
 /* Project view */
 .project-view {
     padding: 2em;
+}
+.project-view-content {
     max-width: 50%;
 }
 .project-view-title {

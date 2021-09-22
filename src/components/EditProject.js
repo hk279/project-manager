@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Form, Input, Transfer, DatePicker, Button, Select } from "antd";
+import { Form, Input, Transfer, DatePicker, Button, Select, Space } from "antd";
 import { useAuth } from "../context/auth";
 import URLroot from "../config/config";
 
@@ -21,6 +21,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
 
     useEffect(() => {
         getEmployees();
+        getTags();
     }, []);
 
     const getEmployees = () => {
@@ -108,12 +109,14 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
                 />
             </Item>
             <Item>
-                <Button type="primary" htmlType="submit">
-                    Save
-                </Button>
-            </Item>
-            <Item>
-                <Button onClick={() => cancelEdit()}>Back</Button>
+                <Space size="middle">
+                    <Button type="primary" htmlType="submit">
+                        Save
+                    </Button>
+                    <Button onClick={() => cancelEdit()} htmlType="button">
+                        Back
+                    </Button>
+                </Space>
             </Item>
         </Form>
     );

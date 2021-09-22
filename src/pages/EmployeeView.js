@@ -67,24 +67,16 @@ const EmployeeView = () => {
     const cancelEdit = () => {
         setEditMode(false);
     };
-
-    if (editMode) {
-        return (
-            <Layout style={{ minHeight: "100vh" }}>
-                <Sider collapsible>
-                    <Navigation />
-                </Sider>
-                <Content className="project-view">
+    return (
+        <Layout style={{ minHeight: "100vh" }}>
+            <Sider collapsible>
+                <Navigation />
+            </Sider>
+            {editMode ? (
+                <Content className="employee-view">
                     <EditEmployee employee={employee} editEmployee={editEmployee} cancelEdit={cancelEdit} />
                 </Content>
-            </Layout>
-        );
-    } else {
-        return (
-            <Layout style={{ minHeight: "100vh" }}>
-                <Sider collapsible>
-                    <Navigation />
-                </Sider>
+            ) : (
                 <Content className="employee-view">
                     <h2 className="employee-view-title">
                         {employee.firstName} {employee.lastName}
@@ -133,9 +125,9 @@ const EmployeeView = () => {
                         </div>
                     </div>
                 </Content>
-            </Layout>
-        );
-    }
+            )}
+        </Layout>
+    );
 };
 
 export default EmployeeView;

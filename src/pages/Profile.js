@@ -30,11 +30,15 @@ const Profile = () => {
 
     // Get organization data
     useEffect(() => {
+        getOrganization();
+    }, []);
+
+    const getOrganization = () => {
         axios
             .get(`http://localhost:3001/organizations/${authTokens.organizationId}`)
             .then((res) => setOrganization(res.data))
             .catch((err) => console.log(err));
-    }, []);
+    };
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
@@ -46,12 +50,28 @@ const Profile = () => {
                 <Divider />
                 <div className="grid-container">
                     <div className="grid-row">
+                        <b className="grid-item">First name:</b>
+                        <p className="grid-item">{authTokens.firstName}</p>
+                    </div>
+                    <div className="grid-row">
+                        <b className="grid-item">Last name:</b>
+                        <p className="grid-item">{authTokens.lastName}</p>
+                    </div>
+                    <div className="grid-row">
                         <b className="grid-item">Email:</b>
                         <p className="grid-item">{authTokens.email}</p>
                     </div>
+                    {organization ? (
+                        organization.type === "organization" ? (
+                            <div className="grid-row">
+                                <b className="grid-item">Organization:</b>
+                                <p className="grid-item">{organization.name}</p>
+                            </div>
+                        ) : null
+                    ) : null}
                     <div className="grid-row">
-                        <b className="grid-item">Organization:</b>
-                        <p className="grid-item">{organization ? organization.name : null}</p>
+                        <b className="grid-item">User type:</b>
+                        <p className="grid-item">{authTokens.userType}</p>
                     </div>
                 </div>
                 <Divider />
