@@ -57,10 +57,6 @@ const Employees = () => {
         setFilteredEmployees(employees);
     }, [employees]);
 
-    const handleChange = (e) => {
-        filterEmployees(e.target.value);
-    };
-
     const getEmployees = () => {
         axios
             .get(`http://localhost:3001/employees/org/${authTokens.organizationId}`)
@@ -71,7 +67,8 @@ const Employees = () => {
     };
 
     /* Filter the data array by matching names with the search field value */
-    const filterEmployees = (searchWord) => {
+    const filterEmployees = (e) => {
+        const searchWord = e.target.value;
         const filteredEmployees = employees.filter((employee) => {
             const firstName = employee.firstName.toLowerCase();
             const lastName = employee.lastName.toLowerCase();
@@ -88,12 +85,12 @@ const Employees = () => {
     }
 
     return (
-        <Layout style={{ minHeight: "100vh" }}>
+        <Layout className="layout">
             <Sider collapsible>
                 <Navigation />
             </Sider>
             <Content className="employees">
-                <Input className="employees-search" placeholder="Search" onChange={(e) => handleChange(e)} />
+                <Input className="employees-search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
                 <Table className="employees-table" rowKey="id" columns={columns} dataSource={filteredEmployees} />
             </Content>
         </Layout>

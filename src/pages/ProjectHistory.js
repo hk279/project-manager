@@ -90,7 +90,7 @@ const ProjectHistory = () => {
     };
 
     return (
-        <Layout style={{ minHeight: "100vh" }}>
+        <Layout className="layout">
             <Sider collapsible>
                 <Navigation />
             </Sider>

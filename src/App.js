@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./customRoutes/PrivateRoute";
+import AdminRoute from "./customRoutes/AdminRoute";
 import { AuthContext } from "./context/auth";
 import "antd/dist/antd.css";
 import "./App.css";
@@ -14,6 +15,7 @@ import EmployeeView from "./pages/EmployeeView";
 import Profile from "./pages/Profile";
 import ProjectHistory from "./pages/ProjectHistory";
 import SignUp from "./pages/SignUp";
+import Admin from "./pages/Admin";
 
 function App() {
     // Tries to get auth tokens stored in local storage
@@ -47,6 +49,7 @@ function App() {
                     <PrivateRoute path="/project/:id" children={<ProjectView />} />
                     <PrivateRoute path="/employee/:id" children={<EmployeeView />} />
                     <PrivateRoute path="/profile" component={Profile} />
+                    <AdminRoute path="/admin" component={Admin} />
                 </Switch>
             </Router>
         </AuthContext.Provider>

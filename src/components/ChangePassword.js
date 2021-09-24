@@ -12,12 +12,11 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    const newPasswordRepeated = (values) => {
+    const passwordRepeated = (values) => {
         return values.newPassword === values.repeatNewPassword;
     };
 
     const correctCurrentPassword = (values) => {
-        console.log(authTokens.password);
         return values.currentPassword === authTokens.password;
     };
 
@@ -31,7 +30,7 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
                     setIsError(true);
                     setErrorMessage("Incorrect current password.");
                     return;
-                } else if (!newPasswordRepeated(values)) {
+                } else if (!passwordRepeated(values)) {
                     setIsError(true);
                     setErrorMessage("New password not repeated correctly.");
                     return;
@@ -68,7 +67,7 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
                     name="newPassword"
                     label="New password"
                     rules={[{ required: true, min: 5, max: 30 }]}
-                    help="New password must be between 5-30 characters."
+                    help="Password must be between 5-30 characters."
                 >
                     <Password />
                 </Item>
@@ -76,7 +75,7 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
                     name="repeatNewPassword"
                     label="Repeat new password"
                     rules={[{ required: true, min: 5, max: 30 }]}
-                    help="New password must be between 5-30 characters."
+                    help="Password must be between 5-30 characters."
                 >
                     <Password />
                 </Item>

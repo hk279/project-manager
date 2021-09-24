@@ -8,11 +8,12 @@ import {
     TeamOutlined,
     HistoryOutlined,
     LogoutOutlined,
+    SettingOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../context/auth";
 
 const Navigation = () => {
-    const { setAuthTokens } = useAuth();
+    const { authTokens, setAuthTokens } = useAuth();
 
     return (
         <Menu mode="inline" theme="dark">
@@ -41,11 +42,16 @@ const Navigation = () => {
                 <Menu.Item key="6" icon={<ProfileOutlined />}>
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
+                {authTokens.userType === "admin" ? (
+                    <Menu.Item key="7" icon={<SettingOutlined />}>
+                        <Link to="/admin">Admin</Link>
+                    </Menu.Item>
+                ) : null}
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g4">
                 <Menu.Item
-                    key="7"
+                    key="8"
                     icon={<LogoutOutlined />}
                     onClick={() => {
                         setAuthTokens();

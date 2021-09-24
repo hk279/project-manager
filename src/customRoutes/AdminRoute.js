@@ -1,5 +1,5 @@
 import { Route, Redirect } from "react-router-dom";
-import { useAuth } from "./context/auth";
+import { useAuth } from "../context/auth";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
     const { authTokens } = useAuth();
@@ -9,7 +9,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
             {...rest}
             render={(props) => {
                 if (authTokens) {
-                    return <Component {...props} />;
+                    if (authTokens.userType === "admin") {
+                        return <Component {...props} />;
+                    } else {
+                        return <Redirect to={"/dashboard"} />;
+                    }
                 } else {
                     return <Redirect to={"/login"} />;
                 }

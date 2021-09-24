@@ -134,7 +134,7 @@ const ProjectView = () => {
         return <Loading />;
     } else {
         return (
-            <Layout style={{ minHeight: "100vh" }}>
+            <Layout className="layout">
                 <Sider collapsible>
                     <Navigation />
                 </Sider>

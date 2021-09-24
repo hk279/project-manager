@@ -77,7 +77,7 @@ const Dashboard = () => {
 
     if (projects.length === 0) {
         return (
-            <Layout style={{ minHeight: "100vh" }}>
+            <Layout className="layout">
                 <Layout.Sider collapsible>
                     <Navigation />
                 </Layout.Sider>
@@ -86,7 +86,7 @@ const Dashboard = () => {
         );
     } else {
         return (
-            <Layout style={{ minHeight: "100vh" }}>
+            <Layout className="layout">
                 <Layout.Sider collapsible>
                     <Navigation />
                 </Layout.Sider>

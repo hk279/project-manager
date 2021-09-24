@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, Redirect } from "react-router-dom";
 import { Form, Input, Button, Alert, Space } from "antd";
 import { useAuth } from "../context/auth";
+import URLroot from "../config/config";
 
 const LoginForm = () => {
     const { Item } = Form;
@@ -18,10 +19,9 @@ const LoginForm = () => {
         let user;
 
         axios
-            .post("http://localhost:3001/users/login", { ...values })
+            .post(`${URLroot}/users/login`, { ...values })
             .then((res) => {
                 user = res.data;
-                console.log(user);
 
                 if (user !== "") {
                     setIsError(false);

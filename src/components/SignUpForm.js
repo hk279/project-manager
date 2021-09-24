@@ -1,28 +1,58 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Form, Input, Button, Alert, Radio, Space } from "antd";
+import { Form, Input, Button, Radio, Space, Divider, notification } from "antd";
+import URLroot from "../config/config";
 
 const SignUpForm = () => {
     const { Item } = Form;
     const { Password } = Input;
+    const [form] = Form.useForm();
 
-    const [isError, setIsError] = useState(false);
     const [isOrganizationAccount, setIsOrganizationAccount] = useState(false);
 
-    // TODO
-    const handleSubmit = (values) => {};
+    const handleSubmit = (values) => {
+        let userDetails = values;
+        const accountType = values.accountType;
+
+        delete userDetails["repeatPassword"];
+        delete userDetails["accountType"];
+
+        axios
+            .post(`${URLroot}/users/signup/${accountType}`, userDetails)
+            .then(() => {
+                notification.success({
+                    message: "Sign up successful",
+                });
+                form.resetFields();
+                setIsOrganizationAccount(false);
+            })
+            .catch((err) => {
+                notification.error({
+                    message: "Sign up failed",
+                });
+                console.log(err);
+            });
+    };
 
     const handleAccoutTypeChange = (e) => {
         setIsOrganizationAccount(e.target.value === "organization" ? true : false);
     };
 
     return (
-        <Form onFinish={handleSubmit} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-            <Item label="Account type" name="accoutType" initialValue="private">
+        <Form
+            form={form}
+            onFinish={handleSubmit}
+            validateMessages={{
+                required: "${label} is required",
+            }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+        >
+            <Item label="Account type" name="accountType" initialValue="private">
                 <Radio.Group>
                     <Radio.Button value="private" onChange={(e) => handleAccoutTypeChange(e)}>
-                        Personal
+                        Private
                     </Radio.Button>
                     <Radio.Button value="organization" onChange={(e) => handleAccoutTypeChange(e)}>
                         Organization
@@ -34,21 +64,45 @@ const SignUpForm = () => {
                     <Input />
                 </Item>
             ) : null}
-            <Item label="First name" name="firstName">
+            <Item label="First name" name="firstName" rules={[{ required: true }]}>
                 <Input />
             </Item>
-            <Item label="Last name" name="lastName">
+            <Item label="Last name" name="lastName" rules={[{ required: true }]}>
                 <Input />
             </Item>
-            <Item label="Email" name="email">
+            <Item
+                label="Email"
+                name="email"
+                rules={[{ type: "email", message: "Email not valid" }, { required: true }]}
+            >
                 <Input />
             </Item>
-            <Item label="Password" name="password">
+            <Item
+                label="Password"
+                name="password"
+                rules={[{ required: true, min: 5, max: 30 }]}
+                help="Password must be between 5-30 characters."
+            >
                 <Password />
             </Item>
-            <Item label="Repeat password" name="repeatPassword">
+            <Item
+                label="Repeat password"
+                name="repeatPassword"
+                rules={[
+                    { required: true },
+                    ({ getFieldValue }) => ({
+                        validator(_, value) {
+                            if (!value || getFieldValue("password") === value) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error("Passwords are not matching"));
+                        },
+                    }),
+                ]}
+            >
                 <Password />
             </Item>
+            <Divider />
             <Item>
                 <Space size="middle">
                     <Button type="primary" htmlType="submit">
@@ -57,10 +111,6 @@ const SignUpForm = () => {
                     <Link to="/login">To login page</Link>
                 </Space>
             </Item>
-
-            {isError ? (
-                <Alert message="Sign up failed" type="error" closable onClose={() => setIsError(false)} />
-            ) : null}
         </Form>
     );
 };
