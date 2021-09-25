@@ -3,13 +3,14 @@ import { Modal, Form, Select } from "antd";
 const { Item } = Form;
 const { Option } = Select;
 
+// TODO
 const AddUser = ({ visible, onFinishAddUser, onCancelAddUser }) => {
     const [form] = Form.useForm();
 
     return (
         <Modal
             visible={visible}
-            title="Create a new task"
+            title="Create a new user"
             okText="Create"
             cancelText="Cancel"
             onCancel={onCancelAddUser}

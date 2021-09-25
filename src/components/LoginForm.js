@@ -12,27 +12,19 @@ const LoginForm = () => {
     const { setAuthTokens } = useAuth();
 
     const [isLoggedIn, setLoggedIn] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [error, setError] = useState(null);
 
     // Login handler
     const handleSubmit = (values) => {
-        let user;
-
         axios
             .post(`${URLroot}/users/login`, { ...values })
             .then((res) => {
-                user = res.data;
-
-                if (user !== "") {
-                    setIsError(false);
-                    setAuthTokens(user);
-                    setLoggedIn(true);
-                } else {
-                    console.log("error");
-                    setIsError(true);
-                }
+                setAuthTokens(res.data);
+                setLoggedIn(true);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                setError(err.response.data);
+            });
     };
 
     // Redirect after being logged in
@@ -57,15 +49,15 @@ const LoginForm = () => {
                 </Space>
             </Item>
 
-            {isError ? (
+            {error && (
                 <Alert
                     message="Login failed"
-                    description="Wrong username or password."
+                    description={error.messages}
                     type="error"
                     closable
-                    onClose={() => setIsError(false)}
+                    onClose={() => setError(null)}
                 />
-            ) : null}
+            )}
         </Form>
     );
 };

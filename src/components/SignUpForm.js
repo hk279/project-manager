@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Form, Input, Button, Radio, Space, Divider, notification } from "antd";
+import { Form, Input, Button, Radio, Space, Divider, notification, Alert } from "antd";
 import URLroot from "../config/config";
 
 const SignUpForm = () => {
@@ -9,6 +9,7 @@ const SignUpForm = () => {
     const { Password } = Input;
     const [form] = Form.useForm();
 
+    const [error, setError] = useState(null);
     const [isOrganizationAccount, setIsOrganizationAccount] = useState(false);
 
     const handleSubmit = (values) => {
@@ -26,12 +27,13 @@ const SignUpForm = () => {
                 });
                 form.resetFields();
                 setIsOrganizationAccount(false);
+                setError(null);
             })
             .catch((err) => {
+                setError(err.response.data);
                 notification.error({
                     message: "Sign up failed",
                 });
-                console.log(err);
             });
     };
 
@@ -59,11 +61,11 @@ const SignUpForm = () => {
                     </Radio.Button>
                 </Radio.Group>
             </Item>
-            {isOrganizationAccount ? (
+            {isOrganizationAccount && (
                 <Item label="Organization" name="organization">
                     <Input />
                 </Item>
-            ) : null}
+            )}
             <Item label="First name" name="firstName" rules={[{ required: true }]}>
                 <Input />
             </Item>
@@ -111,6 +113,15 @@ const SignUpForm = () => {
                     <Link to="/login">To login page</Link>
                 </Space>
             </Item>
+            {error && (
+                <Alert
+                    message="Sign up failed"
+                    description={error.messages}
+                    type="error"
+                    closable
+                    onClose={() => setError(null)}
+                />
+            )}
         </Form>
     );
 };

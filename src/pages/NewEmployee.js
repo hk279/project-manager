@@ -1,7 +1,8 @@
+import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
-import { Layout, Form, Input, Button, Divider, Select } from "antd";
+import { Layout, Form, Input, Button, Divider, Select, notification, Alert } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
@@ -12,13 +13,25 @@ const NewEmployee = () => {
     const { authTokens } = useAuth();
     const [form] = useForm();
 
+    const [error, setError] = useState(null);
+
     const departments = ["Web Development", "UX Design", "Network Maintenance", "Finance", "HR", "Sales"];
 
     const handleSubmit = (values) => {
         axios
             .post("http://localhost:3001/employees", { ...values, organizationId: authTokens.organizationId })
-            .then((res) => console.log(res.data))
-            .catch((err) => console.log(err));
+            .then(() => {
+                setError(null);
+                notification.success({
+                    message: "Employee added",
+                });
+            })
+            .catch((err) => {
+                setError(err.response.data);
+                notification.error({
+                    message: "Add employee failed",
+                });
+            });
 
         form.resetFields();
     };
@@ -73,12 +86,12 @@ const NewEmployee = () => {
                                         >
                                             <Input style={{ width: "60%" }} />
                                         </Item>
-                                        {fields.length > 0 ? (
+                                        {fields.length > 0 && (
                                             <MinusCircleOutlined
                                                 className="dynamic-delete-button"
                                                 onClick={() => remove(field.name)}
                                             />
-                                        ) : null}
+                                        )}
                                     </Item>
                                 ))}
                                 <Item>
@@ -100,6 +113,15 @@ const NewEmployee = () => {
                             Add Employee
                         </Button>
                     </Item>
+                    {error && (
+                        <Alert
+                            message="Sign up failed"
+                            description={error.messages}
+                            type="error"
+                            closable
+                            onClose={() => setError(null)}
+                        />
+                    )}
                 </Form>
             </Content>
         </Layout>
