@@ -75,26 +75,17 @@ const Dashboard = () => {
         setFilteredProjects(filteredProjects);
     };
 
-    if (projects.length === 0) {
-        return (
-            <Layout className="layout">
-                <Layout.Sider collapsible>
-                    <Navigation />
-                </Layout.Sider>
-                <Layout.Content></Layout.Content>
-            </Layout>
-        );
-    } else {
-        return (
-            <Layout className="layout">
-                <Layout.Sider collapsible>
-                    <Navigation />
-                </Layout.Sider>
-                <Layout.Content>
-                    <div className="dashboard-filters">
-                        <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
-                    </div>
-                    <Divider />
+    return (
+        <Layout className="layout">
+            <Layout.Sider collapsible>
+                <Navigation />
+            </Layout.Sider>
+            <Layout.Content>
+                <div className="dashboard-filters">
+                    <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
+                </div>
+                <Divider />
+                {projects.length > 0 && (
                     <div className="dashboard-content">
                         {filteredProjects.length === 0 ? (
                             <div className="empty-dashboard">
@@ -120,10 +111,10 @@ const Dashboard = () => {
                             ))
                         )}
                     </div>
-                </Layout.Content>
-            </Layout>
-        );
-    }
+                )}
+            </Layout.Content>
+        </Layout>
+    );
 };
 
 export default Dashboard;

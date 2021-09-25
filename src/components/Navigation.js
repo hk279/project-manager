@@ -42,11 +42,11 @@ const Navigation = () => {
                 <Menu.Item key="6" icon={<ProfileOutlined />}>
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
-                {authTokens.userType === "admin" ? (
+                {authTokens.userType === "admin" && (
                     <Menu.Item key="7" icon={<SettingOutlined />}>
                         <Link to="/admin">Admin</Link>
                     </Menu.Item>
-                ) : null}
+                )}
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g4">
