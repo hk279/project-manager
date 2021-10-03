@@ -7,6 +7,7 @@ import ProjectCard from "../components/ProjectCard";
 import Navigation from "../components/Navigation";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
+import URLroot from "../config/config";
 
 const Dashboard = () => {
     const [projects, setProjects] = useState([]);
@@ -23,7 +24,7 @@ const Dashboard = () => {
     }, [projects]);
 
     const getProjects = () => {
-        axios.get(`http://localhost:3001/projects/org/${authTokens.organizationId}`).then((res) => {
+        axios.get(`${URLroot}/projects/org/${authTokens.organizationId}`).then((res) => {
             // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
             const activeProjects = res.data.filter((project) => {
                 if (project.deadline === null) {
