@@ -54,7 +54,7 @@ const Navigation = () => {
                     key="8"
                     icon={<LogoutOutlined />}
                     onClick={() => {
-                        setAuthTokens();
+                        setAuthTokens(null);
                         window.location.href = "/";
                     }}
                 >

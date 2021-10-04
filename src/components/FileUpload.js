@@ -69,7 +69,7 @@ const FileUpload = ({ projectId, files }) => {
     };
 
     return (
-        <div style={{ maxWidth: "50%" }}>
+        <div style={{ maxWidth: "75%" }}>
             <Upload {...uploadProps} fileList={fileList}>
                 <Button icon={<UploadOutlined />}>Upload file</Button>
             </Upload>

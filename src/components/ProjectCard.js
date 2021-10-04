@@ -3,8 +3,11 @@ import axios from "axios";
 import { Card, Progress, Tag } from "antd";
 import moment from "moment";
 import URLroot from "../config/config";
+import { useAuth } from "../context/auth";
 
 const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }) => {
+    const { authTokens } = useAuth();
+
     const [employees, setEmployees] = useState([]);
 
     useEffect(() => {
@@ -19,9 +22,19 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }
         });
 
         // Request data for a group of employees. Is post request suitable here?
-        axios.post(`${URLroot}/employees/employeeGroup`, { group: employeeIds }).then((res) => {
-            setEmployees(res.data);
-        });
+        axios
+            .post(
+                `${URLroot}/employees/employeeGroup`,
+                { group: employeeIds },
+                {
+                    headers: {
+                        Authorization: "Bearer " + authTokens.accessToken,
+                    },
+                }
+            )
+            .then((res) => {
+                setEmployees(res.data);
+            });
     };
 
     // Calculates the progress of the project

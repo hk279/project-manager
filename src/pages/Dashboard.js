@@ -24,18 +24,24 @@ const Dashboard = () => {
     }, [projects]);
 
     const getProjects = () => {
-        axios.get(`${URLroot}/projects/org/${authTokens.organizationId}`).then((res) => {
-            // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
-            const activeProjects = res.data.filter((project) => {
-                if (project.deadline === null) {
-                    return true;
-                }
-                return !checkIfDeadlinePassed(project.deadline);
-            });
+        axios
+            .get(`${URLroot}/projects/org/${authTokens.organizationId}`, {
+                headers: {
+                    Authorization: "Bearer " + authTokens.accessToken,
+                },
+            })
+            .then((res) => {
+                // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
+                const activeProjects = res.data.filter((project) => {
+                    if (project.deadline === null) {
+                        return true;
+                    }
+                    return !checkIfDeadlinePassed(project.deadline);
+                });
 
-            let sortedProjects = sortProjects(activeProjects);
-            setProjects(sortedProjects);
-        });
+                let sortedProjects = sortProjects(activeProjects);
+                setProjects(sortedProjects);
+            });
     };
 
     const sortProjects = (projects) => {
