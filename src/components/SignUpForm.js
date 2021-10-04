@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Input, Button, Radio, Space, Divider, notification, Alert } from "antd";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 
 const SignUpForm = () => {
     const { Item } = Form;

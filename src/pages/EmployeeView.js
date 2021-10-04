@@ -6,6 +6,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 import EditEmployee from "../components/EditEmployee";
+import { URLroot, getAuthHeader } from "../config/config";
 
 const { Sider, Content } = Layout;
 const { Item } = List;
@@ -27,14 +28,14 @@ const EmployeeView = () => {
 
     const getEmployee = (id) => {
         axios
-            .get(`http://localhost:3001/employees/id/${id}`)
+            .get(`${URLroot}/employees/id/${id}`, getAuthHeader(authTokens.accessToken))
             .then((res) => setEmployee(res.data))
             .catch((err) => console.log(err));
     };
 
     const getEmployeeProjects = (id) => {
         axios
-            .get(`http://localhost:3001/projects/org/${authTokens.organizationId}`)
+            .get(`${URLroot}/projects/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 let projectMatches = [];
                 res.data.forEach((project) => {
@@ -49,7 +50,7 @@ const EmployeeView = () => {
 
     const editEmployee = (newData) => {
         axios
-            .put(`http://localhost:3001/employees/${employee.id}`, newData)
+            .put(`${URLroot}/employees/${employee.id}`, newData, getAuthHeader(authTokens.accessToken))
             .then(() => {
                 setEditMode(false);
                 setTrigger(!trigger);
@@ -59,7 +60,7 @@ const EmployeeView = () => {
 
     const deleteEmployee = (id) => {
         axios
-            .delete(`http://localhost:3001/employees/${id}`)
+            .delete(`${URLroot}/employees/${id}`, getAuthHeader(authTokens.accessToken))
             .then(() => history.push("/employees"))
             .catch((err) => console.log(err));
     };
@@ -73,55 +74,60 @@ const EmployeeView = () => {
                 <Navigation />
             </Sider>
             {editMode ? (
-                <Content className="employee-view">
+                <Content>
                     <EditEmployee employee={employee} editEmployee={editEmployee} cancelEdit={cancelEdit} />
                 </Content>
             ) : (
-                <Content className="employee-view">
-                    <h2 className="employee-view-title">
-                        {employee.firstName} {employee.lastName}
-                    </h2>
-                    <div className="action-buttons-container">
-                        <Button
-                            className="action-button"
-                            type="primary"
-                            icon={<EditOutlined />}
-                            onClick={() => setEditMode(true)}
-                        >
-                            Edit
-                        </Button>
-                        <Popconfirm
-                            title="Confirm delete employee"
-                            onConfirm={() => deleteEmployee(id)}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <Button className="action-button" type="primary" danger icon={<DeleteOutlined />}>
-                                Delete
+                <Content>
+                    <div className="view-header">
+                        <h2 className="view-title">
+                            {employee.firstName} {employee.lastName}
+                        </h2>
+                        <div className="view-action-buttons-container">
+                            <Button
+                                className="view-action-button"
+                                type="primary"
+                                icon={<EditOutlined />}
+                                onClick={() => setEditMode(true)}
+                            >
+                                Edit
                             </Button>
-                        </Popconfirm>
-                    </div>
-                    <h3>{employee.department}</h3>
-                    <Divider />
-                    <div className="employee-view-columns-container">
-                        <div className="employee-view-column">
-                            <List
-                                header={<h3>Skills</h3>}
-                                size="small"
-                                dataSource={employee.skills}
-                                renderItem={(item) => <Item>{item}</Item>}
-                            />
+                            <Popconfirm
+                                title="Confirm delete employee"
+                                onConfirm={() => deleteEmployee(id)}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <Button className="view-action-button" type="primary" danger icon={<DeleteOutlined />}>
+                                    Delete
+                                </Button>
+                            </Popconfirm>
                         </div>
-                        <div className="employee-view-column">
-                            <List
-                                header={<h3>Active Projects</h3>}
-                                dataSource={employeeProjects}
-                                renderItem={(item) => (
-                                    <Item>
-                                        <a href={`/project/${item.id}`}>{item.title}</a>
-                                    </Item>
-                                )}
-                            />
+                        <h3>{employee.department}</h3>
+                    </div>
+
+                    <div className="view-content">
+                        <Divider />
+                        <div className="employee-view-columns-container">
+                            <div className="employee-view-column">
+                                <List
+                                    header={<h3>Skills</h3>}
+                                    size="small"
+                                    dataSource={employee.skills}
+                                    renderItem={(item) => <Item>{item}</Item>}
+                                />
+                            </div>
+                            <div className="employee-view-column">
+                                <List
+                                    header={<h3>Active Projects</h3>}
+                                    dataSource={employeeProjects}
+                                    renderItem={(item) => (
+                                        <Item>
+                                            <a href={`/project/${item.id}`}>{item.title}</a>
+                                        </Item>
+                                    )}
+                                />
+                            </div>
                         </div>
                     </div>
                 </Content>

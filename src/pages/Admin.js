@@ -1,9 +1,10 @@
 import { Button, Layout, Table, Input, Divider } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import AddUser from "../components/AddUser";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 
 const Admin = () => {
@@ -60,7 +61,7 @@ const Admin = () => {
 
     const getUsers = () => {
         axios
-            .get(`${URLroot}/users/org/${authTokens.organizationId}`)
+            .get(`${URLroot}/users/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
             .then((res) => setUsers(res.data))
             .catch((err) => {
                 console.log(err);
@@ -73,21 +74,32 @@ const Admin = () => {
                 <Navigation />
             </Sider>
             <Content className="profile">
-                <h1>Admin</h1>
-                <Divider />
-                <Input className="users-search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
-                <Table
-                    className="employees-table"
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={filteredUsers}
-                    title={() => {
-                        return <h3>Users</h3>;
-                    }}
-                />
-                <Divider />
-                <Button type="primary">Add user</Button>
-                <AddUser />
+                <div className="view-header">
+                    <h1 className="view-title">Admin</h1>
+                </div>
+                <div className="view-content">
+                    <Divider />
+                    <Input className="search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
+                    <Table
+                        className="employees-table"
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={filteredUsers}
+                        title={() => {
+                            return (
+                                <div>
+                                    <h3 className="view-title">Users</h3>
+                                    <div className="view-action-buttons-container">
+                                        <Button type="primary" icon={<PlusOutlined />} className="view-action-button">
+                                            Add user
+                                        </Button>
+                                    </div>
+                                </div>
+                            );
+                        }}
+                    />
+                    <AddUser />
+                </div>
             </Content>
         </Layout>
     );

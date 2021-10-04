@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Upload, Button, Modal, message } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 import axios from "axios";
+import { useAuth } from "../context/auth";
 
 const FileUpload = ({ projectId, files }) => {
+    const { authTokens } = useAuth();
+
     const { confirm } = Modal;
 
     const initialFileList = files.map((file) => ({
@@ -23,7 +26,15 @@ const FileUpload = ({ projectId, files }) => {
                 icon: <ExclamationCircleOutlined />,
                 onOk() {
                     axios
-                        .put(`${URLroot}/projects/${projectId}/delete-file/${file.uid}`)
+                        .put(
+                            `${URLroot}/projects/${projectId}/delete-file/${file.uid}`,
+                            {},
+                            {
+                                headers: {
+                                    Authorization: "Bearer " + authTokens.accessToken,
+                                },
+                            }
+                        )
                         .then(() => message.info(`'${file.name}' deleted successfully`))
                         .catch((err) => {
                             console.log(err);

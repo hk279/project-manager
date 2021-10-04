@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, Redirect } from "react-router-dom";
 import { Form, Input, Button, Alert, Space } from "antd";
 import { useAuth } from "../context/auth";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 
 const LoginForm = () => {
     const { Item } = Form;

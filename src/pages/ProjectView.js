@@ -9,12 +9,15 @@ import AddTask from "../components/AddTask";
 import Task from "../components/Task";
 import EditProject from "../components/EditProject";
 import Loading from "../components/Loading";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 import FileUpload from "../components/FileUpload";
-
-const { Sider, Content } = Layout;
+import { useAuth } from "../context/auth";
 
 const ProjectView = () => {
+    const { authTokens } = useAuth();
+
+    const { Sider, Content } = Layout;
+
     const [project, setProject] = useState();
     const [employees, setEmployees] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -37,7 +40,7 @@ const ProjectView = () => {
 
     const getProject = (id) => {
         axios
-            .get(`${URLroot}/projects/id/${id}`)
+            .get(`${URLroot}/projects/id/${id}`, getAuthHeader(authTokens.accessToken))
             .then((res) => setProject(res.data))
             .catch((err) => console.log(err));
     };
@@ -51,7 +54,7 @@ const ProjectView = () => {
 
         // Request data for a group of employees
         axios
-            .post(`${URLroot}/employees/employeeGroup`, { group: employeeIds })
+            .post(`${URLroot}/employees/employeeGroup`, { group: employeeIds }, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 setEmployees(res.data);
             })
@@ -74,7 +77,7 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
         axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject)
+            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
             .then(() => {
                 setModalVisible(false);
                 setTrigger(!trigger);
@@ -93,7 +96,7 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject)
+            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
@@ -104,14 +107,14 @@ const ProjectView = () => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject)
+            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
             .then(() => setTrigger(!trigger))
             .catch((err) => console.log(err));
     };
 
     const editProject = (newData) => {
         axios
-            .put(`${URLroot}/projects/${project.id}`, newData)
+            .put(`${URLroot}/projects/${project.id}`, newData, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 setEditMode(false);
                 setTrigger(!trigger);
@@ -121,7 +124,7 @@ const ProjectView = () => {
 
     const deleteProject = (id) => {
         axios
-            .delete(`${URLroot}/projects/${id}`)
+            .delete(`${URLroot}/projects/${id}`, getAuthHeader(authTokens.accessToken))
             .then(() => history.push("/"))
             .catch((err) => console.log(err));
     };
@@ -143,12 +146,12 @@ const ProjectView = () => {
                         <EditProject project={project} editProject={editProject} cancelEdit={cancelEdit} />
                     </Content>
                 ) : (
-                    <Content className="project-view">
-                        <div className="project-view-header">
-                            <h2 className="project-view-title">{project.title}</h2>
-                            <div className="action-buttons-container">
+                    <Content>
+                        <div className="view-header">
+                            <h2 className="view-title">{project.title}</h2>
+                            <div className="view-action-buttons-container">
                                 <Button
-                                    className="action-button"
+                                    className="view-action-button"
                                     type="primary"
                                     icon={<EditOutlined />}
                                     onClick={() => setEditMode(true)}
@@ -161,7 +164,12 @@ const ProjectView = () => {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <Button className="action-button" type="primary" danger icon={<DeleteOutlined />}>
+                                    <Button
+                                        className="view-action-button"
+                                        type="primary"
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                    >
                                         Delete
                                     </Button>
                                 </Popconfirm>
@@ -169,7 +177,7 @@ const ProjectView = () => {
                             <h3>{project.client}</h3>
                         </div>
 
-                        <div className="project-view-content">
+                        <div className="view-content">
                             <Divider />
                             <p>{project.description}</p>
                             <p>

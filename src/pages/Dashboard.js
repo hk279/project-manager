@@ -7,13 +7,14 @@ import ProjectCard from "../components/ProjectCard";
 import Navigation from "../components/Navigation";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 
+const { Sider, Content } = Layout;
 const Dashboard = () => {
+    const { authTokens } = useAuth();
+
     const [projects, setProjects] = useState([]);
     const [filteredProjects, setFilteredProjects] = useState([]);
-
-    const { authTokens } = useAuth();
 
     useEffect(() => {
         getProjects();
@@ -25,11 +26,7 @@ const Dashboard = () => {
 
     const getProjects = () => {
         axios
-            .get(`${URLroot}/projects/org/${authTokens.organizationId}`, {
-                headers: {
-                    Authorization: "Bearer " + authTokens.accessToken,
-                },
-            })
+            .get(`${URLroot}/projects/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
                 const activeProjects = res.data.filter((project) => {
@@ -84,10 +81,10 @@ const Dashboard = () => {
 
     return (
         <Layout className="layout">
-            <Layout.Sider collapsible>
+            <Sider collapsible>
                 <Navigation />
-            </Layout.Sider>
-            <Layout.Content>
+            </Sider>
+            <Content>
                 <div className="dashboard-filters">
                     <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
                 </div>
@@ -119,7 +116,7 @@ const Dashboard = () => {
                         )}
                     </div>
                 )}
-            </Layout.Content>
+            </Content>
         </Layout>
     );
 };

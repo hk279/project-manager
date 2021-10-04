@@ -1,3 +1,9 @@
-const URLroot = "http://localhost:3001";
+export const URLroot = "http://localhost:3001";
 
-export default URLroot;
+export const getAuthHeader = (token) => {
+    return {
+        headers: {
+            Authorization: "Bearer " + token,
+        },
+    };
+};

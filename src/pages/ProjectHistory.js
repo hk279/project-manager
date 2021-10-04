@@ -5,6 +5,7 @@ import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
+import { URLroot, getAuthHeader } from "../config/config";
 
 const { Sider, Content } = Layout;
 
@@ -57,7 +58,7 @@ const ProjectHistory = () => {
 
     const getProjects = () => {
         axios
-            .get(`http://localhost:3001/projects/org/${authTokens.organizationId}`)
+            .get(`${URLroot}/projects/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 // Uses helper function to filter only the projects in which the deadline has already passed.
                 const pastProjects = res.data.filter((project) => {
@@ -94,9 +95,16 @@ const ProjectHistory = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content className="project-history">
-                <Input className="project-history-search" placeholder="Search" onChange={(e) => handleChange(e)} />
-                <Table className="project-history-table" rowKey="id" columns={columns} dataSource={filteredProjects} />
+            <Content>
+                <div className="view-content">
+                    <Input className="search" placeholder="Search" onChange={(e) => handleChange(e)} />
+                    <Table
+                        className="project-history-table"
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={filteredProjects}
+                    />
+                </div>
             </Content>
         </Layout>
     );

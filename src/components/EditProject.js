@@ -3,7 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import { Form, Input, Transfer, DatePicker, Button, Select, Space } from "antd";
 import { useAuth } from "../context/auth";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 
 const { Item, useForm } = Form;
 const { TextArea } = Input;
@@ -26,14 +26,14 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
 
     const getEmployees = () => {
         let url = `${URLroot}/employees/org/${authTokens.organizationId}`;
-        axios.get(url).then((res) => {
+        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
             setEmployees(res.data);
         });
     };
 
     const getTags = () => {
         const url = `${URLroot}/projects/tags/${authTokens.organizationId}`;
-        axios.get(url).then((res) => {
+        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
             setTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
     };

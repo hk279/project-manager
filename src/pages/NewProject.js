@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
 import { Layout, Form, Input, DatePicker, Transfer, Button, Divider, Select } from "antd";
@@ -29,14 +29,14 @@ const NewProject = () => {
 
     const getEmployees = () => {
         const url = `${URLroot}/employees/org/${authTokens.organizationId}`;
-        axios.get(url).then((res) => {
+        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
             setEmployees(res.data);
         });
     };
 
     const getExistingTags = () => {
         const url = `${URLroot}/projects/tags/${authTokens.organizationId}`;
-        axios.get(url).then((res) => {
+        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
             setExistingTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
     };

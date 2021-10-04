@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Progress, Tag } from "antd";
 import moment from "moment";
-import URLroot from "../config/config";
+import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 
 const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }) => {
@@ -23,15 +23,7 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }
 
         // Request data for a group of employees. Is post request suitable here?
         axios
-            .post(
-                `${URLroot}/employees/employeeGroup`,
-                { group: employeeIds },
-                {
-                    headers: {
-                        Authorization: "Bearer " + authTokens.accessToken,
-                    },
-                }
-            )
+            .post(`${URLroot}/employees/employeeGroup`, { group: employeeIds }, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 setEmployees(res.data);
             });

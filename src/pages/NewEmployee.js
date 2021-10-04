@@ -4,6 +4,7 @@ import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
 import { Layout, Form, Input, Button, Divider, Select, notification, Alert } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { URLroot, getAuthHeader } from "../config/config";
 
 const { Sider, Content } = Layout;
 const { Item, List, ErrorList, useForm } = Form;
@@ -19,7 +20,11 @@ const NewEmployee = () => {
 
     const handleSubmit = (values) => {
         axios
-            .post("http://localhost:3001/employees", { ...values, organizationId: authTokens.organizationId })
+            .post(
+                `${URLroot}/employees`,
+                { ...values, organizationId: authTokens.organizationId },
+                getAuthHeader(authTokens.accessToken)
+            )
             .then(() => {
                 setError(null);
                 notification.success({

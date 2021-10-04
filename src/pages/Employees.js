@@ -4,6 +4,7 @@ import { Layout, Table, Space, Input } from "antd";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 import Loading from "../components/Loading";
+import { URLroot, getAuthHeader } from "../config/config";
 
 const { Sider, Content } = Layout;
 
@@ -59,7 +60,7 @@ const Employees = () => {
 
     const getEmployees = () => {
         axios
-            .get(`http://localhost:3001/employees/org/${authTokens.organizationId}`)
+            .get(`${URLroot}/employees/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 setEmployees(res.data);
             })
@@ -89,9 +90,11 @@ const Employees = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content className="employees">
-                <Input className="employees-search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
-                <Table className="employees-table" rowKey="id" columns={columns} dataSource={filteredEmployees} />
+            <Content>
+                <div className="view-content">
+                    <Input className="search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
+                    <Table className="employees-table" rowKey="id" columns={columns} dataSource={filteredEmployees} />
+                </div>
             </Content>
         </Layout>
     );
