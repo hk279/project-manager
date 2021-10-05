@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Input, Button, Radio, Space, Divider, notification, Alert } from "antd";
-import { URLroot, getAuthHeader } from "../config/config";
+import { URLroot } from "../config/config";
 
 const SignUpForm = () => {
     const { Item } = Form;
@@ -20,7 +20,7 @@ const SignUpForm = () => {
         delete userDetails["accountType"];
 
         axios
-            .post(`${URLroot}/users/signup/${accountType}`, userDetails)
+            .post(`${URLroot}/auth/signup/${accountType}`, userDetails)
             .then(() => {
                 notification.success({
                     message: "Sign up successful",

@@ -18,6 +18,7 @@ const Profile = () => {
 
     const { authTokens, setAuthTokens } = useAuth();
 
+    // TODO: rewrite
     const onFinishChangePassword = (values) => {
         axios
             .put(
@@ -37,7 +38,17 @@ const Profile = () => {
         setModalVisible(false);
     };
 
-    const editProfile = (newData) => {};
+    const editProfile = (newData) => {
+        axios
+            .put(`${URLroot}/users/${authTokens.id}`, newData, getAuthHeader(authTokens.accessToken))
+            .then((res) => {
+                // Update new profile info into authTokens
+                setAuthTokens({ ...authTokens, ...res.data });
+                setEditMode(false);
+                setTrigger(!trigger);
+            })
+            .catch((err) => console.log(err));
+    };
 
     const cancelEdit = () => {
         setEditMode(false);

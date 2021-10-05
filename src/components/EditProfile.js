@@ -8,12 +8,7 @@ const EditProfile = ({ editProfile, cancelEdit }) => {
     const [form] = useForm();
 
     const handleSubmit = (values) => {
-        const newData = {
-            ...values,
-            organizationId: authTokens.organizationId,
-        };
-
-        editProfile(newData);
+        editProfile(values);
     };
 
     return (

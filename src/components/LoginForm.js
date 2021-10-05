@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, Redirect } from "react-router-dom";
 import { Form, Input, Button, Alert, Space } from "antd";
 import { useAuth } from "../context/auth";
-import { URLroot, getAuthHeader } from "../config/config";
+import { URLroot } from "../config/config";
 
 const LoginForm = () => {
     const { Item } = Form;
@@ -17,7 +17,7 @@ const LoginForm = () => {
     // Login handler
     const handleSubmit = (values) => {
         axios
-            .post(`${URLroot}/users/login`, { ...values })
+            .post(`${URLroot}/auth/login`, { ...values })
             .then((res) => {
                 setAuthTokens(res.data);
                 setLoggedIn(true);
