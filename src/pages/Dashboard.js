@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import { Layout, Button, Input, Divider } from "antd";
+import { Layout, Button, Input } from "antd";
 import ProjectCard from "../components/ProjectCard";
 import Navigation from "../components/Navigation";
+import Loading from "../components/Loading";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
 import { URLroot, getAuthHeader } from "../config/config";
@@ -79,16 +80,17 @@ const Dashboard = () => {
         setFilteredProjects(filteredProjects);
     };
 
+    if (!projects) {
+        return <Loading />;
+    }
+
     return (
         <Layout className="layout">
             <Sider collapsible>
                 <Navigation />
             </Sider>
             <Content>
-                <div className="dashboard-filters">
-                    <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
-                </div>
-                <Divider />
+                <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
                 {projects.length > 0 && (
                     <div className="dashboard-content">
                         {filteredProjects.length === 0 ? (

@@ -135,92 +135,100 @@ const ProjectView = () => {
 
     if (!project) {
         return <Loading />;
-    } else {
-        return (
-            <Layout className="layout">
-                <Sider collapsible>
-                    <Navigation />
-                </Sider>
-                {editMode ? (
-                    <Content className="project-view">
-                        <EditProject project={project} editProject={editProject} cancelEdit={cancelEdit} />
-                    </Content>
-                ) : (
-                    <Content>
-                        <div className="view-header">
-                            <h2 className="view-title">{project.title}</h2>
-                            <div className="view-action-buttons-container">
-                                <Button
-                                    className="view-action-button"
-                                    type="primary"
-                                    icon={<EditOutlined />}
-                                    onClick={() => setEditMode(true)}
-                                >
-                                    Edit
-                                </Button>
-                                <Popconfirm
-                                    title="Confirm delete project"
-                                    onConfirm={() => deleteProject(project.id)}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button
-                                        className="view-action-button"
-                                        type="primary"
-                                        danger
-                                        icon={<DeleteOutlined />}
-                                    >
-                                        Delete
-                                    </Button>
-                                </Popconfirm>
-                            </div>
-                            <h3>{project.client}</h3>
-                        </div>
+    }
 
-                        <div className="view-content">
-                            <Divider />
-                            <p>{project.description}</p>
-                            <p>
-                                {project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : null}
-                            </p>
-                            <Space size="middle">
-                                Deadline:{" "}
-                                <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
-                            </Space>
-                            <Divider orientation="left">Team</Divider>
-                            <table>
-                                <tbody>
-                                    {employees.map((employee) => (
-                                        <tr key={employee.id}>
-                                            <td className="team-members-table-cell">{`${employee.firstName} ${employee.lastName}`}</td>
-                                            <td className="team-members-table-cell">{employee.department}</td>
-                                        </tr>
-                                    )) ?? []}
-                                </tbody>
-                            </table>
-                            <Divider orientation="left">Files</Divider>
-                            <FileUpload projectId={id} files={project.files ?? []} />
-                            <Divider orientation="left">Tasks</Divider>
-                            <div className="tasks-list-actions">
-                                <Button
-                                    type="primary"
-                                    icon={<PlusOutlined />}
-                                    onClick={() => {
-                                        setModalVisible(true);
-                                    }}
-                                >
-                                    New Task
+    return (
+        <Layout className="layout">
+            <Sider collapsible>
+                <Navigation />
+            </Sider>
+
+            {editMode ? (
+                <Content>
+                    <div className="view-content">
+                        <EditProject project={project} editProject={editProject} cancelEdit={cancelEdit} />
+                    </div>
+                </Content>
+            ) : (
+                <Content>
+                    <div className="view-header">
+                        <h2 className="view-title">{project.title}</h2>
+                        <div className="view-action-buttons-container">
+                            <Button
+                                className="view-action-button"
+                                type="primary"
+                                icon={<EditOutlined />}
+                                onClick={() => setEditMode(true)}
+                            >
+                                Edit
+                            </Button>
+                            <Popconfirm
+                                title="Confirm delete project"
+                                onConfirm={() => deleteProject(project.id)}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <Button className="view-action-button" type="primary" danger icon={<DeleteOutlined />}>
+                                    Delete
                                 </Button>
-                                <Space size="middle" style={{ marginLeft: "2em" }}>
-                                    Show completed
-                                    <Switch defaultChecked={false} onChange={onSwitchChange} />
-                                </Space>
-                            </div>
-                            <div className="tasks-list">
-                                {
-                                    // Conditional rendering according to whether or not show completed tasks is toggled on
-                                    showCompleted
-                                        ? project.tasks.map((task) => (
+                            </Popconfirm>
+                        </div>
+                        <h3>{project.client}</h3>
+                    </div>
+                    <div className="view-content">
+                        <Divider />
+                        <p>{project.description}</p>
+                        <p>{project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : null}</p>
+                        <Space size="middle">
+                            Deadline:{" "}
+                            <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
+                        </Space>
+                        <Divider orientation="left">Team</Divider>
+                        <table>
+                            <tbody>
+                                {employees.map((employee) => (
+                                    <tr key={employee.id}>
+                                        <td className="team-members-table-cell">{`${employee.firstName} ${employee.lastName}`}</td>
+                                        <td className="team-members-table-cell">{employee.department}</td>
+                                    </tr>
+                                )) ?? []}
+                            </tbody>
+                        </table>
+                        <Divider orientation="left">Files</Divider>
+                        <FileUpload projectId={id} files={project.files ?? []} />
+                        <Divider orientation="left">Tasks</Divider>
+                        <div className="tasks-list-actions">
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => {
+                                    setModalVisible(true);
+                                }}
+                            >
+                                New Task
+                            </Button>
+                            <Space size="middle" style={{ marginLeft: "2em" }}>
+                                Show completed
+                                <Switch defaultChecked={false} onChange={onSwitchChange} />
+                            </Space>
+                        </div>
+                        <div className="tasks-list">
+                            {
+                                // Conditional rendering according to whether or not show completed tasks is toggled on
+                                showCompleted
+                                    ? project.tasks.map((task) => (
+                                          <Task
+                                              key={task.title}
+                                              task={task}
+                                              project={project}
+                                              employees={employees}
+                                              deleteTask={deleteTask}
+                                              setTaskStatus={setTaskStatus}
+                                          />
+                                      ))
+                                    : project.tasks
+                                          .filter((task) => task.status !== "Completed")
+                                          .map((task) => (
                                               <Task
                                                   key={task.title}
                                                   task={task}
@@ -230,36 +238,23 @@ const ProjectView = () => {
                                                   setTaskStatus={setTaskStatus}
                                               />
                                           ))
-                                        : project.tasks
-                                              .filter((task) => task.status !== "Completed")
-                                              .map((task) => (
-                                                  <Task
-                                                      key={task.title}
-                                                      task={task}
-                                                      project={project}
-                                                      employees={employees}
-                                                      deleteTask={deleteTask}
-                                                      setTaskStatus={setTaskStatus}
-                                                  />
-                                              ))
-                                }
-                            </div>
+                            }
                         </div>
+                    </div>
+                </Content>
+            )}
 
-                        <AddTask
-                            visible={modalVisible}
-                            onFinishAdd={onFinishAdd}
-                            onCancel={() => {
-                                setModalVisible(false);
-                            }}
-                            project={project}
-                            team={employees}
-                        />
-                    </Content>
-                )}
-            </Layout>
-        );
-    }
+            <AddTask
+                visible={modalVisible}
+                onFinishAdd={onFinishAdd}
+                onCancel={() => {
+                    setModalVisible(false);
+                }}
+                project={project}
+                team={employees}
+            />
+        </Layout>
+    );
 };
 
 export default ProjectView;

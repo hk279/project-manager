@@ -22,7 +22,7 @@ const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
 
     return (
         <Form
-            className="new-employee-form"
+            className="form"
             layout="vertical"
             form={form}
             onFinish={handleSubmit}
@@ -37,10 +37,10 @@ const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
             }}
         >
             <Item label="First Name" name="firstName" rules={[{ required: true }]}>
-                <Input />
+                <Input maxLength={60} />
             </Item>
             <Item label="Last Name" name="lastName" rules={[{ required: true }]}>
-                <Input />
+                <Input maxLength={60} />
             </Item>
             <Item label="Department" name="department" rules={[{ required: true }]}>
                 <Select>
@@ -67,7 +67,7 @@ const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
                                     ]}
                                     noStyle
                                 >
-                                    <Input style={{ width: "60%" }} />
+                                    <Input style={{ width: "60%" }} maxLength={60} />
                                 </Item>
                                 {fields.length > 0 ? (
                                     <MinusCircleOutlined
@@ -91,6 +91,7 @@ const EditEmployee = ({ employee, editEmployee, cancelEdit }) => {
                     </>
                 )}
             </List>
+            <Divider />
             <Item>
                 <Space size="middle">
                     <Button type="primary" htmlType="submit">

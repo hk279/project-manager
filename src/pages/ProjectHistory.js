@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Layout, Table, Input } from "antd";
 import axios from "axios";
 import Navigation from "../components/Navigation";
+import Loading from "../components/Loading";
 import { useAuth } from "../context/auth";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
@@ -89,6 +90,10 @@ const ProjectHistory = () => {
         });
         setFilteredProjects(filteredProjects);
     };
+
+    if (!projects) {
+        return <Loading />;
+    }
 
     return (
         <Layout className="layout">

@@ -46,88 +46,92 @@ const NewEmployee = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content className="new-employee">
-                <h1>New employee</h1>
-                <Divider />
-                <Form
-                    className="new-employee-form"
-                    layout="vertical"
-                    form={form}
-                    onFinish={handleSubmit}
-                    validateMessages={{
-                        required: "${label} is required!",
-                    }}
-                >
-                    <Item label="First name" name="firstName" rules={[{ required: true }]}>
-                        <Input />
-                    </Item>
-                    <Item label="Last name" name="lastName" rules={[{ required: true }]}>
-                        <Input />
-                    </Item>
-                    <Item label="Department" name="department" rules={[{ required: true }]}>
-                        <Select>
-                            {departments.map((item) => (
-                                <Option key={item}>{item}</Option>
-                            ))}
-                        </Select>
-                    </Item>
-                    <Divider orientation="left">Skills</Divider>
-                    <List name="skills">
-                        {(fields, { add, remove }, { errors }) => (
-                            <>
-                                {fields.map((field) => (
-                                    <Item required={false} key={field.key}>
-                                        <Item
-                                            {...field}
-                                            validateTrigger={["onChange", "onBlur"]}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    whitespace: true,
-                                                    message: "Please input a skill or delete this field.",
-                                                },
-                                            ]}
-                                            noStyle
-                                        >
-                                            <Input style={{ width: "60%" }} />
-                                        </Item>
-                                        {fields.length > 0 && (
-                                            <MinusCircleOutlined
-                                                className="dynamic-delete-button"
-                                                onClick={() => remove(field.name)}
-                                            />
-                                        )}
-                                    </Item>
+            <Content>
+                <div className="view-header">
+                    <h2 className="view-title">New employee</h2>
+                </div>
+                <div className="view-content">
+                    <Divider />
+                    <Form
+                        className="form"
+                        layout="vertical"
+                        form={form}
+                        onFinish={handleSubmit}
+                        validateMessages={{
+                            required: "${label} is required!",
+                        }}
+                    >
+                        <Item label="First name" name="firstName" rules={[{ required: true }]}>
+                            <Input maxLength={60} />
+                        </Item>
+                        <Item label="Last name" name="lastName" rules={[{ required: true }]}>
+                            <Input maxLength={60} />
+                        </Item>
+                        <Item label="Department" name="department" rules={[{ required: true }]}>
+                            <Select>
+                                {departments.map((item) => (
+                                    <Option key={item}>{item}</Option>
                                 ))}
-                                <Item>
-                                    <Button
-                                        type="dashed"
-                                        onClick={() => add()}
-                                        style={{ width: "60%" }}
-                                        icon={<PlusOutlined />}
-                                    >
-                                        Add Skill
-                                    </Button>
-                                    <ErrorList errors={errors} />
-                                </Item>
-                            </>
+                            </Select>
+                        </Item>
+                        <Divider orientation="left">Skills</Divider>
+                        <List name="skills">
+                            {(fields, { add, remove }, { errors }) => (
+                                <>
+                                    {fields.map((field) => (
+                                        <Item required={false} key={field.key}>
+                                            <Item
+                                                {...field}
+                                                validateTrigger={["onChange", "onBlur"]}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                        whitespace: true,
+                                                        message: "Please input a skill or delete this field.",
+                                                    },
+                                                ]}
+                                                noStyle
+                                            >
+                                                <Input style={{ width: "60%" }} />
+                                            </Item>
+                                            {fields.length > 0 && (
+                                                <MinusCircleOutlined
+                                                    className="dynamic-delete-button"
+                                                    onClick={() => remove(field.name)}
+                                                />
+                                            )}
+                                        </Item>
+                                    ))}
+                                    <Item>
+                                        <Button
+                                            type="dashed"
+                                            onClick={() => add()}
+                                            style={{ width: "60%" }}
+                                            icon={<PlusOutlined />}
+                                        >
+                                            Add Skill
+                                        </Button>
+                                        <ErrorList errors={errors} />
+                                    </Item>
+                                </>
+                            )}
+                        </List>
+                        <Item>
+                            <Button type="primary" htmlType="submit">
+                                Add Employee
+                            </Button>
+                        </Item>
+                        {error && (
+                            <Alert
+                                message="Sign up failed"
+                                description={error.messages}
+                                type="error"
+                                closable
+                                onClose={() => setError(null)}
+                            />
                         )}
-                    </List>
-                    <Item>
-                        <Button type="primary" htmlType="submit">
-                            Add Employee
-                        </Button>
-                    </Item>
-                    {error && (
-                        <Alert
-                            message="Sign up failed"
-                            description={error.messages}
-                            type="error"
-                            closable
-                            onClose={() => setError(null)}
-                        />
-                    )}
-                </Form>
+                    </Form>
+                </div>
             </Content>
         </Layout>
     );

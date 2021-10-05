@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Form, Input, Transfer, DatePicker, Button, Select, Space } from "antd";
+import { Form, Input, Transfer, DatePicker, Button, Select, Space, Divider } from "antd";
 import { useAuth } from "../context/auth";
 import { URLroot, getAuthHeader } from "../config/config";
 
@@ -60,7 +60,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
 
     return (
         <Form
-            className="new-project-form"
+            className="form"
             layout="vertical"
             form={form}
             onFinish={handleSubmit}
@@ -108,6 +108,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
                     render={(item) => `${item.firstName} ${item.lastName}`}
                 />
             </Item>
+            <Divider />
             <Item>
                 <Space size="middle">
                     <Button type="primary" htmlType="submit">

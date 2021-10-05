@@ -4,6 +4,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Layout, Divider, List, Button, Popconfirm } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
+import Loading from "../components/Loading";
 import { useAuth } from "../context/auth";
 import EditEmployee from "../components/EditEmployee";
 import { URLroot, getAuthHeader } from "../config/config";
@@ -68,6 +69,11 @@ const EmployeeView = () => {
     const cancelEdit = () => {
         setEditMode(false);
     };
+
+    if (!employee) {
+        return <Loading />;
+    }
+
     return (
         <Layout className="layout">
             <Sider collapsible>
@@ -75,7 +81,9 @@ const EmployeeView = () => {
             </Sider>
             {editMode ? (
                 <Content>
-                    <EditEmployee employee={employee} editEmployee={editEmployee} cancelEdit={cancelEdit} />
+                    <div className="view-content">
+                        <EditEmployee employee={employee} editEmployee={editEmployee} cancelEdit={cancelEdit} />
+                    </div>
                 </Content>
             ) : (
                 <Content>

@@ -16,6 +16,11 @@
     margin: 2em 0em;
 }
 
+.form {
+    margin-top: 2em;
+    width: 60%;
+}
+
 .view-header {
     padding: 2em 2em 0em 2em;
 }
@@ -26,7 +31,7 @@
 
 .view-content {
     max-width: 60%;
-    padding: 0em 2em;
+    padding: 0em 2em 2em 2em;
 }
 
 .view-action-buttons-container {
@@ -65,22 +70,6 @@
     border-radius: 1em;
     min-width: 60%;
     max-width: 80%;
-}
-
-/* New project */
-.new-project {
-    padding: 2em;
-}
-.new-project-form {
-    width: 40%;
-}
-
-/* New employee */
-.new-employee {
-    padding: 2em;
-}
-.new-employee-form {
-    width: 40%;
 }
 
 /* Skills list delete button */

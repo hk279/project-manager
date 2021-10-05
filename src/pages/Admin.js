@@ -73,7 +73,7 @@ const Admin = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content className="profile">
+            <Content>
                 <div className="view-header">
                     <h1 className="view-title">Admin</h1>
                 </div>
