@@ -24,15 +24,19 @@ const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
                     });
             }}
         >
-            <Form form={form} layout="vertical" name="addTask" initialValues={{ status: "Not started" }}>
-                <Item name="title" label="Title" rules={[{ required: true, message: "Title required" }]}>
+            <Form
+                form={form}
+                layout="vertical"
+                name="addTask"
+                initialValues={{ status: "Not started" }}
+                validateMessages={{
+                    required: "${label} is required",
+                }}
+            >
+                <Item name="title" label="Title" rules={[{ required: true }]}>
                     <Input />
                 </Item>
-                <Item
-                    name="estimatedCompletion"
-                    label="Estimated completion"
-                    rules={[{ required: true, message: "Date required" }]}
-                >
+                <Item name="estimatedCompletion" label="Estimated completion" rules={[{ required: true }]}>
                     <DatePicker />
                 </Item>
                 <Item
@@ -49,7 +53,7 @@ const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
                         ))}
                     </Select>
                 </Item>
-                <Item name="status" label="Status" rules={[{ required: true, message: "Status required" }]}>
+                <Item name="status" label="Status" rules={[{ required: true }]}>
                     <Select placeholder="Status">
                         <Option value="Not started">Not started</Option>
                         <Option value="Doing">Doing</Option>

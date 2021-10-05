@@ -1,6 +1,7 @@
-import { Button, Layout, Table, Input, Divider } from "antd";
+import { Button, Layout, Table, Input, Divider, notification } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
+import Loading from "../components/Loading";
 import AddUser from "../components/AddUser";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -13,6 +14,8 @@ const Admin = () => {
 
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [trigger, setTrigger] = useState(false);
 
     const columns = [
         {
@@ -68,6 +71,35 @@ const Admin = () => {
             });
     };
 
+    const onFinishAddUser = (values) => {
+        const newUser = {
+            ...values,
+            organizationId: authTokens.organizationId,
+            userOrganizationType: authTokens.userOrganizationType,
+        };
+
+        axios
+            .post(`${URLroot}/users`, newUser, getAuthHeader(authTokens.accessToken))
+            .then((res) => {
+                setModalVisible(false);
+                notification.success({
+                    message: "User created",
+                });
+                setTrigger(!trigger);
+            })
+            .catch((err) => {
+                console.log(err);
+                notification.error({
+                    message: "User creation failed",
+                    description: err.response.data.messages,
+                });
+            });
+    };
+
+    if (!users) {
+        return <Loading />;
+    }
+
     return (
         <Layout className="layout">
             <Sider collapsible>
@@ -90,7 +122,12 @@ const Admin = () => {
                                 <div>
                                     <h3 className="view-title">Users</h3>
                                     <div className="view-action-buttons-container">
-                                        <Button type="primary" icon={<PlusOutlined />} className="view-action-button">
+                                        <Button
+                                            type="primary"
+                                            icon={<PlusOutlined />}
+                                            className="view-action-button"
+                                            onClick={() => setModalVisible(true)}
+                                        >
                                             Add user
                                         </Button>
                                     </div>
@@ -98,7 +135,13 @@ const Admin = () => {
                             );
                         }}
                     />
-                    <AddUser />
+                    <AddUser
+                        visible={modalVisible}
+                        onFinishAddUser={onFinishAddUser}
+                        onCancelAddUser={() => {
+                            setModalVisible(false);
+                        }}
+                    />
                 </div>
             </Content>
         </Layout>
