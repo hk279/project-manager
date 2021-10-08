@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Layout, Table, Space, Input } from "antd";
+import { Layout, Table, Button, Input } from "antd";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
 import Loading from "../components/Loading";
 import { URLroot, getAuthHeader } from "../config/config";
+import { useHistory } from "react-router";
 
 const { Sider, Content } = Layout;
 
@@ -12,6 +13,7 @@ const Employees = () => {
     const [employees, setEmployees] = useState([]);
     const [filteredEmployees, setFilteredEmployees] = useState([]);
 
+    const history = useHistory();
     const { authTokens } = useAuth();
 
     const columns = [
@@ -43,9 +45,14 @@ const Employees = () => {
             title: "Action",
             key: "action",
             render: (record) => (
-                <Space size="middle">
-                    <a href={`/employee/${record.id}`}>View</a>
-                </Space>
+                <Button
+                    type="link"
+                    onClick={() => {
+                        history.push(`/employee/${record.id}`);
+                    }}
+                >
+                    View
+                </Button>
             ),
         },
     ];
@@ -93,7 +100,7 @@ const Employees = () => {
             <Content>
                 <div className="view-content">
                     <Input className="search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
-                    <Table className="employees-table" rowKey="id" columns={columns} dataSource={filteredEmployees} />
+                    <Table rowKey="id" columns={columns} dataSource={filteredEmployees} />
                 </div>
             </Content>
         </Layout>

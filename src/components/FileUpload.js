@@ -26,15 +26,7 @@ const FileUpload = ({ projectId, files }) => {
                 icon: <ExclamationCircleOutlined />,
                 onOk() {
                     axios
-                        .put(
-                            `${URLroot}/projects/${projectId}/delete-file/${file.uid}`,
-                            {},
-                            {
-                                headers: {
-                                    Authorization: "Bearer " + authTokens.accessToken,
-                                },
-                            }
-                        )
+                        .put(`${URLroot}/projects/${projectId}/delete-file/${file.uid}`, {}, getAuthHeader())
                         .then(() => message.info(`'${file.name}' deleted successfully`))
                         .catch((err) => {
                             console.log(err);

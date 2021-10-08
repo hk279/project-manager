@@ -1,5 +1,5 @@
-import { Button, Layout, Table, Input, Divider, notification } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Button, Layout, Table, Input, Divider, notification, Popconfirm } from "antd";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import Loading from "../components/Loading";
 import AddUser from "../components/AddUser";
@@ -38,18 +38,32 @@ const Admin = () => {
             dataIndex: "userType",
             key: "userType",
         },
+        {
+            title: "Delete",
+            key: "delete",
+            render: (record) => (
+                <Popconfirm
+                    title="Confirm delete user"
+                    onConfirm={() => deleteUser(record.id)}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button danger icon={<DeleteOutlined />} />
+                </Popconfirm>
+            ),
+        },
     ];
 
     useEffect(() => {
         getUsers();
-    }, []);
+    }, [trigger]);
 
     useEffect(() => {
         setFilteredUsers(users);
     }, [users]);
 
     /* Filter the data array by matching names with the search field value */
-    const filterEmployees = (e) => {
+    const filterUsers = (e) => {
         const searchWord = e.target.value;
         const filteredUsers = users.filter((user) => {
             const firstName = user.firstName.toLowerCase();
@@ -71,7 +85,7 @@ const Admin = () => {
             });
     };
 
-    const onFinishAddUser = (values) => {
+    const onFinishAddUser = async (values) => {
         const newUser = {
             ...values,
             organizationId: authTokens.organizationId,
@@ -80,11 +94,11 @@ const Admin = () => {
 
         axios
             .post(`${URLroot}/users`, newUser, getAuthHeader(authTokens.accessToken))
-            .then((res) => {
-                setModalVisible(false);
+            .then(() => {
                 notification.success({
                     message: "User created",
                 });
+                setModalVisible(false);
                 setTrigger(!trigger);
             })
             .catch((err) => {
@@ -93,6 +107,18 @@ const Admin = () => {
                     message: "User creation failed",
                     description: err.response.data.messages,
                 });
+            });
+    };
+
+    const deleteUser = (id) => {
+        axios
+            .delete(`${URLroot}/users/${id}`, getAuthHeader(authTokens.accessToken))
+            .then(() => {
+                notification.success({ message: "User deleted" });
+                setTrigger(!trigger);
+            })
+            .catch(() => {
+                notification.error({ message: "User deletion failed" });
             });
     };
 
@@ -111,9 +137,8 @@ const Admin = () => {
                 </div>
                 <div className="view-content">
                     <Divider />
-                    <Input className="search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
+                    <Input className="search" placeholder="Search" onChange={(e) => filterUsers(e)} />
                     <Table
-                        className="employees-table"
                         rowKey="id"
                         columns={columns}
                         dataSource={filteredUsers}
