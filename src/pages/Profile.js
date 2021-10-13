@@ -23,19 +23,22 @@ const Profile = () => {
         axios
             .put(
                 `${URLroot}/users/change-password/${authTokens.id}`,
-                { password: values.newPassword },
+                { currentPassword: values.currentPassword, newPassword: values.newPassword },
                 getAuthHeader(authTokens.accessToken)
             )
             .then((res) => {
-                const user = res.data;
-                setAuthTokens({ ...user, password: values.newPassword });
                 notification.success({
                     message: "Password change successful!",
                 });
+                console.log(res.data);
+                setModalVisible(false);
             })
-            .catch((err) => console.log(err));
-
-        setModalVisible(false);
+            .catch((err) => {
+                notification.error({
+                    message: "Password change failed",
+                    description: err.response.data.messages,
+                });
+            });
     };
 
     const editProfile = (newData) => {

@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { Modal, Form, Input, Alert } from "antd";
-import { useAuth } from "../context/auth";
 
 const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
     const { Item } = Form;
     const { Password } = Input;
     const [form] = Form.useForm();
-
-    const { authTokens } = useAuth();
 
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -16,21 +13,13 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
         return values.newPassword === values.repeatNewPassword;
     };
 
-    const correctCurrentPassword = (values) => {
-        return values.currentPassword === authTokens.password;
-    };
-
     const onConfirm = () => {
         setIsError(false);
         setErrorMessage("");
 
         form.validateFields()
             .then((values) => {
-                if (!correctCurrentPassword(values)) {
-                    setIsError(true);
-                    setErrorMessage("Incorrect current password.");
-                    return;
-                } else if (!passwordRepeated(values)) {
+                if (!passwordRepeated(values)) {
                     setIsError(true);
                     setErrorMessage("New password not repeated correctly.");
                     return;
@@ -74,8 +63,17 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
                 <Item
                     name="repeatNewPassword"
                     label="Repeat new password"
-                    rules={[{ required: true, min: 5, max: 30 }]}
-                    help="Password must be between 5-30 characters."
+                    rules={[
+                        { required: true },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue("newPassword") === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error("Passwords are not matching"));
+                            },
+                        }),
+                    ]}
                 >
                     <Password />
                 </Item>
