@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
+import { v4 } from "uuid";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Divider, Layout, Popconfirm, Switch, Space, Tag } from "antd";
+import { Button, Divider, Layout, Popconfirm, Switch, Space, Tag, notification } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import AddTask from "../components/AddTask";
 import Task from "../components/Task";
+import CommentsSection from "../components/CommentsSection";
 import EditProject from "../components/EditProject";
 import Loading from "../components/Loading";
 import { URLroot, getAuthHeader } from "../config/config";
@@ -112,10 +114,41 @@ const ProjectView = () => {
             .catch((err) => console.log(err));
     };
 
+    // Add a comment
+    const addComment = (commentText) => {
+        const comment = {
+            id: v4(),
+            author: `${authTokens.firstName} ${authTokens.lastName}`,
+            text: commentText,
+            timestamp: new Date().toISOString(),
+        };
+
+        axios
+            .put(`${URLroot}/projects/${project.id}/add-comment`, comment, getAuthHeader(authTokens.accessToken))
+            .then(() => setTrigger(!trigger))
+            .catch((err) => {
+                notification.error({ message: "Adding comment failed", description: err.response.data.messages });
+            });
+    };
+
+    // Delete a comment
+    const deleteComment = (commentId) => {
+        axios
+            .put(
+                `${URLroot}/projects/${project.id}/delete-comment/${commentId}`,
+                {},
+                getAuthHeader(authTokens.accessToken)
+            )
+            .then(() => setTrigger(!trigger))
+            .catch((err) => {
+                notification.error({ message: "Deleting comment failed", description: err.response.data.messages });
+            });
+    };
+
     const editProject = (newData) => {
         axios
             .put(`${URLroot}/projects/${project.id}`, newData, getAuthHeader(authTokens.accessToken))
-            .then((res) => {
+            .then(() => {
                 setEditMode(false);
                 setTrigger(!trigger);
             })
@@ -183,6 +216,7 @@ const ProjectView = () => {
                             Deadline:{" "}
                             <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
                         </Space>
+
                         <Divider orientation="left">Team</Divider>
                         <table>
                             <tbody>
@@ -194,10 +228,12 @@ const ProjectView = () => {
                                 )) ?? []}
                             </tbody>
                         </table>
+
                         <Divider orientation="left">Files</Divider>
                         <FileUpload projectId={id} files={project.files ?? []} />
+
                         <Divider orientation="left">Tasks</Divider>
-                        <div className="tasks-list-actions">
+                        <Space size="middle">
                             <Button
                                 type="primary"
                                 icon={<PlusOutlined />}
@@ -207,11 +243,12 @@ const ProjectView = () => {
                             >
                                 New Task
                             </Button>
+
                             <Space size="middle" style={{ marginLeft: "2em" }}>
                                 Show completed
                                 <Switch defaultChecked={false} onChange={onSwitchChange} />
                             </Space>
-                        </div>
+                        </Space>
                         <div className="tasks-list">
                             {
                                 // Conditional rendering according to whether or not show completed tasks is toggled on
@@ -240,6 +277,9 @@ const ProjectView = () => {
                                           ))
                             }
                         </div>
+
+                        <Divider orientation="left">Comments</Divider>
+                        <CommentsSection project={project} addComment={addComment} deleteComment={deleteComment} />
                     </div>
                 </Content>
             )}

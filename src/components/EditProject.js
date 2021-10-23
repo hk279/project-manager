@@ -44,6 +44,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
             ...values,
             deadline,
             tasks: project.tasks,
+            comments: project.comments,
             organizationId: authTokens.organizationId,
             tags: values.tags.sort(),
         };

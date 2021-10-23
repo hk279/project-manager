@@ -60,11 +60,12 @@ const NewProject = () => {
             deadline,
             organizationId: authTokens.organizationId,
             tasks: [],
+            comments: [],
             tags,
         };
 
         axios
-            .post(`${URLroot}/projects`, body)
+            .post(`${URLroot}/projects`, body, getAuthHeader(authTokens.accessToken))
             .then(() => history.push("/"))
             .catch((err) => console.log(err));
     };

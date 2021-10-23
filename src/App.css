@@ -128,13 +128,10 @@
 .team-members-table-cell {
     padding: 0.5em 2em 0.5em 0em;
 }
-.tasks-list-actions {
-    margin-bottom: 1em;
-}
 .tasks-list {
     width: 40%;
     min-width: 30em;
-    margin-bottom: 2em;
+    margin: 1em 0em;
 }
 
 /* Task item */

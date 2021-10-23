@@ -3,11 +3,8 @@ import { Upload, Button, Modal, message } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { URLroot, getAuthHeader } from "../config/config";
 import axios from "axios";
-import { useAuth } from "../context/auth";
 
 const FileUpload = ({ projectId, files }) => {
-    const { authTokens } = useAuth();
-
     const { confirm } = Modal;
 
     const initialFileList = files.map((file) => ({
