@@ -1,6 +1,6 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Space, List, Avatar, Button, Popconfirm } from "antd";
-import { formatDate } from "../utils/helper";
+import moment from "moment";
 
 const Comment = ({ comment, deleteComment }) => {
     return (
@@ -21,7 +21,7 @@ const Comment = ({ comment, deleteComment }) => {
                 title={
                     <Space size="middle">
                         <p>{comment.author}</p>
-                        <p>{formatDate(comment.timestamp)}</p>
+                        <p>{moment(comment.timestamp).format("D.M.Y - h:mm a")}</p>
                     </Space>
                 }
                 description={comment.text}

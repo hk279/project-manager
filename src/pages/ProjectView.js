@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
-import { v4 } from "uuid";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Divider, Layout, Popconfirm, Switch, Space, Tag, notification } from "antd";
-import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Divider, Layout, notification, Popconfirm, Space, Tag } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
-import AddTask from "../components/AddTask";
-import Task from "../components/Task";
-import CommentsSection from "../components/CommentsSection";
+import CommentSection from "../components/CommentSection";
 import EditProject from "../components/EditProject";
 import Loading from "../components/Loading";
-import { URLroot, getAuthHeader } from "../config/config";
 import FileUpload from "../components/FileUpload";
+import TaskSection from "../components/TaskSection";
+import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 
 const ProjectView = () => {
@@ -20,25 +18,30 @@ const ProjectView = () => {
 
     const { Sider, Content } = Layout;
 
-    const [project, setProject] = useState();
+    const [project, setProject] = useState(null);
     const [employees, setEmployees] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [showCompleted, setShowCompleted] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const [trigger, setTrigger] = useState(false); // Helps trigger re-render when task is added or deleted
+    const [trigger, setTrigger] = useState(false); // Helps trigger re-render when child component functions are called
 
     let { id } = useParams();
     const history = useHistory();
 
+    // Re-fetches project data when triggered by child component or when changing to/from edit mode
     useEffect(() => {
         getProject(id);
-    }, [trigger]);
+    }, [trigger, editMode]);
 
+    // Project data fetch triggers relevant employees data fetch
     useEffect(() => {
         if (project) {
             getEmployees();
         }
     }, [project]);
+
+    // Used by child components to re-fetch data and trigger re-render of this component
+    const reRenderParent = () => {
+        setTrigger(!trigger);
+    };
 
     const getProject = (id) => {
         axios
@@ -63,103 +66,24 @@ const ProjectView = () => {
             .catch((err) => console.log(err));
     };
 
-    // Show completed tasks toggle switch controller
-    const onSwitchChange = (checked) => {
-        if (checked) {
-            setShowCompleted(true);
-        } else {
-            setShowCompleted(false);
-        }
-    };
-
-    const onFinishAdd = (values) => {
-        const etc = values.estimatedCompletion.format("D.M.Y");
-        const newTask = { ...values, estimatedCompletion: etc };
-
-        const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
-
-        axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
-            .then(() => {
-                setModalVisible(false);
-                setTrigger(!trigger);
-            })
-            .catch((err) => console.log(err));
-    };
-
-    /* Changes the status of a task. First, creates an updated task. 
-    Then removes the old task from the list. 
-    Then creates a new list with the updated task added. */
-
-    const setTaskStatus = (changingTask, status) => {
-        const updatedTask = { ...changingTask, status: status };
-        const tasksOldRemoved = [...project.tasks].filter((task) => task.title !== changingTask.title);
-        const updatedTasks = [...tasksOldRemoved, updatedTask];
-        const updatedProject = { ...project, tasks: updatedTasks };
-
-        axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
-            .then(() => setTrigger(!trigger))
-            .catch((err) => console.log(err));
-    };
-
-    // Delete a task
-    const deleteTask = (taskToBeDeleted) => {
-        const updatedTasks = [...project.tasks].filter((task) => task.title !== taskToBeDeleted.title);
-        const updatedProject = { ...project, tasks: updatedTasks };
-
-        axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
-            .then(() => setTrigger(!trigger))
-            .catch((err) => console.log(err));
-    };
-
-    // Add a comment
-    const addComment = (commentText) => {
-        const comment = {
-            id: v4(),
-            author: `${authTokens.firstName} ${authTokens.lastName}`,
-            text: commentText,
-            timestamp: new Date().toISOString(),
-        };
-
-        axios
-            .put(`${URLroot}/projects/${project.id}/add-comment`, comment, getAuthHeader(authTokens.accessToken))
-            .then(() => setTrigger(!trigger))
-            .catch((err) => {
-                notification.error({ message: "Adding comment failed", description: err.response.data.messages });
-            });
-    };
-
-    // Delete a comment
-    const deleteComment = (commentId) => {
-        axios
-            .put(
-                `${URLroot}/projects/${project.id}/delete-comment/${commentId}`,
-                {},
-                getAuthHeader(authTokens.accessToken)
-            )
-            .then(() => setTrigger(!trigger))
-            .catch((err) => {
-                notification.error({ message: "Deleting comment failed", description: err.response.data.messages });
-            });
-    };
-
     const editProject = (newData) => {
         axios
             .put(`${URLroot}/projects/${project.id}`, newData, getAuthHeader(authTokens.accessToken))
             .then(() => {
                 setEditMode(false);
-                setTrigger(!trigger);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                notification.error({ message: "Edit project failed", description: err.response.data.messages });
+            });
     };
 
     const deleteProject = (id) => {
         axios
             .delete(`${URLroot}/projects/${id}`, getAuthHeader(authTokens.accessToken))
             .then(() => history.push("/"))
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                notification.error({ message: "Delete project failed", description: err.response.data.messages });
+            });
     };
 
     const cancelEdit = () => {
@@ -233,66 +157,13 @@ const ProjectView = () => {
                         <FileUpload projectId={id} files={project.files ?? []} />
 
                         <Divider orientation="left">Tasks</Divider>
-                        <Space size="middle">
-                            <Button
-                                type="primary"
-                                icon={<PlusOutlined />}
-                                onClick={() => {
-                                    setModalVisible(true);
-                                }}
-                            >
-                                New Task
-                            </Button>
-
-                            <Space size="middle" style={{ marginLeft: "2em" }}>
-                                Show completed
-                                <Switch defaultChecked={false} onChange={onSwitchChange} />
-                            </Space>
-                        </Space>
-                        <div className="tasks-list">
-                            {
-                                // Conditional rendering according to whether or not show completed tasks is toggled on
-                                showCompleted
-                                    ? project.tasks.map((task) => (
-                                          <Task
-                                              key={task.title}
-                                              task={task}
-                                              project={project}
-                                              employees={employees}
-                                              deleteTask={deleteTask}
-                                              setTaskStatus={setTaskStatus}
-                                          />
-                                      ))
-                                    : project.tasks
-                                          .filter((task) => task.status !== "Completed")
-                                          .map((task) => (
-                                              <Task
-                                                  key={task.title}
-                                                  task={task}
-                                                  project={project}
-                                                  employees={employees}
-                                                  deleteTask={deleteTask}
-                                                  setTaskStatus={setTaskStatus}
-                                              />
-                                          ))
-                            }
-                        </div>
+                        <TaskSection project={project} employees={employees} reRenderParent={reRenderParent} />
 
                         <Divider orientation="left">Comments</Divider>
-                        <CommentsSection project={project} addComment={addComment} deleteComment={deleteComment} />
+                        <CommentSection project={project} reRenderParent={reRenderParent} />
                     </div>
                 </Content>
             )}
-
-            <AddTask
-                visible={modalVisible}
-                onFinishAdd={onFinishAdd}
-                onCancel={() => {
-                    setModalVisible(false);
-                }}
-                project={project}
-                team={employees}
-            />
         </Layout>
     );
 };
