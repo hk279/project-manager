@@ -7,6 +7,7 @@ import EditProfile from "../components/EditProfile";
 import { useAuth } from "../context/auth";
 import { URLroot, getAuthHeader } from "../config/config";
 import axios from "axios";
+import AvatarUpload from "../components/AvatarUpload";
 
 const { Sider, Content } = Layout;
 
@@ -126,6 +127,10 @@ const Profile = () => {
                                 <p className="grid-item">{authTokens.userType}</p>
                             </div>
                         </div>
+
+                        <Divider orientation="left">Upload avatar</Divider>
+                        <AvatarUpload userId={authTokens.id} />
+
                         <Divider />
                         <Button
                             type="primary"
