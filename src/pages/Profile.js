@@ -51,7 +51,9 @@ const Profile = () => {
                 setEditMode(false);
                 setTrigger(!trigger);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                notification.error({ message: err.response.data.messages });
+            });
     };
 
     const cancelEdit = () => {

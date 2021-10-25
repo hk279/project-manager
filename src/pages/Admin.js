@@ -90,6 +90,7 @@ const Admin = () => {
             ...values,
             organizationId: authTokens.organizationId,
             userOrganizationType: authTokens.userOrganizationType,
+            avatar: { fileKey: "", fileName: "" },
         };
 
         axios

@@ -16,6 +16,7 @@ const SignUpForm = () => {
         let userDetails = values;
         const accountType = values.accountType;
 
+        userDetails.avatar = { fileKey: "", fileName: "" };
         delete userDetails["repeatPassword"];
         delete userDetails["accountType"];
 

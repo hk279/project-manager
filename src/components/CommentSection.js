@@ -16,7 +16,8 @@ const CommentSection = ({ project, reRenderParent }) => {
     const addComment = (commentText) => {
         const comment = {
             id: v4(),
-            author: `${authTokens.firstName} ${authTokens.lastName}`,
+            authorId: authTokens.id,
+            authorName: `${authTokens.firstName} ${authTokens.lastName}`,
             text: commentText,
             timestamp: new Date().toISOString(),
         };
@@ -62,6 +63,7 @@ const CommentSection = ({ project, reRenderParent }) => {
                     style={{ width: "20em" }}
                     onChange={(e) => setCommentText(e.target.value)}
                     value={commentText}
+                    maxLength={600}
                 />
                 <Button
                     type="primary"
