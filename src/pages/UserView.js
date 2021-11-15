@@ -6,15 +6,16 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import Loading from "../components/Loading";
 import { useAuth } from "../context/auth";
-import EditEmployee from "../components/EditEmployee";
+import EditUser from "../components/EditUser";
 import { URLroot, getAuthHeader } from "../config/config";
 
 const { Sider, Content } = Layout;
 const { Item } = List;
 
-const EmployeeView = () => {
-    const [employee, setEmployee] = useState({});
-    const [employeeProjects, setEmployeeProjects] = useState([]);
+const UserView = () => {
+    const [user, setUser] = useState(null);
+    const [userProjects, setUserProjects] = useState([]);
+    const [organization, setOrganization] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [trigger, setTrigger] = useState(false);
 
@@ -23,18 +24,26 @@ const EmployeeView = () => {
     const { authTokens } = useAuth();
 
     useEffect(() => {
-        getEmployee(id);
-        getEmployeeProjects(id);
+        getUser(id);
+        getUserProjects(id);
+        getOrganization();
     }, [trigger]);
 
-    const getEmployee = (id) => {
+    const getUser = (id) => {
         axios
-            .get(`${URLroot}/employees/id/${id}`, getAuthHeader(authTokens.accessToken))
-            .then((res) => setEmployee(res.data))
+            .get(`${URLroot}/users/id/${id}`, getAuthHeader(authTokens.accessToken))
+            .then((res) => setUser(res.data))
             .catch((err) => console.log(err));
     };
 
-    const getEmployeeProjects = (id) => {
+    const getOrganization = () => {
+        axios
+            .get(`${URLroot}/organizations/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
+            .then((res) => setOrganization(res.data))
+            .catch((err) => console.log(err));
+    };
+
+    const getUserProjects = (id) => {
         axios
             .get(`${URLroot}/projects/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
@@ -44,14 +53,14 @@ const EmployeeView = () => {
                         projectMatches.push(project);
                     }
                 });
-                setEmployeeProjects(projectMatches);
+                setUserProjects(projectMatches);
             })
             .catch((err) => console.log(err));
     };
 
-    const editEmployee = (newData) => {
+    const editUser = (newData) => {
         axios
-            .put(`${URLroot}/employees/${employee.id}`, newData, getAuthHeader(authTokens.accessToken))
+            .put(`${URLroot}/users/${user.id}`, newData, getAuthHeader(authTokens.accessToken))
             .then(() => {
                 setEditMode(false);
                 setTrigger(!trigger);
@@ -59,10 +68,10 @@ const EmployeeView = () => {
             .catch((err) => console.log(err));
     };
 
-    const deleteEmployee = (id) => {
+    const deleteUser = (id) => {
         axios
-            .delete(`${URLroot}/employees/${id}`, getAuthHeader(authTokens.accessToken))
-            .then(() => history.push("/employees"))
+            .delete(`${URLroot}/users/${id}`, getAuthHeader(authTokens.accessToken))
+            .then(() => history.push("/users"))
             .catch((err) => console.log(err));
     };
 
@@ -70,7 +79,7 @@ const EmployeeView = () => {
         setEditMode(false);
     };
 
-    if (!employee) {
+    if (!user) {
         return <Loading />;
     }
 
@@ -82,14 +91,14 @@ const EmployeeView = () => {
             {editMode ? (
                 <Content>
                     <div className="view-content">
-                        <EditEmployee employee={employee} editEmployee={editEmployee} cancelEdit={cancelEdit} />
+                        <EditUser user={user} editUser={editUser} cancelEdit={cancelEdit} />
                     </div>
                 </Content>
             ) : (
                 <Content>
                     <div className="view-header">
                         <h2 className="view-title">
-                            {employee.firstName} {employee.lastName}
+                            {user.firstName} {user.lastName}
                         </h2>
                         <div className="view-action-buttons-container">
                             <Button
@@ -101,8 +110,8 @@ const EmployeeView = () => {
                                 Edit
                             </Button>
                             <Popconfirm
-                                title="Confirm delete employee"
-                                onConfirm={() => deleteEmployee(id)}
+                                title="Confirm delete user"
+                                onConfirm={() => deleteUser(id)}
                                 okText="Yes"
                                 cancelText="No"
                             >
@@ -111,24 +120,49 @@ const EmployeeView = () => {
                                 </Button>
                             </Popconfirm>
                         </div>
-                        <h3>{employee.department}</h3>
                     </div>
 
                     <div className="view-content">
+                        <Divider orientation="left">Personal information</Divider>
+                        <div className="two-column-grid-container">
+                            <div className="grid-row">
+                                <b className="grid-item">Email</b>
+                                <p className="grid-item">{user.email}</p>
+                            </div>
+                            <div className="grid-row">
+                                <b className="grid-item">Phone</b>
+                                <p className="grid-item">{user.phone}</p>
+                            </div>
+                        </div>
+                        <Divider orientation="left">User details</Divider>
+                        <div className="two-column-grid-container">
+                            <div className="grid-row">
+                                <b className="grid-item">Organization</b>
+                                <p className="grid-item">{organization?.name}</p>
+                            </div>
+                            <div className="grid-row">
+                                <b className="grid-item">Department</b>
+                                <p className="grid-item">{user.department}</p>
+                            </div>
+                            <div className="grid-row">
+                                <b className="grid-item">User type</b>
+                                <p className="grid-item">{user.userType}</p>
+                            </div>
+                        </div>
                         <Divider />
-                        <div className="employee-view-columns-container">
-                            <div className="employee-view-column">
+                        <div className="user-view-columns-container">
+                            <div className="user-view-column">
                                 <List
                                     header={<h3>Skills</h3>}
                                     size="small"
-                                    dataSource={employee.skills}
+                                    dataSource={user.skills}
                                     renderItem={(item) => <Item>{item}</Item>}
                                 />
                             </div>
-                            <div className="employee-view-column">
+                            <div className="user-view-column">
                                 <List
                                     header={<h3>Active Projects</h3>}
-                                    dataSource={employeeProjects}
+                                    dataSource={userProjects}
                                     renderItem={(item) => (
                                         <Item>
                                             <a href={`/project/${item.id}`}>{item.title}</a>
@@ -144,4 +178,4 @@ const EmployeeView = () => {
     );
 };
 
-export default EmployeeView;
+export default UserView;

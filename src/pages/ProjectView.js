@@ -19,7 +19,7 @@ const ProjectView = () => {
     const { Sider, Content } = Layout;
 
     const [project, setProject] = useState(null);
-    const [employees, setEmployees] = useState([]);
+    const [users, setUsers] = useState([]);
     const [editMode, setEditMode] = useState(false);
     const [trigger, setTrigger] = useState(false); // Helps trigger re-render when child component functions are called
 
@@ -31,10 +31,10 @@ const ProjectView = () => {
         getProject(id);
     }, [trigger, editMode]);
 
-    // Project data fetch triggers relevant employees data fetch
+    // Project data fetch triggers relevant users data fetch
     useEffect(() => {
         if (project) {
-            getEmployees();
+            getUsers();
         }
     }, [project]);
 
@@ -50,18 +50,18 @@ const ProjectView = () => {
             .catch((err) => console.log(err));
     };
 
-    const getEmployees = () => {
-        // Saves all unique employee IDs here
-        const employeeIds = [];
+    const getUsers = () => {
+        // Saves all unique user IDs here
+        const userIds = [];
         project.team.forEach((member) => {
-            employeeIds.push(member);
+            userIds.push(member);
         });
 
         // Request data for a group of employees
         axios
-            .post(`${URLroot}/employees/employeeGroup`, { group: employeeIds }, getAuthHeader(authTokens.accessToken))
+            .post(`${URLroot}/users/group:search`, { group: userIds }, getAuthHeader(authTokens.accessToken))
             .then((res) => {
-                setEmployees(res.data);
+                setUsers(res.data);
             })
             .catch((err) => console.log(err));
     };
@@ -144,10 +144,10 @@ const ProjectView = () => {
                         <Divider orientation="left">Team</Divider>
                         <table>
                             <tbody>
-                                {employees.map((employee) => (
-                                    <tr key={employee.id}>
-                                        <td className="team-members-table-cell">{`${employee.firstName} ${employee.lastName}`}</td>
-                                        <td className="team-members-table-cell">{employee.department}</td>
+                                {users.map((user) => (
+                                    <tr key={user.id}>
+                                        <td className="team-members-table-cell">{`${user.firstName} ${user.lastName}`}</td>
+                                        <td className="team-members-table-cell">{user.department}</td>
                                     </tr>
                                 )) ?? []}
                             </tbody>
@@ -157,7 +157,7 @@ const ProjectView = () => {
                         <FileUpload projectId={id} files={project.files ?? []} />
 
                         <Divider orientation="left">Tasks</Divider>
-                        <TaskSection project={project} employees={employees} reRenderParent={reRenderParent} />
+                        <TaskSection project={project} users={users} reRenderParent={reRenderParent} />
 
                         <Divider orientation="left">Comments</Divider>
                         <CommentSection project={project} reRenderParent={reRenderParent} />

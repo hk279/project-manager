@@ -9,9 +9,9 @@ import { useHistory } from "react-router";
 
 const { Sider, Content } = Layout;
 
-const Employees = () => {
-    const [employees, setEmployees] = useState([]);
-    const [filteredEmployees, setFilteredEmployees] = useState([]);
+const Users = () => {
+    const [users, setUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
 
     const history = useHistory();
     const { authTokens } = useAuth();
@@ -28,13 +28,13 @@ const Employees = () => {
             key: "lastName",
         },
         {
-            title: "Department",
-            dataIndex: "department",
-            key: "department",
+            title: "User type",
+            dataIndex: "userType",
+            key: "userType",
             sorter: (a, b) => {
-                if (a.department > b.department) {
+                if (a.userType > b.userType) {
                     return 1;
-                } else if (a.department < b.department) {
+                } else if (a.userType < b.userType) {
                     return -1;
                 } else {
                     return 0;
@@ -48,7 +48,7 @@ const Employees = () => {
                 <Button
                     type="link"
                     onClick={() => {
-                        history.push(`/employee/${record.id}`);
+                        history.push(`/user/${record.id}`);
                     }}
                 >
                     View
@@ -58,37 +58,37 @@ const Employees = () => {
     ];
 
     useEffect(() => {
-        getEmployees();
+        getUsers();
     }, []);
 
     useEffect(() => {
-        setFilteredEmployees(employees);
-    }, [employees]);
+        setFilteredUsers(users);
+    }, [users]);
 
-    const getEmployees = () => {
+    const getUsers = () => {
         axios
-            .get(`${URLroot}/employees/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
+            .get(`${URLroot}/users/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
-                setEmployees(res.data);
+                setUsers(res.data);
             })
             .catch((err) => console.log(err));
     };
 
     /* Filter the data array by matching names with the search field value */
-    const filterEmployees = (e) => {
+    const filterUsers = (e) => {
         const searchWord = e.target.value;
-        const filteredEmployees = employees.filter((employee) => {
-            const firstName = employee.firstName.toLowerCase();
-            const lastName = employee.lastName.toLowerCase();
+        const filteredUsers = users.filter((user) => {
+            const firstName = user.firstName.toLowerCase();
+            const lastName = user.lastName.toLowerCase();
 
             return firstName.includes(searchWord.toLowerCase()) || lastName.includes(searchWord.toLowerCase())
                 ? true
                 : false;
         });
-        setFilteredEmployees(filteredEmployees);
+        setFilteredUsers(filteredUsers);
     };
 
-    if (!employees) {
+    if (!users) {
         return <Loading />;
     }
 
@@ -99,12 +99,12 @@ const Employees = () => {
             </Sider>
             <Content>
                 <div className="view-content">
-                    <Input className="search" placeholder="Search" onChange={(e) => filterEmployees(e)} />
-                    <Table rowKey="id" columns={columns} dataSource={filteredEmployees} />
+                    <Input className="search" placeholder="Search" onChange={(e) => filterUsers(e)} />
+                    <Table rowKey="id" columns={columns} dataSource={filteredUsers} />
                 </div>
             </Content>
         </Layout>
     );
 };
 
-export default Employees;
+export default Users;

@@ -7,16 +7,15 @@ import { PlusOutlined } from "@ant-design/icons";
 import Task from "./Task";
 import AddTask from "./AddTask";
 
-const TaskSection = ({ project, employees, reRenderParent }) => {
+const TaskSection = ({ project, users, reRenderParent }) => {
     const { authTokens } = useAuth();
 
     const [modalVisible, setModalVisible] = useState(false);
     const [showCompleted, setShowCompleted] = useState(false);
 
-    // Add task
-    const onFinishAddTask = (values) => {
-        const etc = values.estimatedCompletion.format("D.M.Y");
-        const newTask = { ...values, estimatedCompletion: etc };
+    const addTask = (values) => {
+        const estimatedCompletion = values.estimatedCompletion.toISOString();
+        const newTask = { ...values, estimatedCompletion };
 
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
@@ -92,7 +91,7 @@ const TaskSection = ({ project, employees, reRenderParent }) => {
                                   key={task.title}
                                   task={task}
                                   project={project}
-                                  employees={employees}
+                                  assignedTo={task.assignedTo}
                                   deleteTask={deleteTask}
                                   setTaskStatus={setTaskStatus}
                               />
@@ -104,7 +103,7 @@ const TaskSection = ({ project, employees, reRenderParent }) => {
                                       key={task.title}
                                       task={task}
                                       project={project}
-                                      employees={employees}
+                                      assignedTo={task.assignedTo}
                                       deleteTask={deleteTask}
                                       setTaskStatus={setTaskStatus}
                                   />
@@ -114,12 +113,12 @@ const TaskSection = ({ project, employees, reRenderParent }) => {
 
             <AddTask
                 visible={modalVisible}
-                onFinishAdd={onFinishAddTask}
+                addTask={addTask}
                 onCancel={() => {
                     setModalVisible(false);
                 }}
                 project={project}
-                team={employees}
+                team={users}
             />
         </>
     );

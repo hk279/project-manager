@@ -12,7 +12,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const NewProject = () => {
-    const [employees, setEmployees] = useState([]);
+    const [users, setUsers] = useState([]);
     const [existingTags, setExistingTags] = useState([]);
 
     const [targetKeys, setTargetKeys] = useState([]);
@@ -23,14 +23,14 @@ const NewProject = () => {
     const [form] = useForm();
 
     useEffect(() => {
-        getEmployees();
+        getUsers();
         getExistingTags();
     }, []);
 
-    const getEmployees = () => {
-        const url = `${URLroot}/employees/org/${authTokens.organizationId}`;
+    const getUsers = () => {
+        const url = `${URLroot}/users/org/${authTokens.organizationId}`;
         axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
-            setEmployees(res.data);
+            setUsers(res.data);
         });
     };
 
@@ -109,10 +109,10 @@ const NewProject = () => {
                         <Item label="Team" name="team">
                             <Transfer
                                 listStyle={{ width: "100%", minWidth: "15em" }}
-                                dataSource={employees.map((employee) => {
-                                    return { ...employee, key: employee.id };
+                                dataSource={users.map((user) => {
+                                    return { ...user, key: user.id };
                                 })}
-                                titles={["Employees", "Team"]}
+                                titles={["Users", "Team"]}
                                 targetKeys={targetKeys}
                                 selectedKeys={selectedKeys}
                                 showSearch

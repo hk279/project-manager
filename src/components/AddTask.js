@@ -3,7 +3,7 @@ import { Modal, Form, Input, DatePicker, Select } from "antd";
 const { Item } = Form;
 const { Option } = Select;
 
-const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
+const AddTask = ({ visible, addTask, onCancel, team }) => {
     const [form] = Form.useForm();
 
     return (
@@ -17,7 +17,7 @@ const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
                 form.validateFields()
                     .then((values) => {
                         form.resetFields();
-                        onFinishAdd(values);
+                        addTask(values);
                     })
                     .catch((info) => {
                         console.log("Validate Failed:", info);
@@ -39,12 +39,8 @@ const AddTask = ({ visible, onFinishAdd, onCancel, team }) => {
                 <Item name="estimatedCompletion" label="Estimated completion" rules={[{ required: true }]}>
                     <DatePicker />
                 </Item>
-                <Item
-                    name="taskTeam"
-                    label="Task team"
-                    rules={[{ required: true, message: "At least one person required" }]}
-                >
-                    <Select mode="multiple" placeholder="Select members">
+                <Item name="assignedTo" label="Assigned to" rules={[{ required: true }]}>
+                    <Select placeholder="Assign to a team member">
                         {team.map((member) => (
                             <Option
                                 key={member.id}

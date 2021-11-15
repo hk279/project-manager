@@ -22,7 +22,7 @@ const Navigation = () => {
                     <Link to="/">Dashboard</Link>
                 </Menu.Item>
                 <Menu.Item key="2" icon={<TeamOutlined />}>
-                    <Link to="/employees">Employees</Link>
+                    <Link to="/users">Users</Link>
                 </Menu.Item>
                 <Menu.Item key="3" icon={<HistoryOutlined />}>
                     <Link to="/project_history">Project history</Link>
@@ -32,9 +32,6 @@ const Navigation = () => {
             <Menu.ItemGroup key="g2">
                 <Menu.Item key="4" icon={<FileAddOutlined />}>
                     <Link to="/new_project">New project</Link>
-                </Menu.Item>
-                <Menu.Item key="5" icon={<UserAddOutlined />}>
-                    <Link to="/new_employee">New employee</Link>
                 </Menu.Item>
             </Menu.ItemGroup>
 
