@@ -10,7 +10,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const EditProject = ({ project, editProject, cancelEdit }) => {
-    const [employees, setEmployees] = useState([]);
+    const [users, setUsers] = useState([]);
     const [tags, setTags] = useState([]);
 
     const [targetKeys, setTargetKeys] = useState(project.team);
@@ -20,14 +20,14 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     const [form] = useForm();
 
     useEffect(() => {
-        getEmployees();
+        getUsers();
         getTags();
     }, []);
 
-    const getEmployees = () => {
-        let url = `${URLroot}/employees/org/${authTokens.organizationId}`;
+    const getUsers = () => {
+        let url = `${URLroot}/users/org/${authTokens.organizationId}`;
         axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
-            setEmployees(res.data);
+            setUsers(res.data);
         });
     };
 
@@ -96,17 +96,16 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
                 <Transfer
                     listStyle={{ width: "100%", minWidth: "15em" }}
                     dataSource={
-                        // Returns an empty array when employees is not yet defined
-                        employees.map((employee) => {
-                            return { ...employee, key: employee.id };
+                        users.map((user) => {
+                            return { ...user, key: user.id };
                         }) ?? []
                     }
-                    titles={["Employees", "Team"]}
+                    titles={["Users", "Team"]}
                     targetKeys={targetKeys}
                     selectedKeys={selectedKeys}
                     onChange={onChange}
                     onSelectChange={onSelectChange}
-                    render={(item) => `${item.firstName} ${item.lastName}`}
+                    render={(user) => `${user.firstName} ${user.lastName}`}
                 />
             </Item>
             <Divider />

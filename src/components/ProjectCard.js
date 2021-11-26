@@ -8,24 +8,24 @@ import { useAuth } from "../context/auth";
 const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }) => {
     const { authTokens } = useAuth();
 
-    const [employees, setEmployees] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        getEmployees();
+        getUsers();
     }, []);
 
-    const getEmployees = () => {
+    const getUsers = () => {
         // Saves all unique employee IDs here
-        let employeeIds = [];
+        let userIds = [];
         team.forEach((member) => {
-            employeeIds.push(member);
+            userIds.push(member);
         });
 
         // Request data for a group of employees. Is post request suitable here?
         axios
-            .post(`${URLroot}/employees/employeeGroup`, { group: employeeIds }, getAuthHeader(authTokens.accessToken))
+            .post(`${URLroot}/users/group:search`, { group: userIds }, getAuthHeader(authTokens.accessToken))
             .then((res) => {
-                setEmployees(res.data);
+                setUsers(res.data);
             });
     };
 
@@ -57,8 +57,8 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }
             </p>
             <p>Team members:</p>
             <ul>
-                {employees.map((employee) => (
-                    <li key={employee.id}>{`${employee.firstName} ${employee.lastName}`}</li>
+                {users.map((user) => (
+                    <li key={user.id}>{`${user.firstName} ${user.lastName}`}</li>
                 ))}
             </ul>
         </Card>

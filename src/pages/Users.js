@@ -1,21 +1,24 @@
-import { Button, Layout, Table, Input, Divider, notification, Popconfirm } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import Navigation from "../components/Navigation";
-import Loading from "../components/Loading";
-import AddUser from "../components/AddUser";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { URLroot, getAuthHeader } from "../config/config";
+import { Layout, Table, Button, Input, Space, Popconfirm, notification, Divider } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
+import Loading from "../components/Loading";
+import AddUser from "../components/AddUser";
+import { URLroot, getAuthHeader } from "../config/config";
+import { useHistory } from "react-router";
 
-const Admin = () => {
-    const { Sider, Content } = Layout;
-    const { authTokens } = useAuth();
+const { Sider, Content } = Layout;
 
+const Users = () => {
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
     const [trigger, setTrigger] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const history = useHistory();
+    const { authTokens } = useAuth();
 
     const columns = [
         {
@@ -29,27 +32,35 @@ const Admin = () => {
             key: "lastName",
         },
         {
-            title: "Email",
-            dataIndex: "email",
-            key: "email",
-        },
-        {
             title: "User type",
             dataIndex: "userType",
             key: "userType",
+            sorter: (a, b) => {
+                if (a.userType > b.userType) {
+                    return 1;
+                } else if (a.userType < b.userType) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            },
         },
         {
-            title: "Delete",
-            key: "delete",
+            title: "Actions",
+            key: "actions",
             render: (record) => (
-                <Popconfirm
-                    title="Confirm delete user"
-                    onConfirm={() => deleteUser(record.id)}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <Button danger icon={<DeleteOutlined />} />
-                </Popconfirm>
+                <Space>
+                    <a href={`/user/${record.id}`}>View</a>
+                    <Divider type="vertical" />
+                    <Popconfirm
+                        title="Confirm delete user"
+                        onConfirm={() => deleteUser(record.id)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button danger icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                </Space>
             ),
         },
     ];
@@ -61,6 +72,15 @@ const Admin = () => {
     useEffect(() => {
         setFilteredUsers(users);
     }, [users]);
+
+    const getUsers = () => {
+        axios
+            .get(`${URLroot}/users/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
+            .then((res) => {
+                setUsers(res.data);
+            })
+            .catch((err) => console.log(err));
+    };
 
     /* Filter the data array by matching names with the search field value */
     const filterUsers = (e) => {
@@ -74,15 +94,6 @@ const Admin = () => {
                 : false;
         });
         setFilteredUsers(filteredUsers);
-    };
-
-    const getUsers = () => {
-        axios
-            .get(`${URLroot}/users/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
-            .then((res) => setUsers(res.data))
-            .catch((err) => {
-                console.log(err);
-            });
     };
 
     const onFinishAddUser = async (values) => {
@@ -133,11 +144,7 @@ const Admin = () => {
                 <Navigation />
             </Sider>
             <Content>
-                <div className="view-header">
-                    <h1 className="view-title">Admin</h1>
-                </div>
                 <div className="view-content">
-                    <Divider />
                     <Input className="search" placeholder="Search" onChange={(e) => filterUsers(e)} />
                     <Table
                         rowKey="id"
@@ -161,17 +168,17 @@ const Admin = () => {
                             );
                         }}
                     />
-                    <AddUser
-                        visible={modalVisible}
-                        onFinishAddUser={onFinishAddUser}
-                        onCancelAddUser={() => {
-                            setModalVisible(false);
-                        }}
-                    />
                 </div>
+                <AddUser
+                    visible={modalVisible}
+                    onFinishAddUser={onFinishAddUser}
+                    onCancelAddUser={() => {
+                        setModalVisible(false);
+                    }}
+                />
             </Content>
         </Layout>
     );
 };
 
-export default Admin;
+export default Users;

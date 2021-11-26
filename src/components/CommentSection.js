@@ -1,6 +1,5 @@
 import { useState } from "react";
 import axios from "axios";
-import { v4 } from "uuid";
 import { SendOutlined } from "@ant-design/icons";
 import { Button, Input, Space, List, notification } from "antd";
 import Comment from "./Comment";
@@ -15,9 +14,7 @@ const CommentSection = ({ project, reRenderParent }) => {
     // Add a comment
     const addComment = (commentText) => {
         const comment = {
-            id: v4(),
             authorId: authTokens.id,
-            authorName: `${authTokens.firstName} ${authTokens.lastName}`,
             text: commentText,
             timestamp: new Date().toISOString(),
         };

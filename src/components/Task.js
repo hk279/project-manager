@@ -1,16 +1,27 @@
+import { useState, useEffect } from "react";
 import { Button, Collapse, Popconfirm } from "antd";
 import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone, DeleteOutlined } from "@ant-design/icons";
+import moment from "moment";
+import axios from "axios";
+import { getAuthHeader, URLroot } from "../config/config";
+import { useAuth } from "../context/auth";
 
 const { Panel } = Collapse;
 
-const Task = ({ task, employees, deleteTask, setTaskStatus }) => {
-    // Get the name of an employee with the param id
-    const getEmployeeName = (id) => {
-        for (let i = 0; i < employees.length; i++) {
-            if (employees[i].id === id) {
-                return `${employees[i].firstName} ${employees[i].lastName}`;
-            }
-        }
+const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
+    const { authTokens } = useAuth();
+
+    const [assignedToName, setAssignedToName] = useState("");
+
+    useEffect(() => {
+        getAssignedToName();
+    }, []);
+
+    const getAssignedToName = () => {
+        axios
+            .get(`${URLroot}/users/id/${assignedTo}`, getAuthHeader(authTokens.accessToken))
+            .then((res) => setAssignedToName(`${res.data.firstName} ${res.data.lastName}`))
+            .catch((err) => console.log(err));
     };
 
     const statusStyle = () => {
@@ -44,16 +55,16 @@ const Task = ({ task, employees, deleteTask, setTaskStatus }) => {
                     <tbody>
                         <tr>
                             <td className="task-details-cell">Estimated completion:</td>
-                            <td className="task-details-cell">{task.estimatedCompletion}</td>
+                            <td className="task-details-cell">
+                                {task.estimatedCompletion
+                                    ? moment(task.estimatedCompletion).format("D.M.Y")
+                                    : "No deadline"}
+                            </td>
                         </tr>
 
                         <tr>
                             <td className="task-details-cell">Assigned to:</td>
-                            <td className="task-details-cell">
-                                {task.taskTeam.map((member) => (
-                                    <div key={member}>{getEmployeeName(member)}</div>
-                                ))}
-                            </td>
+                            <td className="task-details-cell">{assignedToName}</td>
                         </tr>
                         <tr>
                             <td className="task-buttons-cell">

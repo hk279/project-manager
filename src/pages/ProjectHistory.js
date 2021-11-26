@@ -48,7 +48,7 @@ const ProjectHistory = () => {
             title: "Deadline",
             dataIndex: "deadline",
             key: "deadline",
-            render: (deadline) => moment(deadline).format("D.M.Y"),
+            render: (deadline) => (deadline ? moment(deadline).format("D.M.Y") : ""),
         },
         {
             title: "Action",

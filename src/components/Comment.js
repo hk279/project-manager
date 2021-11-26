@@ -73,7 +73,7 @@ const Comment = ({ comment, deleteComment }) => {
                 avatar={<Avatar src={avatarObjectUrl} icon={<UserOutlined />} size={64} />}
                 title={
                     <Space size="middle">
-                        <p>{comment.authorName}</p>
+                        <p>{author && `${author.firstName} ${author.lastName}`}</p>
                         <p>{moment(comment.timestamp).format("D.M.Y - h:mm a")}</p>
                     </Space>
                 }

@@ -7,16 +7,16 @@ import { PlusOutlined } from "@ant-design/icons";
 import Task from "./Task";
 import AddTask from "./AddTask";
 
-const TaskSection = ({ project, employees, reRenderParent }) => {
+const TaskSection = ({ project, users, reRenderParent }) => {
     const { authTokens } = useAuth();
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [showCompleted, setShowCompleted] = useState(false);
+    const [showCompletedTasks, setShowCompletedTasks] = useState(false);
+    const [showOnlyOwnTasks, setShowOnlyOwnTasks] = useState(false);
 
-    // Add task
-    const onFinishAddTask = (values) => {
-        const etc = values.estimatedCompletion.format("D.M.Y");
-        const newTask = { ...values, estimatedCompletion: etc };
+    const addTask = (values) => {
+        const estimatedCompletion = values.estimatedCompletion.toISOString();
+        const newTask = { ...values, estimatedCompletion };
 
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
@@ -57,13 +57,32 @@ const TaskSection = ({ project, employees, reRenderParent }) => {
     };
 
     // Show completed tasks toggle switch controller
-    const onSwitchChange = (checked) => {
+    const onShowCompletedTasksChange = (checked) => {
         if (checked) {
-            setShowCompleted(true);
+            setShowCompletedTasks(true);
         } else {
-            setShowCompleted(false);
+            setShowCompletedTasks(false);
         }
     };
+
+    // Show only own tasks toggle switch controller
+    const onShowOnlyOwnTasksChange = (checked) => {
+        if (checked) {
+            setShowOnlyOwnTasks(true);
+        } else {
+            setShowOnlyOwnTasks(false);
+        }
+    };
+
+    let filteredTasksList = project.tasks;
+
+    if (!showCompletedTasks) {
+        filteredTasksList = project.tasks.filter((task) => task.status !== "Completed");
+    }
+
+    if (showOnlyOwnTasks) {
+        filteredTasksList = filteredTasksList.filter((task) => task.assignedTo === authTokens.id);
+    }
 
     return (
         <>
@@ -80,46 +99,35 @@ const TaskSection = ({ project, employees, reRenderParent }) => {
 
                 <Space size="middle" style={{ marginLeft: "2em" }}>
                     Show completed
-                    <Switch defaultChecked={false} onChange={onSwitchChange} />
+                    <Switch defaultChecked={false} onChange={onShowCompletedTasksChange} />
+                </Space>
+
+                <Space size="middle" style={{ marginLeft: "2em" }}>
+                    Show only own
+                    <Switch defaultChecked={false} onChange={onShowOnlyOwnTasksChange} />
                 </Space>
             </Space>
             <div className="tasks-list">
-                {
-                    // Conditional rendering according to whether or not show completed tasks is toggled on
-                    showCompleted
-                        ? project.tasks.map((task) => (
-                              <Task
-                                  key={task.title}
-                                  task={task}
-                                  project={project}
-                                  employees={employees}
-                                  deleteTask={deleteTask}
-                                  setTaskStatus={setTaskStatus}
-                              />
-                          ))
-                        : project.tasks
-                              .filter((task) => task.status !== "Completed")
-                              .map((task) => (
-                                  <Task
-                                      key={task.title}
-                                      task={task}
-                                      project={project}
-                                      employees={employees}
-                                      deleteTask={deleteTask}
-                                      setTaskStatus={setTaskStatus}
-                                  />
-                              ))
-                }
+                {filteredTasksList.map((task) => (
+                    <Task
+                        key={task.title}
+                        task={task}
+                        project={project}
+                        assignedTo={task.assignedTo}
+                        deleteTask={deleteTask}
+                        setTaskStatus={setTaskStatus}
+                    />
+                ))}
             </div>
 
             <AddTask
                 visible={modalVisible}
-                onFinishAdd={onFinishAddTask}
+                addTask={addTask}
                 onCancel={() => {
                     setModalVisible(false);
                 }}
                 project={project}
-                team={employees}
+                team={users}
             />
         </>
     );
