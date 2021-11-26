@@ -3,12 +3,10 @@ import { Menu } from "antd";
 import {
     DashboardOutlined,
     FileAddOutlined,
-    UserAddOutlined,
     ProfileOutlined,
     TeamOutlined,
     HistoryOutlined,
     LogoutOutlined,
-    SettingOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../context/auth";
 
@@ -36,14 +34,9 @@ const Navigation = () => {
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g3">
-                <Menu.Item key="6" icon={<ProfileOutlined />}>
+                <Menu.Item key="5" icon={<ProfileOutlined />}>
                     <Link to="/profile">Profile</Link>
                 </Menu.Item>
-                {authTokens.userType === "admin" && (
-                    <Menu.Item key="7" icon={<SettingOutlined />}>
-                        <Link to="/admin">Admin</Link>
-                    </Menu.Item>
-                )}
             </Menu.ItemGroup>
 
             <Menu.ItemGroup key="g4">

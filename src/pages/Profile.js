@@ -100,35 +100,40 @@ const Profile = () => {
                     </div>
                     <div className="view-content">
                         <Divider orientation="left">Personal information</Divider>
-                        <div className="two-column-grid-container">
-                            <div className="grid-row">
-                                <b className="grid-item">First name:</b>
-                                <p className="grid-item">{authTokens.firstName}</p>
-                            </div>
-                            <div className="grid-row">
-                                <b className="grid-item">Last name:</b>
-                                <p className="grid-item">{authTokens.lastName}</p>
-                            </div>
-                            <div className="grid-row">
-                                <b className="grid-item">Email:</b>
-                                <p className="grid-item">{authTokens.email}</p>
-                            </div>
-                        </div>
+
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td className="info-table-cell header-cell">First name</td>
+                                    <td className="info-table-cell">{authTokens.firstName}</td>
+                                </tr>
+                                <tr>
+                                    <td className="info-table-cell header-cell">Last name</td>
+                                    <td className="info-table-cell">{authTokens.lastName}</td>
+                                </tr>
+                                <tr>
+                                    <td className="info-table-cell header-cell">Email</td>
+                                    <td className="info-table-cell">{authTokens.email}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
                         <Divider orientation="left">Account details</Divider>
-                        <div className="profile-grid-container">
-                            {organization ? (
-                                organization.type === "organization" ? (
-                                    <div className="grid-row">
-                                        <b className="grid-item">Organization:</b>
-                                        <p className="grid-item">{organization.name}</p>
-                                    </div>
-                                ) : null
-                            ) : null}
-                            <div className="grid-row">
-                                <b className="grid-item">User type:</b>
-                                <p className="grid-item">{authTokens.userType}</p>
-                            </div>
-                        </div>
+
+                        <table>
+                            <tbody>
+                                {organization?.type === "organization" && (
+                                    <tr>
+                                        <td className="info-table-cell header-cell">Organization</td>
+                                        <td className="info-table-cell">{organization?.name}</td>
+                                    </tr>
+                                )}
+                                <tr>
+                                    <td className="info-table-cell header-cell">User type</td>
+                                    <td className="info-table-cell">{authTokens.userType}</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
                         <Divider orientation="left">Upload avatar</Divider>
                         <AvatarUpload userId={authTokens.id} />

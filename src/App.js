@@ -8,14 +8,12 @@ import "./App.css";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
-import NewEmployee from "./pages/NewEmployee";
 import ProjectView from "./pages/ProjectView";
 import Users from "./pages/Users";
 import UserView from "./pages/UserView";
 import Profile from "./pages/Profile";
 import ProjectHistory from "./pages/ProjectHistory";
 import SignUp from "./pages/SignUp";
-import Admin from "./pages/Admin";
 
 function App() {
     // Tries to get auth tokens stored in local storage
@@ -48,7 +46,6 @@ function App() {
                     <PrivateRoute path="/project/:id" children={<ProjectView />} />
                     <PrivateRoute path="/user/:id" children={<UserView />} />
                     <PrivateRoute path="/profile" component={Profile} />
-                    <AdminRoute path="/admin" component={Admin} />
                 </Switch>
             </Router>
         </AuthContext.Provider>

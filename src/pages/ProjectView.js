@@ -146,8 +146,8 @@ const ProjectView = () => {
                             <tbody>
                                 {users.map((user) => (
                                     <tr key={user.id}>
-                                        <td className="team-members-table-cell">{`${user.firstName} ${user.lastName}`}</td>
-                                        <td className="team-members-table-cell">{user.department}</td>
+                                        <td className="info-table-cell">{`${user.firstName} ${user.lastName}`}</td>
+                                        <td className="info-table-cell">{user.department}</td>
                                     </tr>
                                 )) ?? []}
                             </tbody>
