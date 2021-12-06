@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Form, Input, Button, Radio, Space, Divider, notification, Alert } from "antd";
+import { Form, Input, Button, Space, Divider, notification, Alert } from "antd";
 import { URLroot } from "../config/config";
 
 const SignUpForm = () => {
@@ -10,24 +10,20 @@ const SignUpForm = () => {
     const [form] = Form.useForm();
 
     const [error, setError] = useState(null);
-    const [isOrganizationAccount, setIsOrganizationAccount] = useState(false);
 
     const handleSubmit = (values) => {
         let userDetails = values;
-        const accountType = values.accountType;
 
         userDetails.avatar = { fileKey: "", fileName: "" };
         delete userDetails["repeatPassword"];
-        delete userDetails["accountType"];
 
         axios
-            .post(`${URLroot}/auth/signup/${accountType}`, userDetails)
+            .post(`${URLroot}/auth/signup/`, userDetails)
             .then(() => {
                 notification.success({
                     message: "Sign up successful",
                 });
                 form.resetFields();
-                setIsOrganizationAccount(false);
                 setError(null);
             })
             .catch((err) => {
@@ -36,10 +32,6 @@ const SignUpForm = () => {
                     message: "Sign up failed",
                 });
             });
-    };
-
-    const handleAccoutTypeChange = (e) => {
-        setIsOrganizationAccount(e.target.value === "organization" ? true : false);
     };
 
     return (
@@ -52,21 +44,6 @@ const SignUpForm = () => {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
         >
-            <Item label="Account type" name="accountType" initialValue="private">
-                <Radio.Group>
-                    <Radio.Button value="private" onChange={(e) => handleAccoutTypeChange(e)}>
-                        Private
-                    </Radio.Button>
-                    <Radio.Button value="organization" onChange={(e) => handleAccoutTypeChange(e)}>
-                        Organization
-                    </Radio.Button>
-                </Radio.Group>
-            </Item>
-            {isOrganizationAccount && (
-                <Item label="Organization" name="organization">
-                    <Input />
-                </Item>
-            )}
             <Item label="First name" name="firstName" rules={[{ required: true }]}>
                 <Input />
             </Item>

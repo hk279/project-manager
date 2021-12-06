@@ -75,7 +75,7 @@ const Users = () => {
 
     const getUsers = () => {
         axios
-            .get(`${URLroot}/users/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
+            .get(`${URLroot}/users/workspace/${authTokens.activeWorkspace}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 setUsers(res.data);
             })

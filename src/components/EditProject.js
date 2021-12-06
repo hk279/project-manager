@@ -25,14 +25,14 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     }, []);
 
     const getUsers = () => {
-        let url = `${URLroot}/users/org/${authTokens.organizationId}`;
+        let url = `${URLroot}/users/workspace/${authTokens.activeWorkspace}`;
         axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
             setUsers(res.data);
         });
     };
 
     const getTags = () => {
-        const url = `${URLroot}/projects/tags/${authTokens.organizationId}`;
+        const url = `${URLroot}/projects/tags/${authTokens.activeWorkspace}`;
         axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
             setTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
@@ -45,7 +45,6 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
             deadline,
             tasks: project.tasks,
             comments: project.comments,
-            organizationId: authTokens.organizationId,
             tags: values.tags.sort(),
         };
 
