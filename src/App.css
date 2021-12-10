@@ -189,6 +189,16 @@
     width: 30%;
 }
 
+/* Workspace settings */
+.workspace-settings-switch {
+    margin-bottom: 1em;
+}
+.workspace-settings-default-text {
+    float: right;
+    font-style: italic;
+    font-size: small;
+}
+
 /* Hides step controls from number input */
 .ant-input-number-handler-wrap {
     visibility: hidden;

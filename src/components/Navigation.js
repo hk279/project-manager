@@ -9,6 +9,8 @@ import {
     TeamOutlined,
     HistoryOutlined,
     LogoutOutlined,
+    ContainerOutlined,
+    SettingOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../context/auth";
 import axios from "axios";
@@ -37,12 +39,12 @@ const Navigation = () => {
 
     const changeWorkspace = (value) => {
         setAuthTokens({ ...authTokens, activeWorkspace: value });
-        history.push("/");
+        window.location.href = "/";
     };
 
     return (
         <Menu mode="inline" theme="dark" defaultSelectedKeys={[authTokens.activeWorkspace]}>
-            <SubMenu key="sub1" title="Workspaces">
+            <SubMenu key="sub1" title="Workspaces" icon={<ContainerOutlined />}>
                 <ItemGroup key="g1">
                     {workspaces.map((item) => (
                         <Item key={item.id} onClick={() => changeWorkspace(item.id)}>
@@ -54,36 +56,39 @@ const Navigation = () => {
                     <Item key="1" icon={<PlusOutlined />}>
                         <Link to="/new-workspace">New workspace</Link>
                     </Item>
+                    <Item key="2" icon={<SettingOutlined />}>
+                        <Link to="/workspace-settings">Settings</Link>
+                    </Item>
                 </ItemGroup>
             </SubMenu>
             <Divider />
             <ItemGroup key="g3">
-                <Item key="2" icon={<DashboardOutlined />}>
+                <Item key="3" icon={<DashboardOutlined />}>
                     <Link to="/">Dashboard</Link>
                 </Item>
-                <Item key="3" icon={<TeamOutlined />}>
+                <Item key="4" icon={<TeamOutlined />}>
                     <Link to="/users">Users</Link>
                 </Item>
-                <Item key="4" icon={<HistoryOutlined />}>
+                <Item key="5" icon={<HistoryOutlined />}>
                     <Link to="/project-history">Project history</Link>
                 </Item>
             </ItemGroup>
 
             <ItemGroup key="g4">
-                <Item key="5" icon={<FileAddOutlined />}>
+                <Item key="6" icon={<FileAddOutlined />}>
                     <Link to="/new-project">New project</Link>
                 </Item>
             </ItemGroup>
 
             <ItemGroup key="g5">
-                <Item key="6" icon={<UserOutlined />}>
+                <Item key="7" icon={<UserOutlined />}>
                     <Link to="/profile">Profile</Link>
                 </Item>
             </ItemGroup>
 
             <ItemGroup key="g6">
                 <Item
-                    key="7"
+                    key="8"
                     icon={<LogoutOutlined />}
                     onClick={() => {
                         setAuthTokens(null);
