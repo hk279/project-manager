@@ -14,6 +14,8 @@ import UserView from "./pages/UserView";
 import Profile from "./pages/Profile";
 import ProjectHistory from "./pages/ProjectHistory";
 import SignUp from "./pages/SignUp";
+import NewWorkspace from "./pages/NewWorkspace";
+import WorkspaceSettings from "./pages/WorkspaceSettings";
 
 function App() {
     // Tries to get auth tokens stored in local storage
@@ -40,12 +42,14 @@ function App() {
                     <PrivateRoute path="/" exact component={Dashboard} />
                     <Route path="/login" component={Login} />
                     <Route path="/sign-up" component={SignUp} />
-                    <PrivateRoute path="/new_project" component={NewProject} />
+                    <PrivateRoute path="/new-project" component={NewProject} />
                     <PrivateRoute path="/users" component={Users} />
-                    <PrivateRoute path="/project_history" component={ProjectHistory} />
+                    <PrivateRoute path="/project-history" component={ProjectHistory} />
                     <PrivateRoute path="/project/:id" children={<ProjectView />} />
                     <PrivateRoute path="/user/:id" children={<UserView />} />
                     <PrivateRoute path="/profile" component={Profile} />
+                    <PrivateRoute path="/new-workspace" component={NewWorkspace} />
+                    <PrivateRoute path="/workspace-settings" component={WorkspaceSettings} />
                 </Switch>
             </Router>
         </AuthContext.Provider>

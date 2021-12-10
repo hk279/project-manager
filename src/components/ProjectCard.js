@@ -5,7 +5,7 @@ import moment from "moment";
 import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 
-const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }) => {
+const ProjectCard = ({ title, type, client, description, deadline, team, tasks, tags }) => {
     const { authTokens } = useAuth();
 
     const [users, setUsers] = useState([]);
@@ -41,7 +41,11 @@ const ProjectCard = ({ title, client, description, deadline, team, tasks, tags }
     const titleWithClient = (
         <div className="project-card-header">
             <h3 className="ellipsis">{title}</h3>
-            <h4 className="ellipsis">{client}</h4>
+            {type === "internal" ? (
+                <h4 className="ellipsis">Internal</h4>
+            ) : type === "client" ? (
+                <h4 className="ellipsis">{client}</h4>
+            ) : null}
         </div>
     );
 

@@ -27,7 +27,7 @@ const Dashboard = () => {
 
     const getProjects = () => {
         axios
-            .get(`${URLroot}/projects/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
+            .get(`${URLroot}/projects/workspace/${authTokens.activeWorkspace}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
                 const activeProjects = res.data.filter((project) => {
@@ -73,9 +73,8 @@ const Dashboard = () => {
     const filterDashboard = (searchWord) => {
         const filteredProjects = projects.filter((project) => {
             const title = project.title.toLowerCase();
-            const client = project.client.toLowerCase();
 
-            return title.includes(searchWord.toLowerCase()) || client.includes(searchWord.toLowerCase()) ? true : false;
+            return title.includes(searchWord.toLowerCase()) ? true : false;
         });
         setFilteredProjects(filteredProjects);
     };
@@ -97,7 +96,7 @@ const Dashboard = () => {
                             <div className="empty-dashboard">
                                 <p>No projects found</p>
                                 <Button>
-                                    <Link to="/new_project">Create a new project</Link>
+                                    <Link to="/new-project">Create a new project</Link>
                                 </Button>
                             </div>
                         ) : (

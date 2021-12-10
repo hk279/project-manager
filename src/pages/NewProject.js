@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
-import { Layout, Form, Input, DatePicker, Transfer, Button, Divider, Select } from "antd";
+import { Layout, Form, Input, DatePicker, Transfer, Button, Divider, Select, Radio } from "antd";
 
 const { Sider, Content } = Layout;
 const { Item, useForm } = Form;
@@ -12,6 +12,9 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const NewProject = () => {
+    const [workspace, setWorkspace] = useState(null);
+    const [isClientProject, setIsClientProject] = useState(false);
+
     const [users, setUsers] = useState([]);
     const [existingTags, setExistingTags] = useState([]);
 
@@ -23,21 +26,29 @@ const NewProject = () => {
     const [form] = useForm();
 
     useEffect(() => {
+        console.log(authTokens.activeWorkspace);
         getUsers();
         getExistingTags();
+        getWorkspace();
     }, []);
 
-    const getUsers = () => {
-        const url = `${URLroot}/users/org/${authTokens.organizationId}`;
-        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
-            setUsers(res.data);
-        });
+    const getUsers = async () => {
+        const url = `${URLroot}/users/workspace/${authTokens.activeWorkspace}`;
+        const result = await axios.get(url, getAuthHeader(authTokens.accessToken));
+        setUsers(result.data);
     };
 
     const getExistingTags = () => {
-        const url = `${URLroot}/projects/tags/${authTokens.organizationId}`;
+        const url = `${URLroot}/projects/tags/${authTokens.activeWorkspace}`;
         axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
             setExistingTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
+        });
+    };
+
+    const getWorkspace = () => {
+        const url = `${URLroot}/workspaces/${authTokens.activeWorkspace}`;
+        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
+            setWorkspace(res.data);
         });
     };
 
@@ -50,6 +61,10 @@ const NewProject = () => {
         setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
     };
 
+    const handleTypeChange = (e) => {
+        setIsClientProject(e.target.value === "client" ? true : false);
+    };
+
     const handleSubmit = (values) => {
         const deadline = typeof values.deadline === "undefined" ? null : values.deadline;
         const tags = typeof values.tags === "undefined" ? [] : values.tags.sort();
@@ -58,11 +73,16 @@ const NewProject = () => {
         const body = {
             ...values,
             deadline,
-            organizationId: authTokens.organizationId,
+            workspaceId: authTokens.activeWorkspace,
             tasks: [],
             comments: [],
             tags,
         };
+
+        // Type is only selected manually in a business workspace. Without selection defaults to personal.
+        if (!values.type) {
+            body.type = "personal";
+        }
 
         axios
             .post(`${URLroot}/projects`, body, getAuthHeader(authTokens.accessToken))
@@ -94,9 +114,23 @@ const NewProject = () => {
                         <Item label="Title" name="title" rules={[{ required: true }]}>
                             <Input maxLength={80} />
                         </Item>
-                        <Item label="Client" name="client" rules={[{ required: true }]}>
-                            <Input maxLength={80} />
-                        </Item>
+                        {workspace?.type === "business" ? (
+                            <Item label="Type" name="type" initialValue="internal">
+                                <Radio.Group>
+                                    <Radio.Button value="internal" onChange={(e) => handleTypeChange(e)}>
+                                        Internal
+                                    </Radio.Button>
+                                    <Radio.Button value="client" onChange={(e) => handleTypeChange(e)}>
+                                        Client
+                                    </Radio.Button>
+                                </Radio.Group>
+                            </Item>
+                        ) : null}
+                        {isClientProject && (
+                            <Item label="Client" name="client" rules={[{ required: true }]}>
+                                <Input maxLength={80} />
+                            </Item>
+                        )}
                         <Item label="Description" name="description">
                             <TextArea maxLength={300} />
                         </Item>
