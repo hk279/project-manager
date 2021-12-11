@@ -87,17 +87,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
     return (
         <>
             <Space size="middle">
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => {
-                        setModalVisible(true);
-                    }}
-                >
-                    New Task
-                </Button>
-
-                <Space size="middle" style={{ marginLeft: "2em" }}>
+                <Space size="middle">
                     Show completed
                     <Switch defaultChecked={false} onChange={onShowCompletedTasksChange} />
                 </Space>
@@ -119,6 +109,16 @@ const TaskSection = ({ project, users, reRenderParent }) => {
                     />
                 ))}
             </div>
+
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                    setModalVisible(true);
+                }}
+            >
+                New Task
+            </Button>
 
             <AddTask
                 visible={modalVisible}

@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
-import { Layout, Form, Input, DatePicker, Transfer, Button, Divider, Select, Radio } from "antd";
+import { Layout, Form, Input, DatePicker, Transfer, Button, Divider, Select, Radio, PageHeader } from "antd";
 
 const { Sider, Content } = Layout;
 const { Item, useForm } = Form;
@@ -96,9 +96,7 @@ const NewProject = () => {
                 <Navigation />
             </Sider>
             <Content>
-                <div className="view-header">
-                    <h2 className="view-title">New project</h2>
-                </div>
+                <PageHeader title="New project" />
 
                 <div className="view-content">
                     <Divider />

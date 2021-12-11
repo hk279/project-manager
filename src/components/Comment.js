@@ -72,7 +72,7 @@ const Comment = ({ comment, deleteComment }) => {
             <List.Item.Meta
                 avatar={<Avatar src={avatarObjectUrl} icon={<UserOutlined />} size={64} />}
                 title={
-                    <Space size="middle">
+                    <Space size="large">
                         <p>{author && `${author.firstName} ${author.lastName}`}</p>
                         <p>{moment(comment.timestamp).format("D.M.Y - h:mm a")}</p>
                     </Space>

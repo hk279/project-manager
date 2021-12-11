@@ -29,10 +29,14 @@ const WorkspaceMembers = ({ workspace }) => {
             render: (record) => {
                 const role = getMemberRole(record.id);
                 return (
-                    <Select key={record.id} defaultValue={role} disabled={role === "owner" ? true : false}>
-                        <Option key={record.id + "option-view"}>view</Option>
-                        <Option key={record.id + "option-edit"}>edit</Option>
-                        <Option key={record.id + "option-owner"}>owner</Option>
+                    <Select
+                        key={record.id}
+                        defaultValue={role}
+                        disabled={isChangeRoleDisabled(role)}
+                        onSelect={(value) => changeRole(record.id, value)}
+                    >
+                        <Option key="view">view</Option>
+                        <Option key="edit">edit</Option>
                     </Select>
                 );
             },
@@ -40,18 +44,21 @@ const WorkspaceMembers = ({ workspace }) => {
         {
             title: "Remove",
             key: "remove",
-            render: (record) => <Button type="link" danger icon={<DeleteOutlined />}></Button>,
+            render: (record) => (
+                <Button
+                    type="link"
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => {}}
+                    disabled={isChangeRoleDisabled(getMemberRole(record.id))}
+                ></Button>
+            ),
         },
     ];
 
     const getMembers = async () => {
         const url = `${URLroot}/users/workspace/${workspace.id}`;
         const result = await axios.get(url, getAuthHeader(authTokens.accessToken));
-
-        // const membersWithRoles = result.data.map((member) => {
-        //     console.log(getMemberRole(member.id));
-        //     return { ...member, role: getMemberRole(member.id) };
-        // });
 
         setMembers(result.data);
     };
@@ -66,7 +73,26 @@ const WorkspaceMembers = ({ workspace }) => {
         }
     };
 
-    const changeRole = (e) => {};
+    const changeRole = async (userId, role) => {
+        const updatedMembers = workspace.members.map((member) => {
+            if (member.userId === userId) {
+                return { ...member, role };
+            }
+            return member;
+        });
+
+        const url = `${URLroot}/workspaces/${workspace.id}`;
+        await axios.put(url, { members: updatedMembers }, getAuthHeader(authTokens.accessToken));
+
+        getMembers();
+    };
+
+    const isChangeRoleDisabled = (role) => {
+        if (role === "owner" || authTokens.id !== workspace.owner) {
+            return true;
+        }
+        return false;
+    };
 
     return members.length < 1 ? <Loading /> : <Table rowKey="id" columns={columns} dataSource={members} />;
 };

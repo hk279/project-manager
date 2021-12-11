@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Layout, Table, Input } from "antd";
+import { Layout, Table, Input, Divider, PageHeader } from "antd";
 import axios from "axios";
 import Navigation from "../components/Navigation";
 import { useAuth } from "../context/auth";
@@ -81,7 +81,9 @@ const ProjectHistory = () => {
                 <Navigation />
             </Sider>
             <Content>
+                <PageHeader title="Project history" />
                 <div className="view-content">
+                    <Divider />
                     <Input className="search" placeholder="Search" onChange={(e) => handleChange(e)} />
                     <Table
                         className="project-history-table"

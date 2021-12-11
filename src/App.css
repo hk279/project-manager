@@ -7,6 +7,10 @@
     text-align: center;
 }
 
+.ant-page-header {
+    width: 60%;
+}
+
 .layout {
     min-height: 100vh;
 }
@@ -202,4 +206,13 @@
 /* Hides step controls from number input */
 .ant-input-number-handler-wrap {
     visibility: hidden;
+}
+
+@media only screen and (max-width: 900px) {
+    .view-content {
+        width: 100%;
+    }
+    .ant-page-header {
+        width: 100%;
+    }
 }

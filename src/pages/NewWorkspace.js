@@ -1,4 +1,4 @@
-import { Layout, Form, Input, Divider, Radio, Button, notification } from "antd";
+import { Layout, Form, Input, Divider, Radio, Button, notification, PageHeader } from "antd";
 import Navigation from "../components/Navigation";
 import axios from "axios";
 import { getAuthHeader, URLroot } from "../config/config";
@@ -32,11 +32,8 @@ const NewWorkspace = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
+            <PageHeader title="New workspace" />
             <Content>
-                <div className="view-header">
-                    <h2 className="view-title">New workspace</h2>
-                </div>
-
                 <div className="view-content">
                     <Divider />
                     <Form

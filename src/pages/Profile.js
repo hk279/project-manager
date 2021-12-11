@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Layout, Button, Divider, notification } from "antd";
+import { useState } from "react";
+import { Layout, Button, Divider, notification, List, PageHeader } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ChangePassword from "../components/ChangePassword";
 import Navigation from "../components/Navigation";
@@ -13,7 +13,6 @@ const { Sider, Content } = Layout;
 
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [organization, setOrganization] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [trigger, setTrigger] = useState(false);
 
@@ -60,103 +59,70 @@ const Profile = () => {
         setEditMode(false);
     };
 
-    // Get organization data
-    useEffect(() => {
-        getOrganization();
-    }, []);
-
-    const getOrganization = () => {
-        axios
-            .get(`${URLroot}/organizations/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
-            .then((res) => setOrganization(res.data))
-            .catch((err) => console.log(err));
-    };
-
     return (
         <Layout className="layout">
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            {editMode ? (
-                <Content>
-                    <div className="view-content">
+
+            <Content>
+                {!editMode && (
+                    <PageHeader
+                        title="Profile"
+                        extra={[
+                            <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
+                        ]}
+                    />
+                )}
+
+                <div className="view-content">
+                    {editMode ? (
                         <EditProfile editProfile={editProfile} cancelEdit={cancelEdit} />
-                    </div>
-                </Content>
-            ) : (
-                <Content>
-                    <div className="view-header">
-                        <h2 className="view-title">Profile</h2>
-                        <div className="view-action-buttons-container">
-                            <Button
-                                className="view-action-button"
-                                type="primary"
-                                icon={<EditOutlined />}
-                                onClick={() => setEditMode(true)}
-                            >
-                                Edit
-                            </Button>
-                        </div>
-                    </div>
-                    <div className="view-content">
-                        <Divider orientation="left">Personal information</Divider>
+                    ) : (
+                        <>
+                            <Divider orientation="left">Personal information</Divider>
 
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td className="info-table-cell header-cell">First name</td>
-                                    <td className="info-table-cell">{authTokens.firstName}</td>
-                                </tr>
-                                <tr>
-                                    <td className="info-table-cell header-cell">Last name</td>
-                                    <td className="info-table-cell">{authTokens.lastName}</td>
-                                </tr>
-                                <tr>
-                                    <td className="info-table-cell header-cell">Email</td>
-                                    <td className="info-table-cell">{authTokens.email}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <Divider orientation="left">Account details</Divider>
-
-                        <table>
-                            <tbody>
-                                {organization?.type === "organization" && (
+                            <table>
+                                <tbody>
                                     <tr>
-                                        <td className="info-table-cell header-cell">Organization</td>
-                                        <td className="info-table-cell">{organization?.name}</td>
+                                        <td className="info-table-cell header-cell">First name</td>
+                                        <td className="info-table-cell">{authTokens.firstName}</td>
                                     </tr>
-                                )}
-                                <tr>
-                                    <td className="info-table-cell header-cell">User type</td>
-                                    <td className="info-table-cell">{authTokens.userType}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    <tr>
+                                        <td className="info-table-cell header-cell">Last name</td>
+                                        <td className="info-table-cell">{authTokens.lastName}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="info-table-cell header-cell">Email</td>
+                                        <td className="info-table-cell">{authTokens.email}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                        <Divider orientation="left">Upload avatar</Divider>
-                        <AvatarUpload userId={authTokens.id} />
+                            <Divider orientation="left">Skills</Divider>
 
-                        <Divider />
-                        <Button
-                            type="primary"
-                            onClick={() => {
-                                setModalVisible(true);
-                            }}
-                        >
-                            Change password
-                        </Button>
-                        <ChangePassword
-                            visible={modalVisible}
-                            onFinishChangePassword={onFinishChangePassword}
-                            onCancel={() => {
-                                setModalVisible(false);
-                            }}
-                        />
-                    </div>
-                </Content>
-            )}
+                            <List
+                                dataSource={authTokens.skills}
+                                size="small"
+                                renderItem={(item) => <List.Item>{item}</List.Item>}
+                            />
+
+                            <Divider orientation="left">Upload avatar</Divider>
+                            <AvatarUpload userId={authTokens.id} />
+
+                            <Divider />
+                            <Button type="primary" onClick={() => setModalVisible(true)}>
+                                Change password
+                            </Button>
+                            <ChangePassword
+                                visible={modalVisible}
+                                onFinishChangePassword={onFinishChangePassword}
+                                onCancel={() => setModalVisible(false)}
+                            />
+                        </>
+                    )}
+                </div>
+            </Content>
         </Layout>
     );
 };

@@ -1,7 +1,8 @@
 import { Form, Input, Button, Divider, Space } from "antd";
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { useAuth } from "../context/auth";
 
-const { Item, useForm } = Form;
+const { Item, useForm, List, ErrorList } = Form;
 
 const EditProfile = ({ editProfile, cancelEdit }) => {
     const { authTokens } = useAuth();
@@ -21,6 +22,7 @@ const EditProfile = ({ editProfile, cancelEdit }) => {
                 firstName: authTokens.firstName,
                 lastName: authTokens.lastName,
                 email: authTokens.email,
+                skills: authTokens.skills,
             }}
             validateMessages={{
                 required: "${label} is required!",
@@ -39,6 +41,48 @@ const EditProfile = ({ editProfile, cancelEdit }) => {
             >
                 <Input maxLength={60} />
             </Item>
+            <Divider orientation="left">Skills</Divider>
+            <List name="skills">
+                {(fields, { add, remove }, { errors }) => (
+                    <>
+                        {fields.map((field) => (
+                            <Item required={false} key={field.key}>
+                                <Item
+                                    {...field}
+                                    validateTrigger={["onChange", "onBlur"]}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            whitespace: true,
+                                            message: "Please input a skill or delete this field.",
+                                        },
+                                    ]}
+                                    noStyle
+                                >
+                                    <Input style={{ width: "60%" }} maxLength={60} />
+                                </Item>
+                                {fields.length > 0 ? (
+                                    <MinusCircleOutlined
+                                        className="dynamic-delete-button"
+                                        onClick={() => remove(field.name)}
+                                    />
+                                ) : null}
+                            </Item>
+                        ))}
+                        <Item>
+                            <Button
+                                type="dashed"
+                                onClick={() => add()}
+                                style={{ width: "60%" }}
+                                icon={<PlusOutlined />}
+                            >
+                                Add Skill
+                            </Button>
+                            <ErrorList errors={errors} />
+                        </Item>
+                    </>
+                )}
+            </List>
             <Divider />
             <Item>
                 <Space size="middle">

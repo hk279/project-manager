@@ -10,7 +10,7 @@ const WorkspaceSettings = () => {
     const { Sider, Content } = Layout;
     const { Panel } = Collapse;
 
-    const { authTokens } = useAuth();
+    const { authTokens, setAuthTokens } = useAuth();
 
     const [workspaces, setWorkspaces] = useState([]);
 
@@ -24,6 +24,16 @@ const WorkspaceSettings = () => {
             getAuthHeader(authTokens.accessToken)
         );
         setWorkspaces(result.data);
+    };
+
+    const setDefaultWorkspace = (workspaceId) => {
+        axios.put(
+            `${URLroot}/users/${authTokens.id}`,
+            { defaultWorkspace: workspaceId },
+            getAuthHeader(authTokens.accessToken)
+        );
+
+        setAuthTokens({ ...authTokens, defaultWorkspace: workspaceId });
     };
 
     return (
@@ -48,12 +58,13 @@ const WorkspaceSettings = () => {
                                     )
                                 }
                             >
-                                <Space className="workspace-settings-switch">
-                                    Default workspace
-                                    <Switch />
-                                </Space>
                                 <WorkspaceMembers workspace={workspace} />
-                                <Button disabled={authTokens.defaultWorkspace === workspace.id}>Set as default</Button>
+                                <Button
+                                    disabled={authTokens.defaultWorkspace === workspace.id}
+                                    onClick={() => setDefaultWorkspace(workspace.id)}
+                                >
+                                    Set as default
+                                </Button>
                             </Panel>
                         ))}
                     </Collapse>

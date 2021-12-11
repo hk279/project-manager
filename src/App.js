@@ -9,7 +9,6 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
 import ProjectView from "./pages/ProjectView";
-import Users from "./pages/Users";
 import UserView from "./pages/UserView";
 import Profile from "./pages/Profile";
 import ProjectHistory from "./pages/ProjectHistory";
@@ -43,7 +42,6 @@ function App() {
                     <Route path="/login" component={Login} />
                     <Route path="/sign-up" component={SignUp} />
                     <PrivateRoute path="/new-project" component={NewProject} />
-                    <PrivateRoute path="/users" component={Users} />
                     <PrivateRoute path="/project-history" component={ProjectHistory} />
                     <PrivateRoute path="/project/:id" children={<ProjectView />} />
                     <PrivateRoute path="/user/:id" children={<UserView />} />

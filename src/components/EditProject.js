@@ -79,9 +79,11 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
             <Item label="Title" name="title" rules={[{ required: true }]}>
                 <Input maxLength={80} />
             </Item>
-            <Item label="Client" name="client" rules={[{ required: true }]}>
-                <Input maxLength={80} />
-            </Item>
+            {project.type === "client" && (
+                <Item label="Client" name="client" rules={[{ required: true }]}>
+                    <Input maxLength={80} />
+                </Item>
+            )}
             <Item label="Description" name="description">
                 <TextArea maxLength={300} />
             </Item>

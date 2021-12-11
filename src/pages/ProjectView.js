@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Divider, Layout, notification, Popconfirm, Space, Tag } from "antd";
+import { PageHeader, Button, Divider, Layout, List, notification, Popconfirm, Space, Tag } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import CommentSection from "../components/CommentSection";
@@ -108,50 +108,38 @@ const ProjectView = () => {
                 </Content>
             ) : (
                 <Content>
-                    <div className="view-header">
-                        <h2 className="view-title">{project.title}</h2>
-                        <div className="view-action-buttons-container">
-                            <Button
-                                className="view-action-button"
-                                type="primary"
-                                icon={<EditOutlined />}
-                                onClick={() => setEditMode(true)}
-                            >
-                                Edit
-                            </Button>
+                    <PageHeader
+                        title={project.title}
+                        subTitle={project.client}
+                        extra={[
+                            <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
                             <Popconfirm
+                                key="2"
                                 title="Confirm delete project"
                                 onConfirm={() => deleteProject(project.id)}
                                 okText="Yes"
                                 cancelText="No"
                             >
-                                <Button className="view-action-button" type="primary" danger icon={<DeleteOutlined />}>
-                                    Delete
-                                </Button>
-                            </Popconfirm>
-                        </div>
-                        <h3>{project.client}</h3>
-                    </div>
+                                <Button type="primary" danger icon={<DeleteOutlined />} />
+                            </Popconfirm>,
+                        ]}
+                    />
                     <div className="view-content">
+                        <h3>{project.client}</h3>
                         <Divider />
                         <p>{project.description}</p>
                         <p>{project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : null}</p>
-                        <Space size="middle">
+                        <Space>
                             Deadline:{" "}
                             <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
                         </Space>
 
                         <Divider orientation="left">Team</Divider>
-                        <table>
-                            <tbody>
-                                {users.map((user) => (
-                                    <tr key={user.id}>
-                                        <td className="info-table-cell">{`${user.firstName} ${user.lastName}`}</td>
-                                        <td className="info-table-cell">{user.department}</td>
-                                    </tr>
-                                )) ?? []}
-                            </tbody>
-                        </table>
+                        <List
+                            size="small"
+                            dataSource={users}
+                            renderItem={(user) => <List.Item>{`${user.firstName} ${user.lastName}`}</List.Item>}
+                        />
 
                         <Divider orientation="left">Files</Divider>
                         <FileUpload projectId={id} files={project.files ?? []} />

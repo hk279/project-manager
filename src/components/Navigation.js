@@ -62,12 +62,14 @@ const Navigation = () => {
                 </ItemGroup>
             </SubMenu>
             <Divider />
+            <ItemGroup>
+                <Item icon={<UserOutlined />}>
+                    <Link to="/profile">{`${authTokens.firstName} ${authTokens.lastName}`}</Link>
+                </Item>
+            </ItemGroup>
             <ItemGroup key="g3">
                 <Item key="3" icon={<DashboardOutlined />}>
                     <Link to="/">Dashboard</Link>
-                </Item>
-                <Item key="4" icon={<TeamOutlined />}>
-                    <Link to="/users">Users</Link>
                 </Item>
                 <Item key="5" icon={<HistoryOutlined />}>
                     <Link to="/project-history">Project history</Link>
@@ -80,13 +82,7 @@ const Navigation = () => {
                 </Item>
             </ItemGroup>
 
-            <ItemGroup key="g5">
-                <Item key="7" icon={<UserOutlined />}>
-                    <Link to="/profile">Profile</Link>
-                </Item>
-            </ItemGroup>
-
-            <ItemGroup key="g6">
+            <ItemGroup key="g6" className="navigation-profile">
                 <Item
                     key="8"
                     icon={<LogoutOutlined />}
