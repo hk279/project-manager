@@ -6,7 +6,6 @@ import {
     DashboardOutlined,
     FileAddOutlined,
     UserOutlined,
-    TeamOutlined,
     HistoryOutlined,
     LogoutOutlined,
     ContainerOutlined,
@@ -15,13 +14,11 @@ import {
 import { useAuth } from "../context/auth";
 import axios from "axios";
 import { getAuthHeader, URLroot } from "../config/config";
-import { useHistory } from "react-router-dom";
 
 const Navigation = () => {
     const { SubMenu, ItemGroup, Item, Divider } = Menu;
 
     const { authTokens, setAuthTokens } = useAuth();
-    const history = useHistory();
 
     const [workspaces, setWorkspaces] = useState([]);
 
@@ -43,7 +40,7 @@ const Navigation = () => {
     };
 
     return (
-        <Menu mode="inline" theme="dark" defaultSelectedKeys={[authTokens.activeWorkspace]}>
+        <Menu mode="inline" theme="dark" selectedKeys={[authTokens.activeWorkspace, window.location.pathname]}>
             <SubMenu key="sub1" title="Workspaces" icon={<ContainerOutlined />}>
                 <ItemGroup key="g1">
                     {workspaces.map((item) => (
@@ -53,36 +50,33 @@ const Navigation = () => {
                     ))}
                 </ItemGroup>
                 <ItemGroup key="g2">
-                    <Item key="1" icon={<PlusOutlined />}>
+                    <Item key="/new-workspace" icon={<PlusOutlined />}>
                         <Link to="/new-workspace">New workspace</Link>
                     </Item>
-                    <Item key="2" icon={<SettingOutlined />}>
+                    <Item key="/workspace-settings" icon={<SettingOutlined />}>
                         <Link to="/workspace-settings">Settings</Link>
                     </Item>
                 </ItemGroup>
             </SubMenu>
             <Divider />
-            <ItemGroup>
-                <Item icon={<UserOutlined />}>
+            <ItemGroup key="g3">
+                <Item icon={<UserOutlined />} key="/profile">
                     <Link to="/profile">{`${authTokens.firstName} ${authTokens.lastName}`}</Link>
                 </Item>
             </ItemGroup>
-            <ItemGroup key="g3">
-                <Item key="3" icon={<DashboardOutlined />}>
+            <ItemGroup key="g4">
+                <Item key="/" icon={<DashboardOutlined />}>
                     <Link to="/">Dashboard</Link>
                 </Item>
-                <Item key="5" icon={<HistoryOutlined />}>
+                <Item key="/project-history" icon={<HistoryOutlined />}>
                     <Link to="/project-history">Project history</Link>
                 </Item>
-            </ItemGroup>
-
-            <ItemGroup key="g4">
-                <Item key="6" icon={<FileAddOutlined />}>
+                <Item key="/new-project" icon={<FileAddOutlined />} disabled={workspaces.length < 1 ? true : false}>
                     <Link to="/new-project">New project</Link>
                 </Item>
             </ItemGroup>
 
-            <ItemGroup key="g6" className="navigation-profile">
+            <ItemGroup key="g5">
                 <Item
                     key="8"
                     icon={<LogoutOutlined />}

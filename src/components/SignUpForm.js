@@ -17,6 +17,8 @@ const SignUpForm = () => {
         userDetails.avatar = { fileKey: "", fileName: "" };
         delete userDetails["repeatPassword"];
 
+        console.log(userDetails);
+
         axios
             .post(`${URLroot}/auth/signup/`, userDetails)
             .then(() => {

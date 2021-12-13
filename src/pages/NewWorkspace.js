@@ -32,8 +32,9 @@ const NewWorkspace = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <PageHeader title="New workspace" />
+
             <Content>
+                <PageHeader title="New workspace" />
                 <div className="view-content">
                     <Divider />
                     <Form

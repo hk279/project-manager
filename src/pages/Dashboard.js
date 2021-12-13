@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
 import { Layout, Button, Input } from "antd";
 import ProjectCard from "../components/ProjectCard";
@@ -9,21 +9,33 @@ import Loading from "../components/Loading";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
 import { URLroot, getAuthHeader } from "../config/config";
+import { PlusOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
 const Dashboard = () => {
     const { authTokens } = useAuth();
+    const history = useHistory();
 
     const [projects, setProjects] = useState([]);
     const [filteredProjects, setFilteredProjects] = useState([]);
+    const [workspaces, setWorkspaces] = useState([]);
 
     useEffect(() => {
+        getWorkspaces();
         getProjects();
     }, []);
 
     useEffect(() => {
         setFilteredProjects(projects);
     }, [projects]);
+
+    const getWorkspaces = async () => {
+        const result = await axios.get(
+            `${URLroot}/workspaces/user/${authTokens.id}`,
+            getAuthHeader(authTokens.accessToken)
+        );
+        setWorkspaces(result.data);
+    };
 
     const getProjects = () => {
         axios
@@ -90,31 +102,50 @@ const Dashboard = () => {
             </Sider>
             <Content>
                 <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
-                {projects.length > 0 && (
+
+                {workspaces.length < 1 && (
+                    <div className="empty-dashboard">
+                        <p>Start by creating a workspace</p>
+                        <Button icon={<PlusOutlined />} onClick={() => history.push("/new-workspace")}>
+                            New workspace
+                        </Button>
+                    </div>
+                )}
+
+                {projects.length < 1 && (
+                    <div className="empty-dashboard">
+                        <p>No active projects</p>
+                        <Button icon={<PlusOutlined />} onClick={() => history.push("/new-project")}>
+                            New project
+                        </Button>
+                    </div>
+                )}
+
+                {projects.length > 0 && filteredProjects.length < 1 && (
+                    <div className="empty-dashboard">
+                        <p>No projects found</p>
+                        <Button icon={<PlusOutlined />} onClick={() => history.push("/new-project")}>
+                            New project
+                        </Button>
+                    </div>
+                )}
+
+                {filteredProjects.length > 0 && (
                     <div className="dashboard-content">
-                        {filteredProjects.length === 0 ? (
-                            <div className="empty-dashboard">
-                                <p>No projects found</p>
-                                <Button>
-                                    <Link to="/new-project">Create a new project</Link>
-                                </Button>
-                            </div>
-                        ) : (
-                            filteredProjects.map((project) => (
-                                <Link
-                                    className="project-card-link"
-                                    key={project.id}
-                                    to={{
-                                        pathname: `/project/${project.id}`,
-                                        projectProps: {
-                                            id: project.id,
-                                        },
-                                    }}
-                                >
-                                    <ProjectCard {...project} />
-                                </Link>
-                            ))
-                        )}
+                        {filteredProjects.map((project) => (
+                            <Link
+                                className="project-card-link"
+                                key={project.id}
+                                to={{
+                                    pathname: `/project/${project.id}`,
+                                    projectProps: {
+                                        id: project.id,
+                                    },
+                                }}
+                            >
+                                <ProjectCard {...project} />
+                            </Link>
+                        ))}
                     </div>
                 )}
             </Content>
