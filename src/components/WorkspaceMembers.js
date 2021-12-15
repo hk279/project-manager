@@ -5,6 +5,7 @@ import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const WorkspaceMembers = ({ workspace }) => {
     const { Option } = Select;
@@ -21,7 +22,7 @@ const WorkspaceMembers = ({ workspace }) => {
         {
             title: "Name",
             key: "name",
-            render: (record) => `${record.firstName} ${record.lastName}`,
+            render: (record) => <Link to={`/user/${record.id}`}>{`${record.firstName} ${record.lastName}`}</Link>,
         },
         {
             title: "Role",

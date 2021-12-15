@@ -1,40 +1,46 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Layout, Divider, List, Button, PageHeader } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
+import { Layout, Divider, List, PageHeader, Result, Button } from "antd";
 import Navigation from "../components/Navigation";
 import Loading from "../components/Loading";
 import { useAuth } from "../context/auth";
 import { URLroot, getAuthHeader } from "../config/config";
 import { checkIfDeadlinePassed } from "../utils/helper";
+import usersAPI from "../api/users";
 
 const { Sider, Content } = Layout;
 const { Item } = List;
 
 const UserView = () => {
-    const [user, setUser] = useState(null);
-    const [userProjects, setUserProjects] = useState([]);
-    const [trigger, setTrigger] = useState(false);
-
     let { id } = useParams();
     const { authTokens } = useAuth();
+    const history = useHistory();
+
+    const [user, setUser] = useState(null);
+    const [userProjects, setUserProjects] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         getUser(id);
         getUserProjects(id);
-    }, [trigger]);
+    }, []);
 
-    const getUser = (id) => {
-        axios
-            .get(`${URLroot}/users/id/${id}`, getAuthHeader(authTokens.accessToken))
-            .then((res) => setUser(res.data))
-            .catch((err) => console.log(err));
+    const getUser = (userId) => {
+        usersAPI
+            .getUserById(userId, authTokens.accessToken)
+            .then((res) => {
+                setUser(res.data);
+            })
+            .catch((err) => {
+                setError(err.response);
+            });
     };
 
     const getUserProjects = (id) => {
         axios
-            .get(`${URLroot}/projects/org/${authTokens.organizationId}`, getAuthHeader(authTokens.accessToken))
+            .get(`${URLroot}/projects/workspace/${authTokens.activeWorkspace}`, getAuthHeader(authTokens.accessToken))
             .then((res) => {
                 let projectMatches = [];
                 res.data.forEach((project) => {
@@ -47,8 +53,22 @@ const UserView = () => {
             .catch((err) => console.log(err));
     };
 
-    if (!user) {
+    if (!user && !error) {
         return <Loading />;
+    }
+
+    if (error) {
+        return (
+            <Result
+                title="Something went wrong"
+                subTitle={error.data.messages}
+                extra={
+                    <Button type="primary" onClick={() => history.push("/")}>
+                        Back to dashboard
+                    </Button>
+                }
+            />
+        );
     }
 
     return (
@@ -63,6 +83,7 @@ const UserView = () => {
                 <div className="view-content">
                     <Divider orientation="left">Personal information</Divider>
 
+                    {/* Make into a antd list */}
                     <table>
                         <tbody>
                             <tr>
@@ -88,7 +109,7 @@ const UserView = () => {
                         </div>
                         <div className="user-view-column">
                             <List
-                                header={<h3>Active Projects</h3>}
+                                header={<h3>Active Projects in this workspace</h3>}
                                 dataSource={userProjects.filter((project) => !checkIfDeadlinePassed(project.deadline))}
                                 renderItem={(item) => (
                                     <Item>
