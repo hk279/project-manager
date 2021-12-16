@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Layout, Collapse, Divider, Switch, Space, Button } from "antd";
+import { Layout, Collapse, Divider, Button, notification, PageHeader } from "antd";
 import Navigation from "../components/Navigation";
-import { URLroot, getAuthHeader } from "../config/config";
-import { useAuth } from "../context/auth";
-import axios from "axios";
+import Error from "../components/Error";
 import WorkspaceMembers from "../components/WorkspaceMembers";
+import workspacesAPI from "../api/workspaces";
+import usersAPI from "../api/users";
+import { useAuth } from "../context/auth";
 
 const WorkspaceSettings = () => {
     const { Sider, Content } = Layout;
@@ -13,38 +14,39 @@ const WorkspaceSettings = () => {
     const { authTokens, setAuthTokens } = useAuth();
 
     const [workspaces, setWorkspaces] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         getWorkspaces();
     }, []);
 
     const getWorkspaces = async () => {
-        const result = await axios.get(
-            `${URLroot}/workspaces/user/${authTokens.id}`,
-            getAuthHeader(authTokens.accessToken)
-        );
-        setWorkspaces(result.data);
+        workspacesAPI
+            .getWorkspacesByUser(authTokens.id, authTokens.accessToken)
+            .then((res) => setWorkspaces(res.data))
+            .catch((err) => setError(err.response));
     };
 
     const setDefaultWorkspace = (workspaceId) => {
-        axios.put(
-            `${URLroot}/users/${authTokens.id}`,
-            { defaultWorkspace: workspaceId },
-            getAuthHeader(authTokens.accessToken)
-        );
-
-        setAuthTokens({ ...authTokens, defaultWorkspace: workspaceId });
+        usersAPI
+            .updateUser(authTokens.id, { defaultWorkspace: workspaceId }, authTokens.accessToken)
+            .then(() => setAuthTokens({ ...authTokens, defaultWorkspace: workspaceId }))
+            .catch((err) =>
+                notification.error({
+                    message: "Setting default workspace failed",
+                    description: err?.response?.data?.messages,
+                })
+            );
     };
 
-    return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-            <Content>
-                <div className="view-header">
-                    <h2 className="view-title">Workspace settings</h2>
-                </div>
+    let pageContent;
+
+    if (error) {
+        pageContent = <Error status={error.status} description={error.data.messages} />;
+    } else {
+        pageContent = (
+            <>
+                <PageHeader title="Workspace settings" />
                 <div className="view-content">
                     <Divider />
                     <Collapse>
@@ -69,7 +71,16 @@ const WorkspaceSettings = () => {
                         ))}
                     </Collapse>
                 </div>
-            </Content>
+            </>
+        );
+    }
+
+    return (
+        <Layout className="layout">
+            <Sider collapsible>
+                <Navigation />
+            </Sider>
+            <Content>{pageContent}</Content>
         </Layout>
     );
 };

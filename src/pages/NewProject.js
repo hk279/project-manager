@@ -4,7 +4,22 @@ import { useHistory } from "react-router-dom";
 import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 import Navigation from "../components/Navigation";
-import { Layout, Form, Input, DatePicker, Transfer, Button, Divider, Select, Radio, PageHeader } from "antd";
+import {
+    Layout,
+    Form,
+    Input,
+    DatePicker,
+    Transfer,
+    Button,
+    Divider,
+    Select,
+    Radio,
+    PageHeader,
+    notification,
+} from "antd";
+import usersAPI from "../api/users";
+import projectsAPI from "../api/projects";
+import Error from "../components/Error";
 
 const { Sider, Content } = Layout;
 const { Item, useForm } = Form;
@@ -14,35 +29,35 @@ const { Option } = Select;
 const NewProject = () => {
     const [workspace, setWorkspace] = useState(null);
     const [isClientProject, setIsClientProject] = useState(false);
-
     const [users, setUsers] = useState([]);
     const [existingTags, setExistingTags] = useState([]);
-
     const [targetKeys, setTargetKeys] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState([]);
+    const [error, setError] = useState(null);
 
     const { authTokens } = useAuth();
     const history = useHistory();
     const [form] = useForm();
 
     useEffect(() => {
-        console.log(authTokens.activeWorkspace);
         getUsers();
         getExistingTags();
         getWorkspace();
     }, []);
 
-    const getUsers = async () => {
-        const url = `${URLroot}/users/workspace/${authTokens.activeWorkspace}`;
-        const result = await axios.get(url, getAuthHeader(authTokens.accessToken));
-        setUsers(result.data);
+    const getUsers = () => {
+        usersAPI
+            .getWorkspaceUsers(authTokens.activeWorkspace, authTokens.accessToken)
+            .then((res) => setUsers(res.data))
+            .catch((err) => setError(err.response));
     };
 
+    // Get tags previously used in the workspace to show as options in the tag select component.
     const getExistingTags = () => {
-        const url = `${URLroot}/projects/tags/${authTokens.activeWorkspace}`;
-        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
-            setExistingTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
-        });
+        projectsAPI
+            .getProjectTagsByWorkspace(authTokens.activeWorkspace, authTokens.accessToken)
+            .then((res) => setExistingTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>)))
+            .catch((err) => setError(err.response));
     };
 
     const getWorkspace = () => {
@@ -84,18 +99,24 @@ const NewProject = () => {
             body.type = "personal";
         }
 
-        axios
-            .post(`${URLroot}/projects`, body, getAuthHeader(authTokens.accessToken))
-            .then(() => history.push("/"))
-            .catch((err) => console.log(err));
+        projectsAPI
+            .createProject(body, authTokens.accessToken)
+            .then(() => {
+                history.push("/");
+                notification.success({ message: "Project created successfully" });
+            })
+            .catch((err) =>
+                notification.error({ message: "Project creation failed", description: err?.response?.data?.messages })
+            );
     };
 
-    return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-            <Content>
+    let pageContent;
+
+    if (error) {
+        pageContent = <Error status={error.status} description={error.data.messages} />;
+    } else {
+        pageContent = (
+            <>
                 <PageHeader title="New project" />
 
                 <div className="view-content">
@@ -165,7 +186,16 @@ const NewProject = () => {
                         </Item>
                     </Form>
                 </div>
-            </Content>
+            </>
+        );
+    }
+
+    return (
+        <Layout className="layout">
+            <Sider collapsible>
+                <Navigation />
+            </Sider>
+            <Content>{pageContent}</Content>
         </Layout>
     );
 };

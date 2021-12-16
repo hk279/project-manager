@@ -15,6 +15,7 @@ import ProjectHistory from "./pages/ProjectHistory";
 import SignUp from "./pages/SignUp";
 import NewWorkspace from "./pages/NewWorkspace";
 import WorkspaceSettings from "./pages/WorkspaceSettings";
+import NotFound from "./pages/NotFound";
 
 function App() {
     // Tries to get auth tokens stored in local storage
@@ -39,15 +40,16 @@ function App() {
             <Router>
                 <Switch>
                     <PrivateRoute path="/" exact component={Dashboard} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/sign-up" component={SignUp} />
-                    <PrivateRoute path="/new-project" component={NewProject} />
-                    <PrivateRoute path="/project-history" component={ProjectHistory} />
-                    <PrivateRoute path="/project/:id" children={<ProjectView />} />
-                    <PrivateRoute path="/user/:id" children={<UserView />} />
-                    <PrivateRoute path="/profile" component={Profile} />
-                    <PrivateRoute path="/new-workspace" component={NewWorkspace} />
-                    <PrivateRoute path="/workspace-settings" component={WorkspaceSettings} />
+                    <Route path="/login" exact component={Login} />
+                    <Route path="/sign-up" exact component={SignUp} />
+                    <PrivateRoute path="/new-project" exact component={NewProject} />
+                    <PrivateRoute path="/project-history" exact component={ProjectHistory} />
+                    <PrivateRoute path="/project/:projectId" exact children={<ProjectView />} />
+                    <PrivateRoute path="/user/:userId" exact children={<UserView />} />
+                    <PrivateRoute path="/profile" exact component={Profile} />
+                    <PrivateRoute path="/new-workspace" exact component={NewWorkspace} />
+                    <PrivateRoute path="/workspace-settings" exact component={WorkspaceSettings} />
+                    <Route path="*" exact component={NotFound} />
                 </Switch>
             </Router>
         </AuthContext.Provider>

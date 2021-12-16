@@ -1,34 +1,34 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
-import { PageHeader, Button, Divider, Layout, List, notification, Popconfirm, Space, Tag } from "antd";
+import { PageHeader, Button, Divider, Layout, List, notification, Popconfirm, Space, Tag, Result } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import CommentSection from "../components/CommentSection";
 import EditProject from "../components/EditProject";
 import Loading from "../components/Loading";
+import Error from "../components/Error";
 import FileUpload from "../components/FileUpload";
 import TaskSection from "../components/TaskSection";
-import { URLroot, getAuthHeader } from "../config/config";
+import usersAPI from "../api/users";
+import projectsAPI from "../api/projects";
 import { useAuth } from "../context/auth";
 
 const ProjectView = () => {
-    const { authTokens } = useAuth();
-
     const { Sider, Content } = Layout;
+    const { authTokens } = useAuth();
+    let { projectId } = useParams();
+    const history = useHistory();
 
     const [project, setProject] = useState(null);
     const [users, setUsers] = useState([]);
     const [editMode, setEditMode] = useState(false);
+    const [error, setError] = useState(null);
     const [trigger, setTrigger] = useState(false); // Helps trigger re-render when child component functions are called
-
-    let { id } = useParams();
-    const history = useHistory();
 
     // Re-fetches project data when triggered by child component or when changing to/from edit mode
     useEffect(() => {
-        getProject(id);
+        getProject(projectId);
     }, [trigger, editMode]);
 
     // Project data fetch triggers relevant users data fetch
@@ -43,55 +43,106 @@ const ProjectView = () => {
         setTrigger(!trigger);
     };
 
-    const getProject = (id) => {
-        axios
-            .get(`${URLroot}/projects/id/${id}`, getAuthHeader(authTokens.accessToken))
+    const getProject = () => {
+        projectsAPI
+            .getProjectById(projectId, authTokens.accessToken)
             .then((res) => setProject(res.data))
-            .catch((err) => console.log(err));
+            .catch((err) => setError(err.response));
     };
 
     const getUsers = () => {
-        // Saves all unique user IDs here
-        const userIds = [];
-        project.team.forEach((member) => {
-            userIds.push(member);
-        });
-
-        // Request data for a group of employees
-        axios
-            .post(`${URLroot}/users/group:search`, { group: userIds }, getAuthHeader(authTokens.accessToken))
-            .then((res) => {
-                setUsers(res.data);
-            })
-            .catch((err) => console.log(err));
+        usersAPI
+            .getGroupOfUsers(project.team, authTokens.accessToken)
+            .then((res) => setUsers(res.data))
+            .catch((err) => setError(err.response));
     };
 
     const editProject = (newData) => {
-        axios
-            .put(`${URLroot}/projects/${project.id}`, newData, getAuthHeader(authTokens.accessToken))
+        projectsAPI
+            .updateProject(project.id, newData, authTokens.accessToken)
             .then(() => {
                 setEditMode(false);
+                notification.success({ message: "Edit project successful" });
             })
-            .catch((err) => {
-                notification.error({ message: "Edit project failed", description: err.response.data.messages });
-            });
+            .catch((err) =>
+                notification.error({ message: "Edit project failed", description: err?.response?.data?.messages })
+            );
     };
 
-    const deleteProject = (id) => {
-        axios
-            .delete(`${URLroot}/projects/${id}`, getAuthHeader(authTokens.accessToken))
-            .then(() => history.push("/"))
-            .catch((err) => {
-                notification.error({ message: "Delete project failed", description: err.response.data.messages });
-            });
+    const deleteProject = () => {
+        projectsAPI
+            .deleteProject(project.id, authTokens.accessToken)
+            .then(() => {
+                history.push("/");
+                notification.success({ message: "Project successfully deleted" });
+            })
+            .catch((err) =>
+                notification.error({ message: "Delete project failed", description: err?.response?.data?.messages })
+            );
     };
 
-    const cancelEdit = () => {
-        setEditMode(false);
-    };
+    let pageContent;
 
-    if (!project) {
-        return <Loading />;
+    if (!project && !error) {
+        pageContent = <Loading />;
+    } else if (error) {
+        pageContent = <Error status={error.status} description={error.data.messages} />;
+    } else if (editMode) {
+        pageContent = (
+            <div className="view-content">
+                <EditProject project={project} editProject={editProject} cancelEdit={() => setEditMode(false)} />
+            </div>
+        );
+    } else {
+        pageContent = (
+            <>
+                <PageHeader
+                    title={project.title}
+                    subTitle={
+                        <span className="page-header-sub-title">
+                            {project.client ? project.client : project.type === "internal" ? "Internal" : null}
+                        </span>
+                    }
+                    extra={[
+                        <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
+                        <Popconfirm
+                            key="2"
+                            title="Confirm delete project"
+                            onConfirm={() => deleteProject(project.id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button type="primary" danger icon={<DeleteOutlined />} />
+                        </Popconfirm>,
+                    ]}
+                />
+                <div className="view-content">
+                    <h3>{project.client}</h3>
+                    <Divider />
+                    <p>{project.description}</p>
+                    <p>{project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : null}</p>
+                    <Space>
+                        Deadline: <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
+                    </Space>
+
+                    <Divider orientation="left">Team</Divider>
+                    <List
+                        size="small"
+                        dataSource={users}
+                        renderItem={(user) => <List.Item>{`${user.firstName} ${user.lastName}`}</List.Item>}
+                    />
+
+                    <Divider orientation="left">Files</Divider>
+                    <FileUpload projectId={project.id} files={project.files ?? []} />
+
+                    <Divider orientation="left">Tasks</Divider>
+                    <TaskSection project={project} users={users} reRenderParent={reRenderParent} />
+
+                    <Divider orientation="left">Comments</Divider>
+                    <CommentSection project={project} reRenderParent={reRenderParent} />
+                </div>
+            </>
+        );
     }
 
     return (
@@ -99,59 +150,7 @@ const ProjectView = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-
-            {editMode ? (
-                <Content>
-                    <div className="view-content">
-                        <EditProject project={project} editProject={editProject} cancelEdit={cancelEdit} />
-                    </div>
-                </Content>
-            ) : (
-                <Content>
-                    <PageHeader
-                        title={project.title}
-                        subTitle={project.client}
-                        extra={[
-                            <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
-                            <Popconfirm
-                                key="2"
-                                title="Confirm delete project"
-                                onConfirm={() => deleteProject(project.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button type="primary" danger icon={<DeleteOutlined />} />
-                            </Popconfirm>,
-                        ]}
-                    />
-                    <div className="view-content">
-                        <h3>{project.client}</h3>
-                        <Divider />
-                        <p>{project.description}</p>
-                        <p>{project.tags.length > 0 ? project.tags.map((tag) => <Tag key={tag}>{tag}</Tag>) : null}</p>
-                        <Space>
-                            Deadline:{" "}
-                            <b>{project.deadline ? moment(project.deadline).format("D.M.Y") : "No deadline"}</b>
-                        </Space>
-
-                        <Divider orientation="left">Team</Divider>
-                        <List
-                            size="small"
-                            dataSource={users}
-                            renderItem={(user) => <List.Item>{`${user.firstName} ${user.lastName}`}</List.Item>}
-                        />
-
-                        <Divider orientation="left">Files</Divider>
-                        <FileUpload projectId={id} files={project.files ?? []} />
-
-                        <Divider orientation="left">Tasks</Divider>
-                        <TaskSection project={project} users={users} reRenderParent={reRenderParent} />
-
-                        <Divider orientation="left">Comments</Divider>
-                        <CommentSection project={project} reRenderParent={reRenderParent} />
-                    </div>
-                </Content>
-            )}
+            <Content>{pageContent}</Content>
         </Layout>
     );
 };

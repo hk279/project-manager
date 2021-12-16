@@ -5,9 +5,8 @@ import ChangePassword from "../components/ChangePassword";
 import Navigation from "../components/Navigation";
 import EditProfile from "../components/EditProfile";
 import { useAuth } from "../context/auth";
-import { URLroot, getAuthHeader } from "../config/config";
-import axios from "axios";
 import AvatarUpload from "../components/AvatarUpload";
+import usersAPI from "../api/users";
 
 const { Sider, Content } = Layout;
 
@@ -20,17 +19,12 @@ const Profile = () => {
 
     // TODO: rewrite
     const onFinishChangePassword = (values) => {
-        axios
-            .put(
-                `${URLroot}/users/change-password/${authTokens.id}`,
-                { currentPassword: values.currentPassword, newPassword: values.newPassword },
-                getAuthHeader(authTokens.accessToken)
-            )
-            .then((res) => {
+        usersAPI
+            .changePassword(authTokens.id, values, authTokens.accessToken)
+            .then(() => {
                 notification.success({
-                    message: "Password change successful!",
+                    message: "Password change successful",
                 });
-                console.log(res.data);
                 setModalVisible(false);
             })
             .catch((err) => {
@@ -42,87 +36,83 @@ const Profile = () => {
     };
 
     const editProfile = (newData) => {
-        axios
-            .put(`${URLroot}/users/${authTokens.id}`, newData, getAuthHeader(authTokens.accessToken))
+        usersAPI
+            .updateUser(authTokens.id, newData, authTokens.accessToken)
             .then((res) => {
                 // Update new profile info into authTokens
                 setAuthTokens({ ...authTokens, ...res.data });
                 setEditMode(false);
                 setTrigger(!trigger);
             })
-            .catch((err) => {
-                notification.error({ message: err.response.data.messages });
-            });
+            .catch((err) =>
+                notification.error({ message: "Edit profile failed", descripition: err.response.data.messages })
+            );
     };
 
-    const cancelEdit = () => {
-        setEditMode(false);
-    };
+    let pageContent;
+
+    if (editMode) {
+        pageContent = <EditProfile editProfile={editProfile} cancelEdit={() => setEditMode(false)} />;
+    } else {
+        pageContent = (
+            <>
+                <PageHeader
+                    title="Profile"
+                    extra={[
+                        <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
+                    ]}
+                />
+                <div className="view-content">
+                    <Divider orientation="left">Personal information</Divider>
+
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td className="info-table-cell header-cell">First name</td>
+                                <td className="info-table-cell">{authTokens.firstName}</td>
+                            </tr>
+                            <tr>
+                                <td className="info-table-cell header-cell">Last name</td>
+                                <td className="info-table-cell">{authTokens.lastName}</td>
+                            </tr>
+                            <tr>
+                                <td className="info-table-cell header-cell">Email</td>
+                                <td className="info-table-cell">{authTokens.email}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <Divider orientation="left">Skills</Divider>
+
+                    <List
+                        dataSource={authTokens.skills}
+                        size="small"
+                        renderItem={(item) => <List.Item>{item}</List.Item>}
+                    />
+
+                    <Divider orientation="left">Upload avatar</Divider>
+                    <AvatarUpload userId={authTokens.id} />
+
+                    <Divider />
+                    <Button type="primary" onClick={() => setModalVisible(true)}>
+                        Change password
+                    </Button>
+                    <ChangePassword
+                        visible={modalVisible}
+                        onFinishChangePassword={onFinishChangePassword}
+                        onCancel={() => setModalVisible(false)}
+                    />
+                </div>
+            </>
+        );
+    }
 
     return (
         <Layout className="layout">
             <Sider collapsible>
                 <Navigation />
             </Sider>
-
-            <Content>
-                {!editMode && (
-                    <PageHeader
-                        title="Profile"
-                        extra={[
-                            <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
-                        ]}
-                    />
-                )}
-
-                <div className="view-content">
-                    {editMode ? (
-                        <EditProfile editProfile={editProfile} cancelEdit={cancelEdit} />
-                    ) : (
-                        <>
-                            <Divider orientation="left">Personal information</Divider>
-
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td className="info-table-cell header-cell">First name</td>
-                                        <td className="info-table-cell">{authTokens.firstName}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="info-table-cell header-cell">Last name</td>
-                                        <td className="info-table-cell">{authTokens.lastName}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="info-table-cell header-cell">Email</td>
-                                        <td className="info-table-cell">{authTokens.email}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <Divider orientation="left">Skills</Divider>
-
-                            <List
-                                dataSource={authTokens.skills}
-                                size="small"
-                                renderItem={(item) => <List.Item>{item}</List.Item>}
-                            />
-
-                            <Divider orientation="left">Upload avatar</Divider>
-                            <AvatarUpload userId={authTokens.id} />
-
-                            <Divider />
-                            <Button type="primary" onClick={() => setModalVisible(true)}>
-                                Change password
-                            </Button>
-                            <ChangePassword
-                                visible={modalVisible}
-                                onFinishChangePassword={onFinishChangePassword}
-                                onCancel={() => setModalVisible(false)}
-                            />
-                        </>
-                    )}
-                </div>
-            </Content>
+            <Content>{pageContent}</Content>
         </Layout>
     );
 };

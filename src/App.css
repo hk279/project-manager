@@ -24,16 +24,12 @@
     margin-top: 2em;
 }
 
-.view-header {
-    padding: 2em 2em 0em 2em;
-}
-
-.view-title {
-    display: inline-block;
+.page-header-sub-title {
+    margin-left: 2em;
 }
 
 .view-content {
-    max-width: 60%;
+    width: 60%;
     padding: 0em 2em 2em 2em;
 }
 

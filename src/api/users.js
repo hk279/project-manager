@@ -9,19 +9,19 @@ const usersAPI = {
         url = `${usersAPIroot}/id/${userId}`;
         return axios.get(url, getAuthHeader(accessToken));
     },
-    async getWorkspaceUsers(workspaceId, accessToken) {
+    getWorkspaceUsers(workspaceId, accessToken) {
         url = `${usersAPIroot}/workspace/${workspaceId}`;
         return axios.get(url, getAuthHeader(accessToken));
     },
-    async getGroupOfUsers(userIdsList, accessToken) {
+    getGroupOfUsers(userIdsList, accessToken) {
         url = `${usersAPIroot}/group:search`;
         return axios.post(url, { group: userIdsList }, getAuthHeader(accessToken));
     },
-    async updateUser(userId, body, accessToken) {
+    updateUser(userId, body, accessToken) {
         url = `${usersAPIroot}/${userId}`;
-        return await axios.put(url, body, getAuthHeader(accessToken));
+        return axios.put(url, body, getAuthHeader(accessToken));
     },
-    async changePassword(userId, body, accessToken) {
+    changePassword(userId, body, accessToken) {
         url = `${usersAPIroot}/change-password/${userId}`;
         return axios.put(url, body, getAuthHeader(accessToken));
     },

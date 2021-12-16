@@ -13,88 +13,90 @@ const EditProfile = ({ editProfile, cancelEdit }) => {
     };
 
     return (
-        <Form
-            className="form"
-            layout="vertical"
-            form={form}
-            onFinish={handleSubmit}
-            initialValues={{
-                firstName: authTokens.firstName,
-                lastName: authTokens.lastName,
-                email: authTokens.email,
-                skills: authTokens.skills,
-            }}
-            validateMessages={{
-                required: "${label} is required!",
-            }}
-        >
-            <Item label="First name" name="firstName" rules={[{ required: true }]}>
-                <Input maxLength={60} />
-            </Item>
-            <Item label="Last name" name="lastName" rules={[{ required: true }]}>
-                <Input maxLength={60} />
-            </Item>
-            <Item
-                label="Email"
-                name="email"
-                rules={[{ type: "email", message: "Email not valid" }, { required: true }]}
+        <div className="view-content">
+            <Form
+                className="form"
+                layout="vertical"
+                form={form}
+                onFinish={handleSubmit}
+                initialValues={{
+                    firstName: authTokens.firstName,
+                    lastName: authTokens.lastName,
+                    email: authTokens.email,
+                    skills: authTokens.skills,
+                }}
+                validateMessages={{
+                    required: "${label} is required!",
+                }}
             >
-                <Input maxLength={60} />
-            </Item>
-            <Divider orientation="left">Skills</Divider>
-            <List name="skills">
-                {(fields, { add, remove }, { errors }) => (
-                    <>
-                        {fields.map((field) => (
-                            <Item required={false} key={field.key}>
-                                <Item
-                                    {...field}
-                                    validateTrigger={["onChange", "onBlur"]}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            whitespace: true,
-                                            message: "Please input a skill or delete this field.",
-                                        },
-                                    ]}
-                                    noStyle
-                                >
-                                    <Input style={{ width: "60%" }} maxLength={60} />
+                <Item label="First name" name="firstName" rules={[{ required: true }]}>
+                    <Input maxLength={60} />
+                </Item>
+                <Item label="Last name" name="lastName" rules={[{ required: true }]}>
+                    <Input maxLength={60} />
+                </Item>
+                <Item
+                    label="Email"
+                    name="email"
+                    rules={[{ type: "email", message: "Email not valid" }, { required: true }]}
+                >
+                    <Input maxLength={60} />
+                </Item>
+                <Divider orientation="left">Skills</Divider>
+                <List name="skills">
+                    {(fields, { add, remove }, { errors }) => (
+                        <>
+                            {fields.map((field) => (
+                                <Item required={false} key={field.key}>
+                                    <Item
+                                        {...field}
+                                        validateTrigger={["onChange", "onBlur"]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                whitespace: true,
+                                                message: "Please input a skill or delete this field.",
+                                            },
+                                        ]}
+                                        noStyle
+                                    >
+                                        <Input style={{ width: "60%" }} maxLength={60} />
+                                    </Item>
+                                    {fields.length > 0 ? (
+                                        <MinusCircleOutlined
+                                            className="dynamic-delete-button"
+                                            onClick={() => remove(field.name)}
+                                        />
+                                    ) : null}
                                 </Item>
-                                {fields.length > 0 ? (
-                                    <MinusCircleOutlined
-                                        className="dynamic-delete-button"
-                                        onClick={() => remove(field.name)}
-                                    />
-                                ) : null}
+                            ))}
+                            <Item>
+                                <Button
+                                    type="dashed"
+                                    onClick={() => add()}
+                                    style={{ width: "60%" }}
+                                    icon={<PlusOutlined />}
+                                >
+                                    Add Skill
+                                </Button>
+                                <ErrorList errors={errors} />
                             </Item>
-                        ))}
-                        <Item>
-                            <Button
-                                type="dashed"
-                                onClick={() => add()}
-                                style={{ width: "60%" }}
-                                icon={<PlusOutlined />}
-                            >
-                                Add Skill
-                            </Button>
-                            <ErrorList errors={errors} />
-                        </Item>
-                    </>
-                )}
-            </List>
-            <Divider />
-            <Item>
-                <Space size="middle">
-                    <Button type="primary" htmlType="submit">
-                        Save
-                    </Button>
-                    <Button onClick={() => cancelEdit()} htmlType="button">
-                        Back
-                    </Button>
-                </Space>
-            </Item>
-        </Form>
+                        </>
+                    )}
+                </List>
+                <Divider />
+                <Item>
+                    <Space size="middle">
+                        <Button type="primary" htmlType="submit">
+                            Save
+                        </Button>
+                        <Button onClick={() => cancelEdit()} htmlType="button">
+                            Back
+                        </Button>
+                    </Space>
+                </Item>
+            </Form>
+        </div>
     );
 };
 

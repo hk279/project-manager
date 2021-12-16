@@ -1,89 +1,66 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useHistory } from "react-router-dom";
-import { Layout, Divider, List, PageHeader, Result, Button } from "antd";
+import { Layout, Divider, List, PageHeader } from "antd";
 import Navigation from "../components/Navigation";
 import Loading from "../components/Loading";
-import { useAuth } from "../context/auth";
-import { URLroot, getAuthHeader } from "../config/config";
-import { checkIfDeadlinePassed } from "../utils/helper";
+import Error from "../components/Error";
 import usersAPI from "../api/users";
+import projectsAPI from "../api/projects";
+import { useAuth } from "../context/auth";
+import { checkIfDeadlinePassed } from "../utils/helper";
 
 const { Sider, Content } = Layout;
 const { Item } = List;
 
 const UserView = () => {
-    let { id } = useParams();
+    let { userId } = useParams();
     const { authTokens } = useAuth();
-    const history = useHistory();
 
     const [user, setUser] = useState(null);
     const [userProjects, setUserProjects] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        getUser(id);
-        getUserProjects(id);
+        getUser();
+        getUserProjects();
     }, []);
 
-    const getUser = (userId) => {
+    const getUser = () => {
         usersAPI
             .getUserById(userId, authTokens.accessToken)
-            .then((res) => {
-                setUser(res.data);
-            })
-            .catch((err) => {
-                setError(err.response);
-            });
+            .then((res) => setUser(res.data))
+            .catch((err) => setError(err.response));
     };
 
-    const getUserProjects = (id) => {
-        axios
-            .get(`${URLroot}/projects/workspace/${authTokens.activeWorkspace}`, getAuthHeader(authTokens.accessToken))
+    const getUserProjects = () => {
+        projectsAPI
+            .getProjectsByWorkspace(authTokens.activeWorkspace, authTokens.accessToken)
             .then((res) => {
-                let projectMatches = [];
+                let userProjects = [];
                 res.data.forEach((project) => {
-                    if (project.team.includes(id)) {
-                        projectMatches.push(project);
+                    if (project.team.includes(userId)) {
+                        userProjects.push(project);
                     }
                 });
-                setUserProjects(projectMatches);
+                setUserProjects(userProjects);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => setError(err.response));
     };
 
+    let pageContent;
+
     if (!user && !error) {
-        return <Loading />;
-    }
-
-    if (error) {
-        return (
-            <Result
-                title="Something went wrong"
-                subTitle={error.data.messages}
-                extra={
-                    <Button type="primary" onClick={() => history.push("/")}>
-                        Back to dashboard
-                    </Button>
-                }
-            />
-        );
-    }
-
-    return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-
-            <Content>
+        pageContent = <Loading />;
+    } else if (error) {
+        pageContent = <Error status={error.status} description={error.data.messages} />;
+    } else {
+        pageContent = (
+            <>
                 <PageHeader title={`${user.firstName} ${user.lastName}`} />
 
                 <div className="view-content">
                     <Divider orientation="left">Personal information</Divider>
 
-                    {/* Make into a antd list */}
                     <table>
                         <tbody>
                             <tr>
@@ -110,6 +87,7 @@ const UserView = () => {
                         <div className="user-view-column">
                             <List
                                 header={<h3>Active Projects in this workspace</h3>}
+                                size="small"
                                 dataSource={userProjects.filter((project) => !checkIfDeadlinePassed(project.deadline))}
                                 renderItem={(item) => (
                                     <Item>
@@ -120,7 +98,16 @@ const UserView = () => {
                         </div>
                     </div>
                 </div>
-            </Content>
+            </>
+        );
+    }
+
+    return (
+        <Layout className="layout">
+            <Sider collapsible>
+                <Navigation />
+            </Sider>
+            <Content>{pageContent}</Content>
         </Layout>
     );
 };
