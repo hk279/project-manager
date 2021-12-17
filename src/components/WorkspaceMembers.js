@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Table, Select, Button } from "antd";
+import { Table, Select, Button, notification, Popconfirm } from "antd";
 import Loading from "./Loading";
-import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
-import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import workspacesAPI from "../api/workspaces";
+import usersAPI from "../api/users";
 
 const WorkspaceMembers = ({ workspace }) => {
     const { Option } = Select;
@@ -15,7 +15,7 @@ const WorkspaceMembers = ({ workspace }) => {
     const [members, setMembers] = useState([]);
 
     useEffect(() => {
-        getMembers();
+        getWorkspaceUsers();
     }, []);
 
     const columns = [
@@ -36,8 +36,12 @@ const WorkspaceMembers = ({ workspace }) => {
                         disabled={isChangeRoleDisabled(role)}
                         onSelect={(value) => changeRole(record.id, value)}
                     >
-                        <Option key="view">view</Option>
-                        <Option key="edit">edit</Option>
+                        <Option key="view" value="view">
+                            view
+                        </Option>
+                        <Option key="edit" value="edit">
+                            edit
+                        </Option>
                     </Select>
                 );
             },
@@ -46,22 +50,33 @@ const WorkspaceMembers = ({ workspace }) => {
             title: "Remove",
             key: "remove",
             render: (record) => (
-                <Button
-                    type="link"
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => {}}
-                    disabled={isChangeRoleDisabled(getMemberRole(record.id))}
-                ></Button>
+                <Popconfirm
+                    title="Confirm remove user from workspace"
+                    onConfirm={() => removeUserFromWorkspace(record.id)}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button
+                        type="link"
+                        danger
+                        icon={<DeleteOutlined />}
+                        disabled={isChangeRoleDisabled(getMemberRole(record.id))}
+                    ></Button>
+                </Popconfirm>
             ),
         },
     ];
 
-    const getMembers = async () => {
-        const url = `${URLroot}/users/workspace/${workspace.id}`;
-        const result = await axios.get(url, getAuthHeader(authTokens.accessToken));
-
-        setMembers(result.data);
+    const getWorkspaceUsers = () => {
+        usersAPI
+            .getWorkspaceUsers(workspace.id, authTokens.accessToken)
+            .then((res) => setMembers(res.data))
+            .catch((err) =>
+                notification.error({
+                    message: "Getting workspace users failed",
+                    description: err.response.data.messages,
+                })
+            );
     };
 
     const getMemberRole = (memberId) => {
@@ -82,10 +97,15 @@ const WorkspaceMembers = ({ workspace }) => {
             return member;
         });
 
-        const url = `${URLroot}/workspaces/${workspace.id}`;
-        await axios.put(url, { members: updatedMembers }, getAuthHeader(authTokens.accessToken));
-
-        getMembers();
+        workspacesAPI
+            .updateWorkspace(workspace.id, { members: updatedMembers }, authTokens.accessToken)
+            .then(() => getWorkspaceUsers())
+            .catch((err) =>
+                notification.error({
+                    message: "Change user role failed",
+                    description: err.response.data.messages,
+                })
+            );
     };
 
     const isChangeRoleDisabled = (role) => {
@@ -93,6 +113,19 @@ const WorkspaceMembers = ({ workspace }) => {
             return true;
         }
         return false;
+    };
+
+    const removeUserFromWorkspace = (userId) => {
+        const newMembersList = workspace.members.filter((member) => member.userId !== userId);
+        workspacesAPI
+            .updateWorkspace(workspace.id, { members: newMembersList }, authTokens.accessToken)
+            .then(() => getWorkspaceUsers())
+            .catch((err) =>
+                notification.error({
+                    message: "Removing user form workspace failed",
+                    description: err.response.data.messages,
+                })
+            );
     };
 
     return members.length < 1 ? <Loading /> : <Table rowKey="id" columns={columns} dataSource={members} />;

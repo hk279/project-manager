@@ -29,7 +29,16 @@ const projectsAPI = {
         url = `${projectsAPIroot}/tags/${workspaceId}`;
         return axios.get(url, getAuthHeader(accessToken));
     },
-    /* File uploads? */
+    getFile(fileKey, accessToken) {
+        let config = getAuthHeader(accessToken);
+        config.responseType = "arraybuffer";
+        url = `${projectsAPIroot}/get-file/${fileKey}`;
+        return axios.get(url, config);
+    },
+    deleteFile(projectId, fileKey, accessToken) {
+        url = `${projectsAPIroot}/delete-file:search`;
+        return axios.post(url, { projectId, fileKey }, getAuthHeader(accessToken));
+    },
 };
 
 export default projectsAPI;

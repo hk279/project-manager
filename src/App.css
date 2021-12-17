@@ -136,6 +136,9 @@
     min-width: 30em;
     margin: 1em 0em;
 }
+.upload-container {
+    width: 60%;
+}
 
 /* Task item */
 .ant-collapse-header {
@@ -210,5 +213,8 @@
     }
     .ant-page-header {
         width: 100%;
+    }
+    .upload-container {
+        width: 80%;
     }
 }

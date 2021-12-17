@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { Upload, Button, Modal, message } from "antd";
+import { Upload, Button, Modal, notification } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { URLroot, getAuthHeader } from "../config/config";
-import axios from "axios";
+import { URLroot } from "../config/config";
+import { useAuth } from "../context/auth";
+import projectsAPI from "../api/projects";
 
 const FileUpload = ({ projectId, files }) => {
     const { confirm } = Modal;
+    const { authTokens } = useAuth();
 
     const initialFileList = files.map((file) => ({
         uid: file.fileKey,
         name: file.fileName,
-        url: `${URLroot}/projects/get-file/${file.fileKey}`,
+        url: file.fileLocation,
         status: "done",
     }));
 
@@ -22,13 +24,15 @@ const FileUpload = ({ projectId, files }) => {
                 title: `Permanently delete '${file.name}'?`,
                 icon: <ExclamationCircleOutlined />,
                 onOk() {
-                    axios
-                        .put(`${URLroot}/projects/${projectId}/delete-file/${file.uid}`, {}, getAuthHeader())
-                        .then(() => message.info(`'${file.name}' deleted successfully`))
-                        .catch((err) => {
-                            console.log(err);
-                            message.error(`${file.name} delete failed`);
-                        });
+                    projectsAPI
+                        .deleteFile(projectId, file.uid, authTokens.accessToken)
+                        .then(() => notification.success({ message: `'${file.name}' deleted successfully` }))
+                        .catch((err) =>
+                            notification.error({
+                                message: `Delete file '${file.name}' failed`,
+                                description: err?.response?.data?.messages,
+                            })
+                        );
                     resolve(true);
                 },
                 onCancel() {
@@ -40,16 +44,16 @@ const FileUpload = ({ projectId, files }) => {
 
     const handleChange = (info) => {
         if (info.file.status === "done") {
-            message.success(`${info.file.name} uploaded successfully`);
+            notification.success({ message: `${info.file.name} uploaded successfully` });
         } else if (info.file.status === "error") {
-            message.error(`${info.file.name} upload failed`);
+            notification.error({ message: `${info.file.name} upload failed` });
         }
 
         let fileList = [...info.fileList];
 
         fileList = fileList.map((file) => {
             if (file.response) {
-                file.url = URLroot + file.response.filePath;
+                file.url = file.response.fileLocation;
                 file.uid = file.response.fileKey;
             }
             return file;
@@ -61,16 +65,15 @@ const FileUpload = ({ projectId, files }) => {
     const uploadProps = {
         name: "file",
         action: `${URLroot}/projects/${projectId}/upload-file`,
+        headers: { Authorization: "Bearer " + authTokens.accessToken },
         defaultFileList: initialFileList,
-        onRemove: async (file) => {
-            await showConfirm(file);
-        },
+        onRemove: async (file) => await showConfirm(file),
         onChange: (info) => handleChange(info),
     };
 
     return (
-        <div style={{ maxWidth: "75%" }}>
-            <Upload {...uploadProps} fileList={fileList}>
+        <div className="upload-container">
+            <Upload {...uploadProps} fileList={fileList} showUploadList={{ showPreviewIcon: true }}>
                 <Button icon={<UploadOutlined />}>Upload file</Button>
             </Upload>
         </div>

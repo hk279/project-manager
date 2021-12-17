@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Layout, Collapse, Divider, Button, notification, PageHeader } from "antd";
+import { Layout, Collapse, Divider, Button, notification, PageHeader, Popconfirm, Tooltip, Space } from "antd";
 import Navigation from "../components/Navigation";
 import Error from "../components/Error";
 import WorkspaceMembers from "../components/WorkspaceMembers";
 import workspacesAPI from "../api/workspaces";
 import usersAPI from "../api/users";
 import { useAuth } from "../context/auth";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const WorkspaceSettings = () => {
     const { Sider, Content } = Layout;
@@ -61,12 +62,25 @@ const WorkspaceSettings = () => {
                                 }
                             >
                                 <WorkspaceMembers workspace={workspace} />
-                                <Button
-                                    disabled={authTokens.defaultWorkspace === workspace.id}
-                                    onClick={() => setDefaultWorkspace(workspace.id)}
-                                >
-                                    Set as default
-                                </Button>
+
+                                <Space size="middle">
+                                    <Button
+                                        disabled={authTokens.defaultWorkspace === workspace.id}
+                                        onClick={() => setDefaultWorkspace(workspace.id)}
+                                    >
+                                        Set as default
+                                    </Button>
+                                    <Tooltip title="Delete workspace">
+                                        <Popconfirm
+                                            title="Confirm delete workspace"
+                                            onConfirm={() => {}}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <Button danger icon={<DeleteOutlined />} />
+                                        </Popconfirm>
+                                    </Tooltip>
+                                </Space>
                             </Panel>
                         ))}
                     </Collapse>
