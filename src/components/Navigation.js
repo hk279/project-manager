@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu } from "antd";
+import { Menu, Tooltip } from "antd";
 import {
     PlusOutlined,
     DashboardOutlined,
@@ -12,8 +12,8 @@ import {
     SettingOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../context/auth";
-import axios from "axios";
-import { getAuthHeader, URLroot } from "../config/config";
+import Error from "./Error";
+import workspacesAPI from "../api/workspaces";
 
 const Navigation = () => {
     const { SubMenu, ItemGroup, Item, Divider } = Menu;
@@ -21,17 +21,17 @@ const Navigation = () => {
     const { authTokens, setAuthTokens } = useAuth();
 
     const [workspaces, setWorkspaces] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         getWorkspaces();
     }, []);
 
-    const getWorkspaces = async () => {
-        const result = await axios.get(
-            `${URLroot}/workspaces/user/${authTokens.id}`,
-            getAuthHeader(authTokens.accessToken)
-        );
-        setWorkspaces(result.data);
+    const getWorkspaces = () => {
+        workspacesAPI
+            .getWorkspacesByUser(authTokens.id, authTokens.accessToken)
+            .then((res) => setWorkspaces(res.data))
+            .catch((err) => setError(err.response));
     };
 
     const changeWorkspace = (value) => {
@@ -39,13 +39,34 @@ const Navigation = () => {
         window.location.href = "/";
     };
 
+    const getActiveWorkspaceName = () => {
+        if (workspaces.length > 0) {
+            const activeWorkspace = workspaces.find((workspace) => workspace.id === authTokens.activeWorkspace);
+            return activeWorkspace?.name;
+        }
+    };
+
+    if (error) {
+        return <Error status={error.status} description={error.data.messages} />;
+    }
+
     return (
         <Menu mode="inline" theme="dark" selectedKeys={[authTokens.activeWorkspace, window.location.pathname]}>
-            <SubMenu key="sub1" title="Workspaces" icon={<ContainerOutlined />}>
+            <SubMenu
+                key="sub1"
+                title={
+                    <Tooltip placement="bottomLeft" title={getActiveWorkspaceName()}>
+                        {getActiveWorkspaceName()}
+                    </Tooltip>
+                }
+                icon={<ContainerOutlined />}
+            >
                 <ItemGroup key="g1">
                     {workspaces.map((item) => (
                         <Item key={item.id} onClick={() => changeWorkspace(item.id)}>
-                            {item.name}
+                            <Tooltip placement="bottomLeft" title={item.name}>
+                                {item.name}
+                            </Tooltip>
                         </Item>
                     ))}
                 </ItemGroup>
@@ -58,7 +79,9 @@ const Navigation = () => {
                     </Item>
                 </ItemGroup>
             </SubMenu>
+
             <Divider />
+
             <ItemGroup key="g3">
                 <Item icon={<UserOutlined />} key="/profile">
                     <Link to="/profile">{`${authTokens.firstName} ${authTokens.lastName}`}</Link>

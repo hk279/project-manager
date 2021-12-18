@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
 import { Layout, Button, Input } from "antd";
@@ -8,17 +7,20 @@ import Navigation from "../components/Navigation";
 import Loading from "../components/Loading";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
-import { URLroot, getAuthHeader } from "../config/config";
 import { PlusOutlined } from "@ant-design/icons";
+import workspacesAPI from "../api/workspaces";
+import Error from "../components/Error";
+import projectsAPI from "../api/projects";
 
-const { Sider, Content } = Layout;
 const Dashboard = () => {
+    const { Sider, Content } = Layout;
     const { authTokens } = useAuth();
     const history = useHistory();
 
     const [projects, setProjects] = useState([]);
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [workspaces, setWorkspaces] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         getWorkspaces();
@@ -29,17 +31,16 @@ const Dashboard = () => {
         setFilteredProjects(projects);
     }, [projects]);
 
-    const getWorkspaces = async () => {
-        const result = await axios.get(
-            `${URLroot}/workspaces/user/${authTokens.id}`,
-            getAuthHeader(authTokens.accessToken)
-        );
-        setWorkspaces(result.data);
+    const getWorkspaces = () => {
+        workspacesAPI
+            .getWorkspacesByUser(authTokens.id, authTokens.accessToken)
+            .then((res) => setWorkspaces(res.data))
+            .catch((err) => setError(err.response));
     };
 
     const getProjects = () => {
-        axios
-            .get(`${URLroot}/projects/workspace/${authTokens.activeWorkspace}`, getAuthHeader(authTokens.accessToken))
+        projectsAPI
+            .getProjectsByWorkspace(authTokens.activeWorkspace, authTokens.accessToken)
             .then((res) => {
                 // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
                 const activeProjects = res.data.filter((project) => {
@@ -51,7 +52,8 @@ const Dashboard = () => {
 
                 let sortedProjects = sortProjects(activeProjects);
                 setProjects(sortedProjects);
-            });
+            })
+            .catch((err) => setError(err.response));
     };
 
     const sortProjects = (projects) => {
@@ -60,7 +62,7 @@ const Dashboard = () => {
             let dateObject2 = b.deadline ? moment(b.deadline).toDate() : null;
 
             // Sorting by date while taking into account null deadline values.
-            // Can this be simplified?
+            // Can this be simplified? Maybe move to backend
             if (!dateObject1 && !dateObject2) {
                 return 0;
             } else if (!dateObject1) {
@@ -77,10 +79,6 @@ const Dashboard = () => {
         });
     };
 
-    const handleChange = (e) => {
-        filterDashboard(e.target.value);
-    };
-
     /* Filter projects by looking for matches in title or client name */
     const filterDashboard = (searchWord) => {
         const filteredProjects = projects.filter((project) => {
@@ -91,8 +89,47 @@ const Dashboard = () => {
         setFilteredProjects(filteredProjects);
     };
 
-    if (!projects) {
-        return <Loading />;
+    let pageContent;
+
+    if (error) {
+        pageContent = <Error status={error.status} description={error?.data?.messages} />;
+    } else if (workspaces.length < 1) {
+        pageContent = (
+            <div className="empty-dashboard">
+                <p>Start by creating a workspace</p>
+                <Button icon={<PlusOutlined />} onClick={() => history.push("/new-workspace")}>
+                    New workspace
+                </Button>
+            </div>
+        );
+    } else if (projects.length < 1 || filteredProjects.length < 1) {
+        pageContent = (
+            <div className="empty-dashboard">
+                <p>No projects found</p>
+                <Button icon={<PlusOutlined />} onClick={() => history.push("/new-project")}>
+                    New project
+                </Button>
+            </div>
+        );
+    } else if (filteredProjects.length > 0) {
+        pageContent = (
+            <div className="dashboard-content">
+                {filteredProjects.map((project) => (
+                    <Link
+                        className="project-card-link"
+                        key={project.id}
+                        to={{
+                            pathname: `/project/${project.id}`,
+                            projectProps: {
+                                id: project.id,
+                            },
+                        }}
+                    >
+                        <ProjectCard {...project} />
+                    </Link>
+                ))}
+            </div>
+        );
     }
 
     return (
@@ -101,53 +138,15 @@ const Dashboard = () => {
                 <Navigation />
             </Sider>
             <Content>
-                <Input className="dashboard-search" placeholder="Search" onChange={(e) => handleChange(e)} />
-
-                {workspaces.length < 1 && (
-                    <div className="empty-dashboard">
-                        <p>Start by creating a workspace</p>
-                        <Button icon={<PlusOutlined />} onClick={() => history.push("/new-workspace")}>
-                            New workspace
-                        </Button>
-                    </div>
+                {projects.length > 0 && (
+                    <Input
+                        className="dashboard-search"
+                        placeholder="Search"
+                        onChange={(e) => filterDashboard(e.target.value)}
+                    />
                 )}
 
-                {projects.length < 1 && (
-                    <div className="empty-dashboard">
-                        <p>No active projects</p>
-                        <Button icon={<PlusOutlined />} onClick={() => history.push("/new-project")}>
-                            New project
-                        </Button>
-                    </div>
-                )}
-
-                {projects.length > 0 && filteredProjects.length < 1 && (
-                    <div className="empty-dashboard">
-                        <p>No projects found</p>
-                        <Button icon={<PlusOutlined />} onClick={() => history.push("/new-project")}>
-                            New project
-                        </Button>
-                    </div>
-                )}
-
-                {filteredProjects.length > 0 && (
-                    <div className="dashboard-content">
-                        {filteredProjects.map((project) => (
-                            <Link
-                                className="project-card-link"
-                                key={project.id}
-                                to={{
-                                    pathname: `/project/${project.id}`,
-                                    projectProps: {
-                                        id: project.id,
-                                    },
-                                }}
-                            >
-                                <ProjectCard {...project} />
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                {pageContent}
             </Content>
         </Layout>
     );

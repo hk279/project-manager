@@ -56,7 +56,10 @@ const UserView = () => {
     } else {
         pageContent = (
             <>
-                <PageHeader title={`${user.firstName} ${user.lastName}`} />
+                <PageHeader
+                    title={`${user.firstName} ${user.lastName}`}
+                    avatar={{ src: user.avatar.fileLocation, size: 64 }}
+                />
 
                 <div className="view-content">
                     <Divider orientation="left">Personal information</Divider>
