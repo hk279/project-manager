@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { notification, Space, Upload, Image, Skeleton } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
@@ -9,11 +9,6 @@ const AvatarUpload = ({ userId }) => {
     const { authTokens, setAuthTokens } = useAuth();
 
     const [loading, setLoading] = useState(false);
-    const [avatarObjectUrl, setAvatarObjectUrl] = useState("");
-
-    useEffect(() => {
-        createAvatarObjectUrl(authTokens.avatar.fileKey);
-    }, []);
 
     // Restrict upload to jpeg or png-files that are smaller than 2MB in size
     const validateUpload = (file) => {
@@ -35,51 +30,39 @@ const AvatarUpload = ({ userId }) => {
             setLoading(false);
             notification.success({ message: "Avatar successfully uploaded" });
         } else if (info.file.status === "error") {
+            setLoading(false);
             notification.error({ message: "Avatar upload failed" });
         }
     };
 
     // Custom upload request
-    const uploadAvatar = (options) => {
+    const uploadAvatar = (info) => {
         let requestConfig = getAuthHeader(authTokens.accessToken);
         requestConfig.headers["content-type"] = "multipart/form-data";
 
         const data = new FormData();
-        data.append("image", options.file);
+        data.append("image", info.file);
 
         axios
             .post(`${URLroot}/users/upload-avatar/${userId}`, data, requestConfig)
-            .then((res) => {
-                options.onSuccess();
-                setAuthTokens({ ...authTokens, avatar: { fileKey: res.data.fileKey, fileName: res.data.fileName } });
-                createAvatarObjectUrl(res.data.fileKey);
-            })
-            .catch(() => {
-                options.onError();
-            });
+            .then((res) =>
+                setAuthTokens({
+                    ...authTokens,
+                    avatar: {
+                        fileKey: res.data.fileKey,
+                        fileName: res.data.fileName,
+                        fileLocation: res.data.fileLocation,
+                    },
+                })
+            )
+            .catch((err) =>
+                notification.error({ message: "Avatar upload failed", description: err.response.data.messages })
+            )
+            .finally(() => setLoading(false));
     };
 
-    const createAvatarObjectUrl = async (fileKey) => {
-        // Fetch the image.
-        const headers = new Headers();
-        headers.set("Authorization", `Bearer ${authTokens.accessToken}`);
-
-        let response;
-        try {
-            if (fileKey !== "") {
-                response = await fetch(`${URLroot}/users/get-avatar/${fileKey}`, { headers });
-            } else {
-                return;
-            }
-        } catch (error) {
-            notification.error({ message: "Fetching avatar image failed" });
-        }
-
-        // Create an object URL from the data.
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-
-        setAvatarObjectUrl(objectUrl);
+    const deleteAvatar = () => {
+        //TODO
     };
 
     const uploadProps = {
@@ -89,18 +72,22 @@ const AvatarUpload = ({ userId }) => {
         customRequest: uploadAvatar,
         showUploadList: false,
         beforeUpload: validateUpload,
-        onChange: (info) => handleChange(info),
+        onChange: handleChange,
     };
 
     return (
         <Space>
-            {authTokens.avatar.fileKey !== "" ? <Image width={200} src={avatarObjectUrl}></Image> : <Skeleton.Image />}
+            {authTokens.avatar.fileLocation !== "" ? (
+                <Image width={200} src={authTokens.avatar.fileLocation}></Image>
+            ) : (
+                <Skeleton.Image />
+            )}
 
             <Upload {...uploadProps}>
-                <div>
+                <Space direction="vertical" size="small">
                     {loading ? <LoadingOutlined /> : <PlusOutlined />}
-                    <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
+                    Upload
+                </Space>
             </Upload>
         </Space>
     );

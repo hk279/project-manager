@@ -35,13 +35,7 @@ const EditProfile = ({ editProfile, cancelEdit }) => {
                 <Item label="Last name" name="lastName" rules={[{ required: true }]}>
                     <Input maxLength={60} />
                 </Item>
-                <Item
-                    label="Email"
-                    name="email"
-                    rules={[{ type: "email", message: "Email not valid" }, { required: true }]}
-                >
-                    <Input maxLength={60} />
-                </Item>
+
                 <Divider orientation="left">Skills</Divider>
                 <List name="skills">
                     {(fields, { add, remove }, { errors }) => (

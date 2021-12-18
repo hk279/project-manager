@@ -62,13 +62,23 @@ const FileUpload = ({ projectId, files }) => {
         setFileList(fileList);
     };
 
+    // Restrict upload to files that are smaller than 5MB in size
+    const validateUpload = (file) => {
+        const isLessThan2mb = file.size / 1024 / 1024 < 2;
+        if (!isLessThan2mb) {
+            notification.error({ message: "Upload failed", description: "Attachment must smaller than 5MB." });
+        }
+        return isLessThan2mb;
+    };
+
     const uploadProps = {
         name: "file",
         action: `${URLroot}/projects/${projectId}/upload-file`,
         headers: { Authorization: "Bearer " + authTokens.accessToken },
         defaultFileList: initialFileList,
         onRemove: async (file) => await showConfirm(file),
-        onChange: (info) => handleChange(info),
+        onChange: handleChange,
+        beforeUpload: validateUpload,
     };
 
     return (

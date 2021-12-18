@@ -59,7 +59,10 @@ const Profile = () => {
                 <PageHeader
                     title="Profile"
                     extra={[
-                        <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
+                        <Button key="1" type="primary" onClick={() => setModalVisible(true)}>
+                            Change password
+                        </Button>,
+                        <Button key="2" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
                     ]}
                 />
                 <div className="view-content">
@@ -93,10 +96,6 @@ const Profile = () => {
                     <Divider orientation="left">Upload avatar</Divider>
                     <AvatarUpload userId={authTokens.id} />
 
-                    <Divider />
-                    <Button type="primary" onClick={() => setModalVisible(true)}>
-                        Change password
-                    </Button>
                     <ChangePassword
                         visible={modalVisible}
                         onFinishChangePassword={onFinishChangePassword}
