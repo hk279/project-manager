@@ -1,8 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Input, Button, Space, Divider, notification, Alert } from "antd";
-import { URLroot } from "../config/config";
+import authAPI from "../api/auth";
 
 const SignUpForm = () => {
     const { Item } = Form;
@@ -12,15 +11,8 @@ const SignUpForm = () => {
     const [error, setError] = useState(null);
 
     const handleSubmit = (values) => {
-        let userDetails = values;
-
-        userDetails.avatar = { fileKey: "", fileName: "", fileLocation: "" };
-        delete userDetails["repeatPassword"];
-
-        console.log(userDetails);
-
-        axios
-            .post(`${URLroot}/auth/signup/`, userDetails)
+        authAPI
+            .signup(values)
             .then(() => {
                 notification.success({
                     message: "Sign up successful",
@@ -29,7 +21,7 @@ const SignUpForm = () => {
                 setError(null);
             })
             .catch((err) => {
-                setError(err.response.data);
+                setError(err.response);
                 notification.error({
                     message: "Sign up failed",
                 });
@@ -96,7 +88,7 @@ const SignUpForm = () => {
             {error && (
                 <Alert
                     message="Sign up failed"
-                    description={error.messages}
+                    description={error.data.messages}
                     type="error"
                     closable
                     onClose={() => setError(null)}

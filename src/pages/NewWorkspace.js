@@ -1,9 +1,8 @@
 import { Layout, Form, Input, Divider, Radio, Button, notification, PageHeader } from "antd";
 import Navigation from "../components/Navigation";
-import axios from "axios";
-import { getAuthHeader, URLroot } from "../config/config";
 import { useAuth } from "../context/auth";
 import { useHistory } from "react-router-dom";
+import workspacesAPI from "../api/workspaces";
 
 const NewWorkspace = () => {
     const { Sider, Content } = Layout;
@@ -14,10 +13,11 @@ const NewWorkspace = () => {
     const history = useHistory();
 
     const handleSubmit = (values) => {
+        // TODO: If user doesn't have a default workspace, set the created one as default
         const newWorkspace = { ...values, owner: authTokens.id, members: [{ userId: authTokens.id, role: "owner" }] };
 
-        axios
-            .post(`${URLroot}/workspaces`, newWorkspace, getAuthHeader(authTokens.accessToken))
+        workspacesAPI
+            .createWorkspace(newWorkspace, authTokens.accessToken)
             .then((res) => {
                 setAuthTokens({ ...authTokens, activeWorkspace: res.data.id });
                 history.push("/");

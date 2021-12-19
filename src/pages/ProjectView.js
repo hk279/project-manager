@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
-import { PageHeader, Button, Divider, Layout, List, notification, Popconfirm, Space, Tag, Result } from "antd";
+import { PageHeader, Button, Divider, Layout, List, notification, Popconfirm, Space, Tag } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import CommentSection from "../components/CommentSection";
@@ -13,6 +13,7 @@ import TaskSection from "../components/TaskSection";
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
 import { useAuth } from "../context/auth";
+import { Link } from "react-router-dom";
 
 const ProjectView = () => {
     const { Sider, Content } = Layout;
@@ -129,7 +130,11 @@ const ProjectView = () => {
                     <List
                         size="small"
                         dataSource={users}
-                        renderItem={(user) => <List.Item>{`${user.firstName} ${user.lastName}`}</List.Item>}
+                        renderItem={(user) => (
+                            <List.Item>
+                                <Link to={`/user/${user.id}`}>{`${user.firstName} ${user.lastName}`}</Link>
+                            </List.Item>
+                        )}
                     />
 
                     <Divider orientation="left">Files</Divider>

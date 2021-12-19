@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import { Layout, Button, Input } from "antd";
+import { Layout, Button, Input, Result } from "antd";
 import ProjectCard from "../components/ProjectCard";
 import Navigation from "../components/Navigation";
-import Loading from "../components/Loading";
 import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
 import { PlusOutlined } from "@ant-design/icons";
@@ -95,21 +94,25 @@ const Dashboard = () => {
         pageContent = <Error status={error.status} description={error?.data?.messages} />;
     } else if (workspaces.length < 1) {
         pageContent = (
-            <div className="empty-dashboard">
-                <p>Start by creating a workspace</p>
-                <Button icon={<PlusOutlined />} onClick={() => history.push("/new-workspace")}>
-                    New workspace
-                </Button>
-            </div>
+            <Result
+                title="Start by creating a workspace"
+                extra={
+                    <Button icon={<PlusOutlined />} onClick={() => history.push("/new-workspace")}>
+                        New workspace
+                    </Button>
+                }
+            />
         );
     } else if (projects.length < 1 || filteredProjects.length < 1) {
         pageContent = (
-            <div className="empty-dashboard">
-                <p>No projects found</p>
-                <Button icon={<PlusOutlined />} onClick={() => history.push("/new-project")}>
-                    New project
-                </Button>
-            </div>
+            <Result
+                title="No projects found"
+                extra={
+                    <Button icon={<PlusOutlined />} onClick={() => history.push("/new-project")}>
+                        New project
+                    </Button>
+                }
+            />
         );
     } else if (filteredProjects.length > 0) {
         pageContent = (

@@ -42,8 +42,15 @@ const Navigation = () => {
     const getActiveWorkspaceName = () => {
         if (workspaces.length > 0) {
             const activeWorkspace = workspaces.find((workspace) => workspace.id === authTokens.activeWorkspace);
-            return activeWorkspace?.name;
+            console.log(activeWorkspace);
+            return activeWorkspace?.name ?? "Workspaces";
+        } else {
+            return "Workspaces";
         }
+    };
+
+    const areProjectPagesDisabled = () => {
+        return workspaces.length < 1 || authTokens.activeWorkspace === "" ? true : false;
     };
 
     if (error) {
@@ -82,20 +89,21 @@ const Navigation = () => {
 
             <Divider />
 
-            <ItemGroup key="g3">
-                <Item icon={<UserOutlined />} key="/profile">
-                    <Link to="/profile">{`${authTokens.firstName} ${authTokens.lastName}`}</Link>
-                </Item>
-            </ItemGroup>
             <ItemGroup key="g4">
                 <Item key="/" icon={<DashboardOutlined />}>
                     <Link to="/">Dashboard</Link>
                 </Item>
-                <Item key="/project-history" icon={<HistoryOutlined />}>
+                <Item key="/project-history" icon={<HistoryOutlined />} disabled={areProjectPagesDisabled()}>
                     <Link to="/project-history">Project history</Link>
                 </Item>
-                <Item key="/new-project" icon={<FileAddOutlined />} disabled={workspaces.length < 1 ? true : false}>
+                <Item key="/new-project" icon={<FileAddOutlined />} disabled={areProjectPagesDisabled()}>
                     <Link to="/new-project">New project</Link>
+                </Item>
+            </ItemGroup>
+
+            <ItemGroup key="g3">
+                <Item icon={<UserOutlined />} key="/profile">
+                    <Link to="/profile">{`${authTokens.firstName} ${authTokens.lastName}`}</Link>
                 </Item>
             </ItemGroup>
 

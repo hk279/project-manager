@@ -20,6 +20,7 @@ import {
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
 import Error from "../components/Error";
+import workspacesAPI from "../api/workspaces";
 
 const { Sider, Content } = Layout;
 const { Item, useForm } = Form;
@@ -61,10 +62,10 @@ const NewProject = () => {
     };
 
     const getWorkspace = () => {
-        const url = `${URLroot}/workspaces/${authTokens.activeWorkspace}`;
-        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
-            setWorkspace(res.data);
-        });
+        workspacesAPI
+            .getWorkspaceById(authTokens.activeWorkspace, authTokens.accessToken)
+            .then((res) => setWorkspace(res.data))
+            .catch((err) => setError(err.response));
     };
 
     /* Used for transfer component */
@@ -116,77 +117,73 @@ const NewProject = () => {
         pageContent = <Error status={error.status} description={error.data.messages} />;
     } else {
         pageContent = (
-            <>
-                <PageHeader title="New project" />
-
-                <div className="view-content">
-                    <Divider />
-                    <Form
-                        className="form"
-                        layout="vertical"
-                        form={form}
-                        onFinish={handleSubmit}
-                        validateMessages={{
-                            required: "${label} is required!",
-                        }}
-                    >
-                        <Item label="Title" name="title" rules={[{ required: true }]}>
+            <div className="view-content">
+                <Divider />
+                <Form
+                    className="form"
+                    layout="vertical"
+                    form={form}
+                    onFinish={handleSubmit}
+                    validateMessages={{
+                        required: "${label} is required!",
+                    }}
+                >
+                    <Item label="Title" name="title" rules={[{ required: true }]}>
+                        <Input maxLength={80} />
+                    </Item>
+                    {workspace?.type === "business" ? (
+                        <Item label="Type" name="type" initialValue="internal">
+                            <Radio.Group>
+                                <Radio.Button value="internal" onChange={(e) => handleTypeChange(e)}>
+                                    Internal
+                                </Radio.Button>
+                                <Radio.Button value="client" onChange={(e) => handleTypeChange(e)}>
+                                    Client
+                                </Radio.Button>
+                            </Radio.Group>
+                        </Item>
+                    ) : null}
+                    {isClientProject && (
+                        <Item label="Client" name="client" rules={[{ required: true }]}>
                             <Input maxLength={80} />
                         </Item>
-                        {workspace?.type === "business" ? (
-                            <Item label="Type" name="type" initialValue="internal">
-                                <Radio.Group>
-                                    <Radio.Button value="internal" onChange={(e) => handleTypeChange(e)}>
-                                        Internal
-                                    </Radio.Button>
-                                    <Radio.Button value="client" onChange={(e) => handleTypeChange(e)}>
-                                        Client
-                                    </Radio.Button>
-                                </Radio.Group>
-                            </Item>
-                        ) : null}
-                        {isClientProject && (
-                            <Item label="Client" name="client" rules={[{ required: true }]}>
-                                <Input maxLength={80} />
-                            </Item>
-                        )}
-                        <Item label="Description" name="description">
-                            <TextArea maxLength={300} />
-                        </Item>
-                        <Item label="Deadline" name="deadline">
-                            <DatePicker format="DD/MM/YYYY" />
-                        </Item>
-                        <Item label="Tags" name="tags">
-                            <Select mode="tags">{existingTags}</Select>
-                        </Item>
-                        <Item label="Team" name="team">
-                            <Transfer
-                                listStyle={{ width: "100%", minWidth: "15em" }}
-                                dataSource={users.map((user) => {
-                                    return { ...user, key: user.id };
-                                })}
-                                titles={["Users", "Team"]}
-                                targetKeys={targetKeys}
-                                selectedKeys={selectedKeys}
-                                showSearch
-                                // filterOption is needed to make search case-insensitive
-                                filterOption={(input, option) => {
-                                    const fullName = `${option.firstName} ${option.lastName}`;
-                                    return fullName.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                                }}
-                                onChange={onChange}
-                                onSelectChange={onSelectChange}
-                                render={(item) => `${item.firstName} ${item.lastName}`}
-                            />
-                        </Item>
-                        <Item>
-                            <Button type="primary" htmlType="submit">
-                                Create Project
-                            </Button>
-                        </Item>
-                    </Form>
-                </div>
-            </>
+                    )}
+                    <Item label="Description" name="description">
+                        <TextArea maxLength={300} />
+                    </Item>
+                    <Item label="Deadline" name="deadline">
+                        <DatePicker format="DD/MM/YYYY" />
+                    </Item>
+                    <Item label="Tags" name="tags">
+                        <Select mode="tags">{existingTags}</Select>
+                    </Item>
+                    <Item label="Team" name="team">
+                        <Transfer
+                            listStyle={{ width: "100%", minWidth: "15em" }}
+                            dataSource={users.map((user) => {
+                                return { ...user, key: user.id };
+                            })}
+                            titles={["Users", "Team"]}
+                            targetKeys={targetKeys}
+                            selectedKeys={selectedKeys}
+                            showSearch
+                            // filterOption is needed to make search case-insensitive
+                            filterOption={(input, option) => {
+                                const fullName = `${option.firstName} ${option.lastName}`;
+                                return fullName.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                            }}
+                            onChange={onChange}
+                            onSelectChange={onSelectChange}
+                            render={(item) => `${item.firstName} ${item.lastName}`}
+                        />
+                    </Item>
+                    <Item>
+                        <Button type="primary" htmlType="submit">
+                            Create Project
+                        </Button>
+                    </Item>
+                </Form>
+            </div>
         );
     }
 
@@ -195,7 +192,10 @@ const NewProject = () => {
             <Sider collapsible>
                 <Navigation />
             </Sider>
-            <Content>{pageContent}</Content>
+            <Content>
+                <PageHeader title="New project" />
+                {pageContent}
+            </Content>
         </Layout>
     );
 };

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link, Redirect } from "react-router-dom";
 import { Form, Input, Button, Alert, Space } from "antd";
 import { useAuth } from "../context/auth";
-import { URLroot } from "../config/config";
+import authAPI from "../api/auth";
+import workspacesAPI from "../api/workspaces";
 
 const LoginForm = () => {
     const { Item } = Form;
@@ -16,15 +16,26 @@ const LoginForm = () => {
 
     // Login handler
     const handleSubmit = (values) => {
-        axios
-            .post(`${URLroot}/auth/login`, { ...values })
-            .then((res) => {
+        authAPI
+            .login(values)
+            .then(async (res) => {
+                if (res.data.activeWorkspace === "") {
+                    res.data.activeWorkspace = await getFallbackWorkspace(res.data.id, res.data.accessToken);
+                }
                 setAuthTokens(res.data);
                 setLoggedIn(true);
             })
-            .catch((err) => {
-                setError(err.response.data);
-            });
+            .catch((err) => setError(err.response));
+    };
+
+    // Get a fallback workspace to set as active in case no default was set.
+    const getFallbackWorkspace = (userId, accessToken) => {
+        return workspacesAPI
+            .getWorkspacesByUser(userId, accessToken)
+            .then((res) => {
+                return res.data.length > 0 ? res.data[0].id : "";
+            })
+            .catch((err) => setError(err.response));
     };
 
     // Redirect after being logged in
@@ -52,7 +63,7 @@ const LoginForm = () => {
             {error && (
                 <Alert
                     message="Login failed"
-                    description={error.messages}
+                    description={error.data.messages}
                     type="error"
                     closable
                     onClose={() => setError(null)}

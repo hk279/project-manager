@@ -106,13 +106,6 @@
     width: 40%;
     margin: 2em 2em 0em 2em;
 }
-.empty-dashboard {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
 .project-card-link {
     display: grid;
     max-width: 30vw;
@@ -193,9 +186,6 @@
 }
 
 /* Workspace settings */
-.workspace-settings-switch {
-    margin-bottom: 1em;
-}
 .workspace-settings-default-text {
     float: right;
     font-style: italic;
@@ -207,6 +197,7 @@
     visibility: hidden;
 }
 
+/* Responsiveness */
 @media only screen and (max-width: 900px) {
     .view-content {
         width: 100%;

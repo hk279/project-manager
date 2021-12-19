@@ -21,11 +21,7 @@ const workspacesAPI = {
         url = `${workspacesAPIroot}/${workspaceId}`;
         return axios.put(url, body, getAuthHeader(accessToken));
     },
-    // removeUserFromWorkspace(workspaceId, userId, accessToken) {
-    //     url = `${workspacesAPIroot}/${workspaceId}/remove-user/${userId}`;
-    //     return axios.put(url, getAuthHeader(accessToken));
-    // },
-    deleteWorkspace(workspaceId, body, accessToken) {
+    deleteWorkspace(workspaceId, accessToken) {
         url = `${workspacesAPIroot}/${workspaceId}`;
         return axios.delete(url, getAuthHeader(accessToken));
     },
