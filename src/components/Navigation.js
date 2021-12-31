@@ -42,7 +42,6 @@ const Navigation = () => {
     const getActiveWorkspaceName = () => {
         if (workspaces.length > 0) {
             const activeWorkspace = workspaces.find((workspace) => workspace.id === authTokens.activeWorkspace);
-            console.log(activeWorkspace);
             return activeWorkspace?.name ?? "Workspaces";
         } else {
             return "Workspaces";

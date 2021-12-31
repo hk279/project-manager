@@ -11,15 +11,23 @@ import {
     Space,
     Modal,
     Result,
+    Input,
 } from "antd";
 import { useHistory } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import Error from "../components/Error";
+import RenameWorkspace from "../components/RenameWorkspace";
 import WorkspaceMembers from "../components/WorkspaceMembers";
 import workspacesAPI from "../api/workspaces";
 import usersAPI from "../api/users";
 import { useAuth } from "../context/auth";
-import { DeleteOutlined, UserDeleteOutlined, ExclamationCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    UserDeleteOutlined,
+    ExclamationCircleOutlined,
+    PlusOutlined,
+    CopyOutlined,
+} from "@ant-design/icons";
 
 const WorkspaceSettings = () => {
     const { Sider, Content } = Layout;
@@ -31,12 +39,13 @@ const WorkspaceSettings = () => {
 
     const [workspaces, setWorkspaces] = useState([]);
     const [error, setError] = useState(null);
+    const [renameModalVisible, setRenameModalVisible] = useState(false);
 
     useEffect(() => {
         getWorkspaces();
     }, []);
 
-    const getWorkspaces = async () => {
+    const getWorkspaces = () => {
         workspacesAPI
             .getWorkspacesByUser(authTokens.id, authTokens.accessToken)
             .then((res) => setWorkspaces(res.data))
@@ -78,7 +87,33 @@ const WorkspaceSettings = () => {
         });
     };
 
+    const renameWorkspace = (workspaceId, newName) => {
+        workspacesAPI
+            .updateWorkspace(workspaceId, { name: newName }, authTokens.accessToken)
+            .then(() => {
+                setRenameModalVisible(false);
+                window.location.reload(); // In order to refresh names in navigation as well
+            })
+            .catch((err) =>
+                notification.error({
+                    message: "Renaming workspace failed",
+                    description: err?.response?.data?.messages,
+                })
+            );
+    };
+
     const leaveWorkspace = (workspaceId) => {};
+
+    const copyLink = (workspaceId) => {
+        let field = document.getElementById("inviteLink");
+
+        field.select();
+        field.setSelectionRange(0, 99999); /* For mobile devices */
+
+        navigator.clipboard.writeText(field.value);
+
+        alert("Copied the link: " + field.value);
+    };
 
     let pageContent;
 
@@ -112,6 +147,23 @@ const WorkspaceSettings = () => {
                         >
                             <WorkspaceMembers workspace={workspace} />
 
+                            <Input.Group>
+                                <Input
+                                    id="inviteLink"
+                                    disabled={true}
+                                    style={{ width: "calc(100% - 300px)" }}
+                                    defaultValue={`${window.location.origin}/invite/1234abcd`}
+                                />
+                                <Space size="middle">
+                                    <Tooltip title="Copy URL">
+                                        <Button icon={<CopyOutlined />} onClick={() => copyLink(workspace.id)} />
+                                    </Tooltip>
+                                    <Button>Generate a new link</Button>
+                                </Space>
+                            </Input.Group>
+
+                            <Divider />
+
                             <Space size="middle">
                                 <Button
                                     disabled={authTokens.defaultWorkspace === workspace.id}
@@ -120,13 +172,16 @@ const WorkspaceSettings = () => {
                                     Set as default
                                 </Button>
                                 {workspace.owner === authTokens.id ? (
-                                    <Tooltip title="Delete workspace">
-                                        <Button
-                                            danger
-                                            icon={<DeleteOutlined />}
-                                            onClick={() => confirmDelete(workspace.id)}
-                                        />
-                                    </Tooltip>
+                                    <>
+                                        <Button onClick={() => setRenameModalVisible(true)}>Rename</Button>
+                                        <Tooltip title="Delete workspace">
+                                            <Button
+                                                danger
+                                                icon={<DeleteOutlined />}
+                                                onClick={() => confirmDelete(workspace.id)}
+                                            />
+                                        </Tooltip>
+                                    </>
                                 ) : (
                                     <Tooltip title="Leave workspace">
                                         <Popconfirm
@@ -147,6 +202,14 @@ const WorkspaceSettings = () => {
                                     </Tooltip>
                                 )}
                             </Space>
+
+                            <RenameWorkspace
+                                workspaceId={workspace.id}
+                                currentName={workspace.name}
+                                visible={renameModalVisible}
+                                onConfirm={renameWorkspace}
+                                onCancel={() => setRenameModalVisible(false)}
+                            />
                         </Panel>
                     ))}
                 </Collapse>

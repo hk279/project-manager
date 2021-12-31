@@ -33,14 +33,7 @@ const ChangePassword = ({ visible, onFinishChangePassword, onCancel }) => {
     };
 
     return (
-        <Modal
-            visible={visible}
-            title="Change password"
-            okText="Confirm"
-            cancelText="Cancel"
-            onCancel={onCancel}
-            onOk={onConfirm}
-        >
+        <Modal visible={visible} title="Change password" okText="Confirm" onCancel={onCancel} onOk={onConfirm}>
             <Form
                 form={form}
                 layout="vertical"
