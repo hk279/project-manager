@@ -18,7 +18,7 @@ import workspacesAPI from "../api/workspaces";
 const Navigation = () => {
     const { SubMenu, ItemGroup, Item, Divider } = Menu;
 
-    const { activeUser, setActiveUser } = useAuth();
+    const { logout, activeUser, setActiveUser } = useAuth();
 
     const [workspaces, setWorkspaces] = useState([]);
     const [error, setError] = useState(null);
@@ -107,14 +107,7 @@ const Navigation = () => {
             </ItemGroup>
 
             <ItemGroup key="g5">
-                <Item
-                    key="8"
-                    icon={<LogoutOutlined />}
-                    onClick={() => {
-                        setActiveUser(null);
-                        window.location.href = "/";
-                    }}
-                >
+                <Item key="8" icon={<LogoutOutlined />} onClick={() => logout()}>
                     Logout
                 </Item>
             </ItemGroup>

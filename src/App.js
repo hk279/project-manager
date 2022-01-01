@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./customRoutes/PrivateRoute";
-import { AuthContext } from "./context/auth";
+import { AuthProvider } from "./context/auth";
 import "antd/dist/antd.css";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
@@ -17,21 +17,9 @@ import WorkspaceSettings from "./pages/WorkspaceSettings";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
-    const getUserFromStorage = () => {
-        const storageItem = localStorage.getItem("user");
-        return storageItem !== "undefined" ? JSON.parse(storageItem) : null;
-    };
-
-    const [activeUser, setActiveUser] = useState(getUserFromStorage());
-
-    const storeUserData = (data) => {
-        localStorage.setItem("user", JSON.stringify(data));
-        setActiveUser(data);
-    };
-
     return (
-        <AuthContext.Provider value={{ activeUser, setActiveUser: storeUserData }}>
-            <Router>
+        <Router>
+            <AuthProvider>
                 <Switch>
                     <PrivateRoute path="/" exact component={Dashboard} />
                     <Route path="/login" exact component={Login} />
@@ -45,8 +33,8 @@ const App = () => {
                     <PrivateRoute path="/workspace-settings" exact component={WorkspaceSettings} />
                     <Route path="*" exact component={NotFound} />
                 </Switch>
-            </Router>
-        </AuthContext.Provider>
+            </AuthProvider>
+        </Router>
     );
 };
 

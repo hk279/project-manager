@@ -1,50 +1,19 @@
-import { useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Form, Input, Button, Alert, Space } from "antd";
 import { useAuth } from "../context/auth";
-import authAPI from "../api/auth";
-import workspacesAPI from "../api/workspaces";
 
 const LoginForm = () => {
     const { Item } = Form;
     const { Password } = Input;
 
-    const { setActiveUser } = useAuth();
+    const { login, authPending, authError } = useAuth();
 
-    const [isLoggedIn, setLoggedIn] = useState(false);
-    const [error, setError] = useState(null);
-
-    // Login handler
-    const handleSubmit = (values) => {
-        authAPI
-            .login(values)
-            .then(async (res) => {
-                if (res.data.activeWorkspace === "") {
-                    res.data.activeWorkspace = await getFallbackWorkspace(res.data.id, res.data.accessToken);
-                }
-                setActiveUser(res.data);
-                setLoggedIn(true);
-            })
-            .catch((err) => setError(err.response));
+    const handleLogin = (values) => {
+        login(values.email, values.password);
     };
-
-    // Get a fallback workspace to set as active in case no default was set.
-    const getFallbackWorkspace = (userId, accessToken) => {
-        return workspacesAPI
-            .getWorkspacesByUser(userId, accessToken)
-            .then((res) => {
-                return res.data.length > 0 ? res.data[0].id : "";
-            })
-            .catch((err) => setError(err.response));
-    };
-
-    // Redirect after being logged in
-    if (isLoggedIn) {
-        return <Redirect to={"/"} />;
-    }
 
     return (
-        <Form layout="vertical" onFinish={handleSubmit}>
+        <Form layout="vertical" onFinish={handleLogin}>
             <Item label="Email" name="email">
                 <Input />
             </Item>
@@ -53,22 +22,14 @@ const LoginForm = () => {
             </Item>
             <Item>
                 <Space size="middle">
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" disabled={authPending} loading={authPending}>
                         Login
                     </Button>
                     <Link to="/sign-up">Sign up</Link>
                 </Space>
             </Item>
 
-            {error && (
-                <Alert
-                    message="Login failed"
-                    description={error.data.messages}
-                    type="error"
-                    closable
-                    onClose={() => setError(null)}
-                />
-            )}
+            {authError && <Alert message="Login failed" description={authError?.data?.messages} type="error" />}
         </Form>
     );
 };
