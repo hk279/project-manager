@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 
 const ProjectView = () => {
     const { Sider, Content } = Layout;
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
     let { projectId } = useParams();
     const history = useHistory();
 
@@ -46,21 +46,21 @@ const ProjectView = () => {
 
     const getProject = () => {
         projectsAPI
-            .getProjectById(projectId, authTokens.accessToken)
+            .getProjectById(projectId, activeUser.accessToken)
             .then((res) => setProject(res.data))
             .catch((err) => setError(err.response));
     };
 
     const getUsers = () => {
         usersAPI
-            .getGroupOfUsers(project.team, authTokens.accessToken)
+            .getGroupOfUsers(project.team, activeUser.accessToken)
             .then((res) => setUsers(res.data))
             .catch((err) => setError(err.response));
     };
 
     const editProject = (newData) => {
         projectsAPI
-            .updateProject(project.id, newData, authTokens.accessToken)
+            .updateProject(project.id, newData, activeUser.accessToken)
             .then(() => {
                 setEditMode(false);
                 notification.success({ message: "Edit project successful" });
@@ -72,7 +72,7 @@ const ProjectView = () => {
 
     const deleteProject = () => {
         projectsAPI
-            .deleteProject(project.id, authTokens.accessToken)
+            .deleteProject(project.id, activeUser.accessToken)
             .then(() => {
                 history.push("/");
                 notification.success({ message: "Project successfully deleted" });

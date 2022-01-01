@@ -9,7 +9,7 @@ import { useAuth } from "../context/auth";
 const { Panel } = Collapse;
 
 const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const [assignedToName, setAssignedToName] = useState("");
 
@@ -19,7 +19,7 @@ const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
 
     const getAssignedToName = () => {
         axios
-            .get(`${URLroot}/users/id/${assignedTo}`, getAuthHeader(authTokens.accessToken))
+            .get(`${URLroot}/users/id/${assignedTo}`, getAuthHeader(activeUser.accessToken))
             .then((res) => setAssignedToName(`${res.data.firstName} ${res.data.lastName}`))
             .catch((err) => console.log(err));
     };

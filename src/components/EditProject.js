@@ -16,7 +16,7 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     const [targetKeys, setTargetKeys] = useState(project.team);
     const [selectedKeys, setSelectedKeys] = useState([]);
 
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
     const [form] = useForm();
 
     useEffect(() => {
@@ -25,15 +25,15 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     }, []);
 
     const getUsers = () => {
-        let url = `${URLroot}/users/workspace/${authTokens.activeWorkspace}`;
-        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
+        let url = `${URLroot}/users/workspace/${activeUser.activeWorkspace}`;
+        axios.get(url, getAuthHeader(activeUser.accessToken)).then((res) => {
             setUsers(res.data);
         });
     };
 
     const getTags = () => {
-        const url = `${URLroot}/projects/tags/${authTokens.activeWorkspace}`;
-        axios.get(url, getAuthHeader(authTokens.accessToken)).then((res) => {
+        const url = `${URLroot}/projects/tags/${activeUser.activeWorkspace}`;
+        axios.get(url, getAuthHeader(activeUser.accessToken)).then((res) => {
             setTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
     };

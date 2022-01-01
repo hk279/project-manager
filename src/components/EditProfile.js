@@ -5,7 +5,7 @@ import { useAuth } from "../context/auth";
 const { Item, useForm, List, ErrorList } = Form;
 
 const EditProfile = ({ editProfile, cancelEdit }) => {
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
     const [form] = useForm();
 
     const handleSubmit = (values) => {
@@ -20,10 +20,10 @@ const EditProfile = ({ editProfile, cancelEdit }) => {
                 form={form}
                 onFinish={handleSubmit}
                 initialValues={{
-                    firstName: authTokens.firstName,
-                    lastName: authTokens.lastName,
-                    email: authTokens.email,
-                    skills: authTokens.skills,
+                    firstName: activeUser.firstName,
+                    lastName: activeUser.lastName,
+                    email: activeUser.email,
+                    skills: activeUser.skills,
                 }}
                 validateMessages={{
                     required: "${label} is required!",

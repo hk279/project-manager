@@ -14,7 +14,7 @@ const { Item } = List;
 
 const UserView = () => {
     let { userId } = useParams();
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const [user, setUser] = useState(null);
     const [userProjects, setUserProjects] = useState([]);
@@ -27,14 +27,14 @@ const UserView = () => {
 
     const getUser = () => {
         usersAPI
-            .getUserById(userId, authTokens.accessToken)
+            .getUserById(userId, activeUser.accessToken)
             .then((res) => setUser(res.data))
             .catch((err) => setError(err.response));
     };
 
     const getUserProjects = () => {
         projectsAPI
-            .getProjectsByWorkspace(authTokens.activeWorkspace, authTokens.accessToken)
+            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
             .then((res) => {
                 let userProjects = [];
                 res.data.forEach((project) => {
@@ -69,10 +69,6 @@ const UserView = () => {
                             <tr>
                                 <td className="info-table-cell header-cell">Email</td>
                                 <td className="info-table-cell">{user.email}</td>
-                            </tr>
-                            <tr>
-                                <td className="info-table-cell header-cell">Phone</td>
-                                <td className="info-table-cell">{user.phone}</td>
                             </tr>
                         </tbody>
                     </table>

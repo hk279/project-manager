@@ -16,7 +16,7 @@ const ProjectHistory = () => {
     const [workspace, setWorkspace] = useState(null);
     const [error, setError] = useState(null);
 
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     useEffect(() => {
         getProjects();
@@ -53,14 +53,14 @@ const ProjectHistory = () => {
 
     const getWorkspace = () => {
         workspacesAPI
-            .getWorkspaceById(authTokens.activeWorkspace, authTokens.accessToken)
+            .getWorkspaceById(activeUser.activeWorkspace, activeUser.accessToken)
             .then((res) => setWorkspace(res.data))
             .catch((err) => setError(err.response));
     };
 
     const getProjects = () => {
         projectsAPI
-            .getProjectsByWorkspace(authTokens.activeWorkspace, authTokens.accessToken)
+            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
             .then((res) => {
                 // Uses helper function to filter only the projects in which the deadline has already passed.
                 const pastProjects = res.data.filter((project) => {

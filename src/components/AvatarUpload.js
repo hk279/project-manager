@@ -6,7 +6,7 @@ import { getAuthHeader, URLroot } from "../config/config";
 import { useAuth } from "../context/auth";
 
 const AvatarUpload = ({ userId }) => {
-    const { authTokens, setAuthTokens } = useAuth();
+    const { activeUser, setActiveUser } = useAuth();
 
     const [loading, setLoading] = useState(false);
 
@@ -37,7 +37,7 @@ const AvatarUpload = ({ userId }) => {
 
     // Custom upload request
     const uploadAvatar = (info) => {
-        let requestConfig = getAuthHeader(authTokens.accessToken);
+        let requestConfig = getAuthHeader(activeUser.accessToken);
         requestConfig.headers["content-type"] = "multipart/form-data";
 
         const data = new FormData();
@@ -46,8 +46,8 @@ const AvatarUpload = ({ userId }) => {
         axios
             .post(`${URLroot}/users/upload-avatar/${userId}`, data, requestConfig)
             .then((res) =>
-                setAuthTokens({
-                    ...authTokens,
+                setActiveUser({
+                    ...activeUser,
                     avatar: {
                         fileKey: res.data.fileKey,
                         fileName: res.data.fileName,
@@ -77,8 +77,8 @@ const AvatarUpload = ({ userId }) => {
 
     return (
         <Space>
-            {authTokens.avatar.fileLocation !== "" ? (
-                <Image width={200} src={authTokens.avatar.fileLocation}></Image>
+            {activeUser.avatar.fileLocation !== "" ? (
+                <Image width={200} src={activeUser.avatar.fileLocation}></Image>
             ) : (
                 <Skeleton.Image />
             )}

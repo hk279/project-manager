@@ -13,7 +13,7 @@ import projectsAPI from "../api/projects";
 
 const Dashboard = () => {
     const { Sider, Content } = Layout;
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
     const history = useHistory();
 
     const [projects, setProjects] = useState([]);
@@ -32,14 +32,14 @@ const Dashboard = () => {
 
     const getWorkspaces = () => {
         workspacesAPI
-            .getWorkspacesByUser(authTokens.id, authTokens.accessToken)
+            .getWorkspacesByUser(activeUser.id, activeUser.accessToken)
             .then((res) => setWorkspaces(res.data))
             .catch((err) => setError(err.response));
     };
 
     const getProjects = () => {
         projectsAPI
-            .getProjectsByWorkspace(authTokens.activeWorkspace, authTokens.accessToken)
+            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
             .then((res) => {
                 // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
                 const activeProjects = res.data.filter((project) => {

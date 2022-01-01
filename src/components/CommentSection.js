@@ -7,20 +7,20 @@ import { useAuth } from "../context/auth";
 import { URLroot, getAuthHeader } from "../config/config";
 
 const CommentSection = ({ project, reRenderParent }) => {
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const [commentText, setCommentText] = useState("");
 
     // Add a comment
     const addComment = (commentText) => {
         const comment = {
-            authorId: authTokens.id,
+            authorId: activeUser.id,
             text: commentText,
             timestamp: new Date().toISOString(),
         };
 
         axios
-            .put(`${URLroot}/projects/${project.id}/add-comment`, comment, getAuthHeader(authTokens.accessToken))
+            .put(`${URLroot}/projects/${project.id}/add-comment`, comment, getAuthHeader(activeUser.accessToken))
             .then(() => reRenderParent())
             .catch((err) => {
                 notification.error({ message: "Adding comment failed", description: err.response.data.messages });
@@ -33,7 +33,7 @@ const CommentSection = ({ project, reRenderParent }) => {
             .put(
                 `${URLroot}/projects/${project.id}/delete-comment/${commentId}`,
                 {},
-                getAuthHeader(authTokens.accessToken)
+                getAuthHeader(activeUser.accessToken)
             )
             .then(() => reRenderParent())
             .catch((err) => {

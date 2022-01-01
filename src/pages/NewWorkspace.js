@@ -9,17 +9,17 @@ const NewWorkspace = () => {
     const { Item, useForm } = Form;
 
     const [form] = useForm();
-    const { authTokens, setAuthTokens } = useAuth();
+    const { activeUser, setActiveUser } = useAuth();
     const history = useHistory();
 
     const handleSubmit = (values) => {
         // TODO: If user doesn't have a default workspace, set the created one as default
-        const newWorkspace = { ...values, owner: authTokens.id, members: [{ userId: authTokens.id, role: "owner" }] };
+        const newWorkspace = { ...values, owner: activeUser.id, members: [{ userId: activeUser.id, role: "owner" }] };
 
         workspacesAPI
-            .createWorkspace(newWorkspace, authTokens.accessToken)
+            .createWorkspace(newWorkspace, activeUser.accessToken)
             .then((res) => {
-                setAuthTokens({ ...authTokens, activeWorkspace: res.data.id });
+                setActiveUser({ ...activeUser, activeWorkspace: res.data.id });
                 history.push("/");
             })
             .catch((err) =>

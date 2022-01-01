@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./customRoutes/PrivateRoute";
-import AdminRoute from "./customRoutes/AdminRoute";
 import { AuthContext } from "./context/auth";
 import "antd/dist/antd.css";
 import "./App.css";
@@ -17,26 +16,21 @@ import NewWorkspace from "./pages/NewWorkspace";
 import WorkspaceSettings from "./pages/WorkspaceSettings";
 import NotFound from "./pages/NotFound";
 
-function App() {
-    // Tries to get auth tokens stored in local storage
-    const storageItem = localStorage.getItem("tokens");
-    let existingTokens;
+const App = () => {
+    const getUserFromStorage = () => {
+        const storageItem = localStorage.getItem("user");
+        return storageItem !== "undefined" ? JSON.parse(storageItem) : null;
+    };
 
-    if (storageItem !== "undefined") {
-        existingTokens = JSON.parse(storageItem);
-    } else {
-        existingTokens = null;
-    }
+    const [activeUser, setActiveUser] = useState(getUserFromStorage());
 
-    const [authTokens, setAuthTokens] = useState(existingTokens);
-
-    const setTokens = (data) => {
-        localStorage.setItem("tokens", JSON.stringify(data));
-        setAuthTokens(data);
+    const storeUserData = (data) => {
+        localStorage.setItem("user", JSON.stringify(data));
+        setActiveUser(data);
     };
 
     return (
-        <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+        <AuthContext.Provider value={{ activeUser, setActiveUser: storeUserData }}>
             <Router>
                 <Switch>
                     <PrivateRoute path="/" exact component={Dashboard} />
@@ -54,6 +48,6 @@ function App() {
             </Router>
         </AuthContext.Provider>
     );
-}
+};
 
 export default App;

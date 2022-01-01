@@ -34,7 +34,7 @@ const WorkspaceSettings = () => {
     const { Panel } = Collapse;
     const { confirm } = Modal;
 
-    const { authTokens, setAuthTokens } = useAuth();
+    const { activeUser, setActiveUser } = useAuth();
     const history = useHistory();
 
     const [workspaces, setWorkspaces] = useState([]);
@@ -47,15 +47,15 @@ const WorkspaceSettings = () => {
 
     const getWorkspaces = () => {
         workspacesAPI
-            .getWorkspacesByUser(authTokens.id, authTokens.accessToken)
+            .getWorkspacesByUser(activeUser.id, activeUser.accessToken)
             .then((res) => setWorkspaces(res.data))
             .catch((err) => setError(err.response));
     };
 
     const setDefaultWorkspace = (workspaceId) => {
         usersAPI
-            .updateUser(authTokens.id, { defaultWorkspace: workspaceId }, authTokens.accessToken)
-            .then(() => setAuthTokens({ ...authTokens, defaultWorkspace: workspaceId }))
+            .updateUser(activeUser.id, { defaultWorkspace: workspaceId }, activeUser.accessToken)
+            .then(() => setActiveUser({ ...activeUser, defaultWorkspace: workspaceId }))
             .catch((err) =>
                 notification.error({
                     message: "Setting default workspace failed",
@@ -66,11 +66,11 @@ const WorkspaceSettings = () => {
 
     const deleteWorkspace = (workspaceId) => {
         workspacesAPI
-            .deleteWorkspace(workspaceId, authTokens.accessToken)
-            .then(() => getWorkspaces())
+            .deleteWorkspace(workspaceId, activeUser.accessToken)
+            .then(() => window.location.reload()) // In order to refresh names in navigation as well)
             .catch((err) => setError(err.response));
 
-        // if deleted workspace was active, set another one as active. If no other ones remain, set empty string
+        // TODO: if deleted workspace was active, set another one as active. If no other ones remain, set empty string
     };
 
     const confirmDelete = (workspaceId) => {
@@ -89,7 +89,7 @@ const WorkspaceSettings = () => {
 
     const renameWorkspace = (workspaceId, newName) => {
         workspacesAPI
-            .updateWorkspace(workspaceId, { name: newName }, authTokens.accessToken)
+            .updateWorkspace(workspaceId, { name: newName }, activeUser.accessToken)
             .then(() => {
                 setRenameModalVisible(false);
                 window.location.reload(); // In order to refresh names in navigation as well
@@ -102,8 +102,20 @@ const WorkspaceSettings = () => {
             );
     };
 
-    const leaveWorkspace = (workspaceId) => {};
+    const leaveWorkspace = (workspace) => {
+        const newMembersList = workspace.members.filter((member) => member.userId !== activeUser.id);
+        workspacesAPI
+            .updateWorkspace(workspace.id, { members: newMembersList }, activeUser.accessToken)
+            .then(() => window.location.reload()) // In order to refresh names in navigation as well
+            .catch((err) =>
+                notification.error({
+                    message: "Leave workspace failed",
+                    description: err.response.data.messages,
+                })
+            );
+    };
 
+    // WIP
     const copyLink = (workspaceId) => {
         let field = document.getElementById("inviteLink");
 
@@ -140,7 +152,7 @@ const WorkspaceSettings = () => {
                             header={workspace.name}
                             key={workspace.id}
                             extra={
-                                authTokens.defaultWorkspace === workspace.id && (
+                                activeUser.defaultWorkspace === workspace.id && (
                                     <span className="workspace-settings-default-text">Default</span>
                                 )
                             }
@@ -166,12 +178,12 @@ const WorkspaceSettings = () => {
 
                             <Space size="middle">
                                 <Button
-                                    disabled={authTokens.defaultWorkspace === workspace.id}
+                                    disabled={activeUser.defaultWorkspace === workspace.id}
                                     onClick={() => setDefaultWorkspace(workspace.id)}
                                 >
                                     Set as default
                                 </Button>
-                                {workspace.owner === authTokens.id ? (
+                                {workspace.owner === activeUser.id ? (
                                     <>
                                         <Button onClick={() => setRenameModalVisible(true)}>Rename</Button>
                                         <Tooltip title="Delete workspace">

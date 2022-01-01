@@ -6,7 +6,7 @@ import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
 
 const ProjectCard = ({ title, type, client, description, deadline, team, tasks, tags }) => {
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const [users, setUsers] = useState([]);
 
@@ -23,7 +23,7 @@ const ProjectCard = ({ title, type, client, description, deadline, team, tasks, 
 
         // Request data for a group of employees. Is post request suitable here?
         axios
-            .post(`${URLroot}/users/group:search`, { group: userIds }, getAuthHeader(authTokens.accessToken))
+            .post(`${URLroot}/users/group:search`, { group: userIds }, getAuthHeader(activeUser.accessToken))
             .then((res) => {
                 setUsers(res.data);
             });

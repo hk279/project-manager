@@ -10,7 +10,7 @@ import usersAPI from "../api/users";
 const WorkspaceMembers = ({ workspace }) => {
     const { Option } = Select;
 
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const [members, setMembers] = useState([]);
 
@@ -69,7 +69,7 @@ const WorkspaceMembers = ({ workspace }) => {
 
     const getWorkspaceUsers = () => {
         usersAPI
-            .getWorkspaceUsers(workspace.id, authTokens.accessToken)
+            .getWorkspaceUsers(workspace.id, activeUser.accessToken)
             .then((res) => setMembers(res.data))
             .catch((err) =>
                 notification.error({
@@ -98,7 +98,7 @@ const WorkspaceMembers = ({ workspace }) => {
         });
 
         workspacesAPI
-            .updateWorkspace(workspace.id, { members: updatedMembers }, authTokens.accessToken)
+            .updateWorkspace(workspace.id, { members: updatedMembers }, activeUser.accessToken)
             .then(() => getWorkspaceUsers())
             .catch((err) =>
                 notification.error({
@@ -109,16 +109,13 @@ const WorkspaceMembers = ({ workspace }) => {
     };
 
     const isChangeRoleDisabled = (role) => {
-        if (role === "owner" || authTokens.id !== workspace.owner) {
-            return true;
-        }
-        return false;
+        return role === "owner" || activeUser.id !== workspace.owner;
     };
 
     const removeUserFromWorkspace = (userId) => {
         const newMembersList = workspace.members.filter((member) => member.userId !== userId);
         workspacesAPI
-            .updateWorkspace(workspace.id, { members: newMembersList }, authTokens.accessToken)
+            .updateWorkspace(workspace.id, { members: newMembersList }, activeUser.accessToken)
             .then(() => getWorkspaceUsers())
             .catch((err) =>
                 notification.error({

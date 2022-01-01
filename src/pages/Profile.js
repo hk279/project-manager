@@ -15,12 +15,12 @@ const Profile = () => {
     const [editMode, setEditMode] = useState(false);
     const [trigger, setTrigger] = useState(false);
 
-    const { authTokens, setAuthTokens } = useAuth();
+    const { activeUser, setActiveUser } = useAuth();
 
     // TODO: rewrite
     const onFinishChangePassword = (values) => {
         usersAPI
-            .changePassword(authTokens.id, values, authTokens.accessToken)
+            .changePassword(activeUser.id, values, activeUser.accessToken)
             .then(() => {
                 notification.success({
                     message: "Password change successful",
@@ -37,10 +37,10 @@ const Profile = () => {
 
     const editProfile = (newData) => {
         usersAPI
-            .updateUser(authTokens.id, newData, authTokens.accessToken)
+            .updateUser(activeUser.id, newData, activeUser.accessToken)
             .then((res) => {
-                // Update new profile info into authTokens
-                setAuthTokens({ ...authTokens, ...res.data });
+                // Update new profile info into activeUser
+                setActiveUser({ ...activeUser, ...res.data });
                 setEditMode(false);
                 setTrigger(!trigger);
             })
@@ -72,15 +72,15 @@ const Profile = () => {
                         <tbody>
                             <tr>
                                 <td className="info-table-cell header-cell">First name</td>
-                                <td className="info-table-cell">{authTokens.firstName}</td>
+                                <td className="info-table-cell">{activeUser.firstName}</td>
                             </tr>
                             <tr>
                                 <td className="info-table-cell header-cell">Last name</td>
-                                <td className="info-table-cell">{authTokens.lastName}</td>
+                                <td className="info-table-cell">{activeUser.lastName}</td>
                             </tr>
                             <tr>
                                 <td className="info-table-cell header-cell">Email</td>
-                                <td className="info-table-cell">{authTokens.email}</td>
+                                <td className="info-table-cell">{activeUser.email}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -88,13 +88,13 @@ const Profile = () => {
                     <Divider orientation="left">Skills</Divider>
 
                     <List
-                        dataSource={authTokens.skills}
+                        dataSource={activeUser.skills}
                         size="small"
                         renderItem={(item) => <List.Item>{item}</List.Item>}
                     />
 
                     <Divider orientation="left">Upload avatar</Divider>
-                    <AvatarUpload userId={authTokens.id} />
+                    <AvatarUpload userId={activeUser.id} />
 
                     <ChangePassword
                         visible={modalVisible}

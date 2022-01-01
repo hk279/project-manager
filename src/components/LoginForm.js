@@ -9,7 +9,7 @@ const LoginForm = () => {
     const { Item } = Form;
     const { Password } = Input;
 
-    const { setAuthTokens } = useAuth();
+    const { setActiveUser } = useAuth();
 
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [error, setError] = useState(null);
@@ -22,7 +22,7 @@ const LoginForm = () => {
                 if (res.data.activeWorkspace === "") {
                     res.data.activeWorkspace = await getFallbackWorkspace(res.data.id, res.data.accessToken);
                 }
-                setAuthTokens(res.data);
+                setActiveUser(res.data);
                 setLoggedIn(true);
             })
             .catch((err) => setError(err.response));

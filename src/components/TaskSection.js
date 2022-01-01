@@ -8,7 +8,7 @@ import Task from "./Task";
 import AddTask from "./AddTask";
 
 const TaskSection = ({ project, users, reRenderParent }) => {
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const [modalVisible, setModalVisible] = useState(false);
     const [showCompletedTasks, setShowCompletedTasks] = useState(false);
@@ -21,7 +21,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
         axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
+            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(activeUser.accessToken))
             .then(() => {
                 setModalVisible(false);
                 reRenderParent();
@@ -40,7 +40,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
+            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(activeUser.accessToken))
             .then(() => reRenderParent())
             .catch((err) => console.log(err));
     };
@@ -51,7 +51,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(authTokens.accessToken))
+            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(activeUser.accessToken))
             .then(() => reRenderParent())
             .catch((err) => console.log(err));
     };
@@ -81,7 +81,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
     }
 
     if (showOnlyOwnTasks) {
-        filteredTasksList = filteredTasksList.filter((task) => task.assignedTo === authTokens.id);
+        filteredTasksList = filteredTasksList.filter((task) => task.assignedTo === activeUser.id);
     }
 
     return (

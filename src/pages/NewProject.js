@@ -36,7 +36,7 @@ const NewProject = () => {
     const [selectedKeys, setSelectedKeys] = useState([]);
     const [error, setError] = useState(null);
 
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
     const history = useHistory();
     const [form] = useForm();
 
@@ -48,7 +48,7 @@ const NewProject = () => {
 
     const getUsers = () => {
         usersAPI
-            .getWorkspaceUsers(authTokens.activeWorkspace, authTokens.accessToken)
+            .getWorkspaceUsers(activeUser.activeWorkspace, activeUser.accessToken)
             .then((res) => setUsers(res.data))
             .catch((err) => setError(err.response));
     };
@@ -56,14 +56,14 @@ const NewProject = () => {
     // Get tags previously used in the workspace to show as options in the tag select component.
     const getExistingTags = () => {
         projectsAPI
-            .getProjectTagsByWorkspace(authTokens.activeWorkspace, authTokens.accessToken)
+            .getProjectTagsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
             .then((res) => setExistingTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>)))
             .catch((err) => setError(err.response));
     };
 
     const getWorkspace = () => {
         workspacesAPI
-            .getWorkspaceById(authTokens.activeWorkspace, authTokens.accessToken)
+            .getWorkspaceById(activeUser.activeWorkspace, activeUser.accessToken)
             .then((res) => setWorkspace(res.data))
             .catch((err) => setError(err.response));
     };
@@ -89,7 +89,7 @@ const NewProject = () => {
         const body = {
             ...values,
             deadline,
-            workspaceId: authTokens.activeWorkspace,
+            workspaceId: activeUser.activeWorkspace,
             tasks: [],
             comments: [],
             tags,
@@ -101,7 +101,7 @@ const NewProject = () => {
         }
 
         projectsAPI
-            .createProject(body, authTokens.accessToken)
+            .createProject(body, activeUser.accessToken)
             .then(() => {
                 history.push("/");
                 notification.success({ message: "Project created successfully" });

@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import axios from "axios";
 
 const Comment = ({ comment, deleteComment }) => {
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const [avatarObjectUrl, setAvatarObjectUrl] = useState("");
     const [author, setAuthor] = useState(null);
@@ -27,7 +27,7 @@ const Comment = ({ comment, deleteComment }) => {
 
     const getAuthor = () => {
         axios
-            .get(`${URLroot}/users/id/${comment.authorId}`, getAuthHeader(authTokens.accessToken))
+            .get(`${URLroot}/users/id/${comment.authorId}`, getAuthHeader(activeUser.accessToken))
             .then((res) => {
                 setAuthor(res.data);
             })
@@ -38,7 +38,7 @@ const Comment = ({ comment, deleteComment }) => {
 
     const createAvatarObjectUrl = async (fileKey) => {
         const headers = new Headers();
-        headers.set("Authorization", `Bearer ${authTokens.accessToken}`);
+        headers.set("Authorization", `Bearer ${activeUser.accessToken}`);
 
         let response;
         if (fileKey !== "") {
@@ -57,7 +57,7 @@ const Comment = ({ comment, deleteComment }) => {
     return (
         <List.Item
             actions={
-                comment.authorId === authTokens.id && [
+                comment.authorId === activeUser.id && [
                     <Popconfirm
                         title="Confirm delete comment"
                         onConfirm={() => deleteComment(comment.id)}

@@ -7,7 +7,7 @@ import projectsAPI from "../api/projects";
 
 const FileUpload = ({ projectId, files }) => {
     const { confirm } = Modal;
-    const { authTokens } = useAuth();
+    const { activeUser } = useAuth();
 
     const initialFileList = files.map((file) => ({
         uid: file.fileKey,
@@ -25,7 +25,7 @@ const FileUpload = ({ projectId, files }) => {
                 icon: <ExclamationCircleOutlined />,
                 onOk() {
                     projectsAPI
-                        .deleteFile(projectId, file.uid, authTokens.accessToken)
+                        .deleteFile(projectId, file.uid, activeUser.accessToken)
                         .then(() => notification.success({ message: `'${file.name}' deleted successfully` }))
                         .catch((err) =>
                             notification.error({
@@ -74,7 +74,7 @@ const FileUpload = ({ projectId, files }) => {
     const uploadProps = {
         name: "file",
         action: `${URLroot}/projects/${projectId}/upload-file`,
-        headers: { Authorization: "Bearer " + authTokens.accessToken },
+        headers: { Authorization: "Bearer " + activeUser.accessToken },
         defaultFileList: initialFileList,
         onRemove: async (file) => await showConfirm(file),
         onChange: handleChange,

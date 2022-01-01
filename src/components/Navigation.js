@@ -18,7 +18,7 @@ import workspacesAPI from "../api/workspaces";
 const Navigation = () => {
     const { SubMenu, ItemGroup, Item, Divider } = Menu;
 
-    const { authTokens, setAuthTokens } = useAuth();
+    const { activeUser, setActiveUser } = useAuth();
 
     const [workspaces, setWorkspaces] = useState([]);
     const [error, setError] = useState(null);
@@ -29,19 +29,19 @@ const Navigation = () => {
 
     const getWorkspaces = () => {
         workspacesAPI
-            .getWorkspacesByUser(authTokens.id, authTokens.accessToken)
+            .getWorkspacesByUser(activeUser.id, activeUser.accessToken)
             .then((res) => setWorkspaces(res.data))
             .catch((err) => setError(err.response));
     };
 
     const changeWorkspace = (value) => {
-        setAuthTokens({ ...authTokens, activeWorkspace: value });
+        setActiveUser({ ...activeUser, activeWorkspace: value });
         window.location.href = "/";
     };
 
     const getActiveWorkspaceName = () => {
         if (workspaces.length > 0) {
-            const activeWorkspace = workspaces.find((workspace) => workspace.id === authTokens.activeWorkspace);
+            const activeWorkspace = workspaces.find((workspace) => workspace.id === activeUser.activeWorkspace);
             return activeWorkspace?.name ?? "Workspaces";
         } else {
             return "Workspaces";
@@ -49,7 +49,7 @@ const Navigation = () => {
     };
 
     const areProjectPagesDisabled = () => {
-        return workspaces.length < 1 || authTokens.activeWorkspace === "" ? true : false;
+        return workspaces.length < 1 || activeUser.activeWorkspace === "" ? true : false;
     };
 
     if (error) {
@@ -57,7 +57,7 @@ const Navigation = () => {
     }
 
     return (
-        <Menu mode="inline" theme="dark" selectedKeys={[authTokens.activeWorkspace, window.location.pathname]}>
+        <Menu mode="inline" theme="dark" selectedKeys={[activeUser.activeWorkspace, window.location.pathname]}>
             <SubMenu
                 key="sub1"
                 title={
@@ -102,7 +102,7 @@ const Navigation = () => {
 
             <ItemGroup key="g3">
                 <Item icon={<UserOutlined />} key="/profile">
-                    <Link to="/profile">{`${authTokens.firstName} ${authTokens.lastName}`}</Link>
+                    <Link to="/profile">{`${activeUser.firstName} ${activeUser.lastName}`}</Link>
                 </Item>
             </ItemGroup>
 
@@ -111,7 +111,7 @@ const Navigation = () => {
                     key="8"
                     icon={<LogoutOutlined />}
                     onClick={() => {
-                        setAuthTokens(null);
+                        setActiveUser(null);
                         window.location.href = "/";
                     }}
                 >
