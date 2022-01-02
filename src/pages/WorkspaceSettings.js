@@ -68,11 +68,8 @@ const WorkspaceSettings = () => {
         workspacesAPI
             .deleteWorkspace(workspaceId, activeUser.accessToken)
             .then(() => {
-                // If deleted workspace was the default, default will be changed to another workspace or empty.
-                if (workspaceId === activeUser.defaultWorkspace) {
-                    const newDefaultWorkspace = workspaces.length > 0 ? workspaces[0].id : "";
-                    setActiveUser({ ...activeUser, defaultWorkspace: newDefaultWorkspace });
-                }
+                // If deleted workspace was the default, remove default workspace from user context.
+                if (workspaceId === activeUser.defaultWorkspace) setActiveUser({ ...activeUser, defaultWorkspace: "" });
                 window.location.reload(); // In order to refresh names in navigation as well
             })
             .catch((err) => setError(err.response));

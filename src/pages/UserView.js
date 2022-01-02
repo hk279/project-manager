@@ -7,7 +7,6 @@ import Error from "../components/Error";
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
 import { useAuth } from "../context/auth";
-import { checkIfDeadlinePassed } from "../utils/helper";
 
 const { Sider, Content } = Layout;
 const { Item } = List;
@@ -33,8 +32,9 @@ const UserView = () => {
     };
 
     const getUserProjects = () => {
+        // Current projects only
         projectsAPI
-            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
+            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken, false, true)
             .then((res) => {
                 let userProjects = [];
                 res.data.forEach((project) => {
@@ -87,7 +87,7 @@ const UserView = () => {
                             <List
                                 header={<h3>Active Projects in this workspace</h3>}
                                 size="small"
-                                dataSource={userProjects.filter((project) => !checkIfDeadlinePassed(project.deadline))}
+                                dataSource={userProjects}
                                 renderItem={(item) => (
                                     <Item>
                                         <a href={`/project/${item.id}`}>{item.title}</a>

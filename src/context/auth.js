@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import authAPI from "../api/auth";
+import usersAPI from "../api/users";
 
 export const AuthContext = createContext();
 
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     const history = useHistory();
     const location = useLocation();
 
+    // If we change page, reset the error state.
     useEffect(() => {
         if (authError) setAuthError(null);
     }, [location.pathname]);
@@ -27,23 +29,38 @@ export const AuthProvider = ({ children }) => {
         authAPI
             .login({ email, password })
             .then((res) => {
-                setActiveUser(res.data);
+                storeUserData(res.data);
                 history.push("/");
             })
-            .catch((err) => {
-                console.log(err);
-                setAuthError(err);
-            })
+            .catch((err) => setAuthError(err))
             .finally(() => setAuthPending(false));
     };
 
-    const logout = () => {
-        setActiveUser(null);
+    // Get up-to-date user data for context and local storage.
+    const getActiveUser = () => {
+        if (!activeUser.id) {
+            storeUserData(null);
+            return;
+        }
+
+        usersAPI
+            .getUserById(activeUser.id)
+            .then((res) => {
+                if (res.data.length < 1) setActiveUser(null);
+                else storeUserData({ ...activeUser, ...res.data });
+            })
+            .catch(() => storeUserData(null));
     };
 
     const storeUserData = (data) => {
         localStorage.setItem("user", JSON.stringify(data));
         setActiveUser(data);
+    };
+
+    const logout = () => {
+        localStorage.setItem("user", null);
+        setActiveUser(null);
+        history.push("/");
     };
 
     return (

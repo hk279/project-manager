@@ -3,7 +3,6 @@ import { Layout, Table, Input, Divider, PageHeader } from "antd";
 import Navigation from "../components/Navigation";
 import Error from "../components/Error";
 import { useAuth } from "../context/auth";
-import { checkIfDeadlinePassed } from "../utils/helper";
 import moment from "moment";
 import projectsAPI from "../api/projects";
 import workspacesAPI from "../api/workspaces";
@@ -60,17 +59,8 @@ const ProjectHistory = () => {
 
     const getProjects = () => {
         projectsAPI
-            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
-            .then((res) => {
-                // Uses helper function to filter only the projects in which the deadline has already passed.
-                const pastProjects = res.data.filter((project) => {
-                    if (project.deadline === "") {
-                        return false;
-                    }
-                    return checkIfDeadlinePassed(project.deadline);
-                });
-                setProjects(pastProjects);
-            })
+            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken, true, false)
+            .then((res) => setProjects(res.data))
             .catch((err) => setError(err.response));
     };
 

@@ -4,8 +4,6 @@ import { useAuth } from "../context/auth";
 import { Layout, Button, Input, Result } from "antd";
 import ProjectCard from "../components/ProjectCard";
 import Navigation from "../components/Navigation";
-import { checkIfDeadlinePassed } from "../utils/helper";
-import moment from "moment";
 import { PlusOutlined } from "@ant-design/icons";
 import workspacesAPI from "../api/workspaces";
 import Error from "../components/Error";
@@ -38,44 +36,13 @@ const Dashboard = () => {
     };
 
     const getProjects = () => {
-        projectsAPI
-            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
-            .then((res) => {
-                // Uses helper function to filter only the projects in which the deadline hasn't yet passed.
-                const activeProjects = res.data.filter((project) => {
-                    if (project.deadline === null) {
-                        return true;
-                    }
-                    return !checkIfDeadlinePassed(project.deadline);
-                });
-
-                let sortedProjects = sortProjects(activeProjects);
-                setProjects(sortedProjects);
-            })
-            .catch((err) => setError(err.response));
-    };
-
-    const sortProjects = (projects) => {
-        return projects.sort((a, b) => {
-            let dateObject1 = a.deadline ? moment(a.deadline).toDate() : null;
-            let dateObject2 = b.deadline ? moment(b.deadline).toDate() : null;
-
-            // Sorting by date while taking into account null deadline values.
-            // Can this be simplified? Maybe move to backend
-            if (!dateObject1 && !dateObject2) {
-                return 0;
-            } else if (!dateObject1) {
-                return 1;
-            } else if (!dateObject2) {
-                return -1;
-            } else if (dateObject1 < dateObject2) {
-                return -1;
-            } else if (dateObject1 > dateObject2) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
+        if (activeUser.activeWorkspace) {
+            // Get only projects with deadline after current date
+            projectsAPI
+                .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken, false)
+                .then((res) => setProjects(res.data))
+                .catch((err) => setError(err.response));
+        }
     };
 
     /* Filter projects by looking for matches in title or client name */
@@ -103,6 +70,8 @@ const Dashboard = () => {
                 }
             />
         );
+    } else if (!activeUser.activeWorkspace && workspaces.length > 0) {
+        pageContent = <Result title="Start by selecting an active workspace" />;
     } else if (projects.length < 1 || filteredProjects.length < 1) {
         pageContent = (
             <Result

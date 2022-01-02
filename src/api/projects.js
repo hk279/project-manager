@@ -9,8 +9,12 @@ const projectsAPI = {
         url = `${projectsAPIroot}/id/${projectId}`;
         return axios.get(url, getAuthHeader(accessToken));
     },
-    getProjectsByWorkspace(workspaceId, accessToken) {
-        url = `${projectsAPIroot}/workspace/${workspaceId}`;
+    // Parameters for getting only past or current project specifically. Gets all by default.
+    getProjectsByWorkspace(workspaceId, accessToken, getPastProjects = true, getCurrentProjects = true) {
+        const pastProjectsInQuery = getPastProjects ? "1" : "0";
+        const currentProjectsInQuery = getCurrentProjects ? "1" : "0";
+
+        url = `${projectsAPIroot}/workspace/${workspaceId}?past=${pastProjectsInQuery}&current=${currentProjectsInQuery}`;
         return axios.get(url, getAuthHeader(accessToken));
     },
     createProject(body, accessToken) {
@@ -18,7 +22,7 @@ const projectsAPI = {
         return axios.post(url, body, getAuthHeader(accessToken));
     },
     updateProject(projectId, body, accessToken) {
-        url = `${projectsAPIroot}/id/${projectId}`;
+        url = `${projectsAPIroot}/${projectId}`;
         return axios.put(url, body, getAuthHeader(accessToken));
     },
     deleteProject(projectId, accessToken) {
