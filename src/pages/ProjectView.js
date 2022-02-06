@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { useHistory, useParams } from "react-router-dom";
-import { PageHeader, Button, Divider, Layout, List, notification, Popconfirm, Space, Tag } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { PageHeader, Button, Divider, Layout, List, notification, Space, Tag } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import CommentSection from "../components/CommentSection";
 import EditProject from "../components/EditProject";
@@ -14,6 +14,7 @@ import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
 import { useAuth } from "../context/auth";
 import { Link } from "react-router-dom";
+import DeleteButton from "../components/DeleteButton";
 
 const ProjectView = () => {
     const { Sider, Content } = Layout;
@@ -106,15 +107,7 @@ const ProjectView = () => {
                     }
                     extra={[
                         <Button key="1" type="primary" icon={<EditOutlined />} onClick={() => setEditMode(true)} />,
-                        <Popconfirm
-                            key="2"
-                            title="Confirm delete project"
-                            onConfirm={() => deleteProject(project.id)}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <Button type="primary" danger icon={<DeleteOutlined />} />
-                        </Popconfirm>,
+                        <DeleteButton key="2" title="Confirm delete project?" action={() => deleteProject()} />,
                     ]}
                 />
                 <div className="view-content">
@@ -137,11 +130,11 @@ const ProjectView = () => {
                         )}
                     />
 
-                    <Divider orientation="left">Files</Divider>
-                    <FileUpload projectId={project.id} files={project.files ?? []} />
-
                     <Divider orientation="left">Tasks</Divider>
                     <TaskSection project={project} users={users} reRenderParent={reRenderParent} />
+
+                    <Divider orientation="left">Files</Divider>
+                    <FileUpload projectId={project.id} files={project.files ?? []} />
 
                     <Divider orientation="left">Comments</Divider>
                     <CommentSection project={project} reRenderParent={reRenderParent} />

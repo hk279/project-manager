@@ -37,20 +37,20 @@ export const AuthProvider = ({ children }) => {
     };
 
     // Get up-to-date user data for context and local storage.
-    const getActiveUser = () => {
-        if (!activeUser.id) {
-            storeUserData(null);
-            return;
-        }
+    // const getActiveUser = () => {
+    //     if (!activeUser.id) {
+    //         storeUserData(null);
+    //         return;
+    //     }
 
-        usersAPI
-            .getUserById(activeUser.id)
-            .then((res) => {
-                if (res.data.length < 1) setActiveUser(null);
-                else storeUserData({ ...activeUser, ...res.data });
-            })
-            .catch(() => storeUserData(null));
-    };
+    //     usersAPI
+    //         .getUserById(activeUser.id)
+    //         .then((res) => {
+    //             if (res.data.length < 1) setActiveUser(null);
+    //             else storeUserData({ ...activeUser, ...res.data });
+    //         })
+    //         .catch(() => storeUserData(null));
+    // };
 
     const storeUserData = (data) => {
         localStorage.setItem("user", JSON.stringify(data));

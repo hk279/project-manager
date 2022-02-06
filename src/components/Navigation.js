@@ -25,7 +25,7 @@ const Navigation = () => {
 
     useEffect(() => {
         getWorkspaces();
-    }, []);
+    }, [activeUser]);
 
     const getWorkspaces = () => {
         workspacesAPI

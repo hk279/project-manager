@@ -11,7 +11,6 @@ const CommentSection = ({ project, reRenderParent }) => {
 
     const [commentText, setCommentText] = useState("");
 
-    // Add a comment
     const addComment = (commentText) => {
         const comment = {
             authorId: activeUser.id,
@@ -27,7 +26,6 @@ const CommentSection = ({ project, reRenderParent }) => {
             });
     };
 
-    // Delete a comment
     const deleteComment = (commentId) => {
         axios
             .put(

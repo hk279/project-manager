@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { DeleteOutlined, UserOutlined } from "@ant-design/icons";
-import { Space, List, Avatar, Button, Popconfirm } from "antd";
 import moment from "moment";
+import { UserOutlined } from "@ant-design/icons";
+import { Space, List, Avatar } from "antd";
+import DeleteButton from "./DeleteButton";
 import { useAuth } from "../context/auth";
 import { getAuthHeader, URLroot } from "../config/config";
 import { useEffect } from "react";
@@ -58,14 +59,7 @@ const Comment = ({ comment, deleteComment }) => {
         <List.Item
             actions={
                 comment.authorId === activeUser.id && [
-                    <Popconfirm
-                        title="Confirm delete comment"
-                        onConfirm={() => deleteComment(comment.id)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button danger icon={<DeleteOutlined />} />
-                    </Popconfirm>,
+                    <DeleteButton title="Confirm delete comment?" action={() => deleteComment(comment.id)} />,
                 ]
             }
         >

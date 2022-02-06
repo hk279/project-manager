@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Layout, Button, Divider, notification, List, PageHeader } from "antd";
+import { Layout, Button, Divider, notification, List, PageHeader, Row, Col } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ChangePassword from "../components/ChangePassword";
 import Navigation from "../components/Navigation";
@@ -7,6 +7,7 @@ import EditProfile from "../components/EditProfile";
 import { useAuth } from "../context/auth";
 import AvatarUpload from "../components/AvatarUpload";
 import usersAPI from "../api/users";
+import InfoRow from "../components/InfoRow";
 
 const { Sider, Content } = Layout;
 
@@ -68,22 +69,9 @@ const Profile = () => {
                 <div className="view-content">
                     <Divider orientation="left">Personal information</Divider>
 
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td className="info-table-cell header-cell">First name</td>
-                                <td className="info-table-cell">{activeUser.firstName}</td>
-                            </tr>
-                            <tr>
-                                <td className="info-table-cell header-cell">Last name</td>
-                                <td className="info-table-cell">{activeUser.lastName}</td>
-                            </tr>
-                            <tr>
-                                <td className="info-table-cell header-cell">Email</td>
-                                <td className="info-table-cell">{activeUser.email}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <InfoRow label="First name" value={activeUser.firstName} space={4} />
+                    <InfoRow label="Last name" value={activeUser.lastName} space={4} />
+                    <InfoRow label="Email" value={activeUser.email} space={4} />
 
                     <Divider orientation="left">Skills</Divider>
 

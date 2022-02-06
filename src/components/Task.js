@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Collapse, Popconfirm } from "antd";
+import { Button, Collapse, Popconfirm, Tooltip } from "antd";
 import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import axios from "axios";
@@ -68,24 +68,30 @@ const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
                         </tr>
                         <tr>
                             <td className="task-buttons-cell">
-                                <Button
-                                    className="task-status"
-                                    type={task.status === "Completed" ? "primary" : "default"}
-                                    icon={<CheckCircleTwoTone twoToneColor="#73d13d" />}
-                                    onClick={() => setTaskStatus(task, "Completed")}
-                                />
-                                <Button
-                                    className="task-status"
-                                    type={task.status === "Doing" ? "primary" : "default"}
-                                    icon={<ClockCircleTwoTone twoToneColor="#40a9ff" />}
-                                    onClick={() => setTaskStatus(task, "Doing")}
-                                />
-                                <Button
-                                    className="task-status"
-                                    type={task.status === "Not started" ? "primary" : "default"}
-                                    icon={<PauseCircleTwoTone twoToneColor="#bfbfbf" />}
-                                    onClick={() => setTaskStatus(task, "Not started")}
-                                />
+                                <Tooltip title="Completed">
+                                    <Button
+                                        className="task-status"
+                                        type={task.status === "Completed" ? "primary" : "default"}
+                                        icon={<CheckCircleTwoTone twoToneColor="#73d13d" />}
+                                        onClick={() => setTaskStatus(task, "Completed")}
+                                    />
+                                </Tooltip>
+                                <Tooltip title="Doing">
+                                    <Button
+                                        className="task-status"
+                                        type={task.status === "Doing" ? "primary" : "default"}
+                                        icon={<ClockCircleTwoTone twoToneColor="#40a9ff" />}
+                                        onClick={() => setTaskStatus(task, "Doing")}
+                                    />
+                                </Tooltip>
+                                <Tooltip title="Not started">
+                                    <Button
+                                        className="task-status"
+                                        type={task.status === "Not started" ? "primary" : "default"}
+                                        icon={<PauseCircleTwoTone twoToneColor="#bfbfbf" />}
+                                        onClick={() => setTaskStatus(task, "Not started")}
+                                    />
+                                </Tooltip>
                             </td>
 
                             <td className="task-buttons-cell">
