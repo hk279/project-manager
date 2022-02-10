@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Layout, Table, Input, Divider, PageHeader } from "antd";
 import Navigation from "../components/Navigation";
-import Error from "../components/Error";
+import Error from "../components/generic/Error";
 import { useAuth } from "../context/auth";
 import moment from "moment";
 import projectsAPI from "../api/projects";
 import workspacesAPI from "../api/workspaces";
+import PageLayout from "../components/generic/PageLayout";
 
 const { Sider, Content } = Layout;
 
@@ -83,29 +84,19 @@ const ProjectHistory = () => {
         pageContent = <Error status={error.status} description={error.data.messages} />;
     } else {
         pageContent = (
-            <>
-                <PageHeader title="Project history" />
-                <div className="view-content">
-                    <Divider />
-                    <Input className="search" placeholder="Search" onChange={(e) => filterProjects(e.target.value)} />
-                    <Table
-                        className="project-history-table"
-                        rowKey="id"
-                        columns={columns}
-                        dataSource={filteredProjects}
-                    />
-                </div>
-            </>
+            <div className="view-content">
+                <Input className="search" placeholder="Search" onChange={(e) => filterProjects(e.target.value)} />
+                <Table className="project-history-table" rowKey="id" columns={columns} dataSource={filteredProjects} />
+            </div>
         );
     }
 
     return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-            <Content>{pageContent}</Content>
-        </Layout>
+        <PageLayout>
+            <PageHeader title="Project history" />
+            <Divider />
+            {pageContent}
+        </PageLayout>
     );
 };
 

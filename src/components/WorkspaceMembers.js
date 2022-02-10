@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table, Select, Button, notification, Popconfirm } from "antd";
-import Loading from "./Loading";
+import Loading from "./generic/Loading";
 import { useAuth } from "../context/auth";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";

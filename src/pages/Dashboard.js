@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import { Layout, Button, Input, Result } from "antd";
+import { Button, Input, Result } from "antd";
 import ProjectCard from "../components/ProjectCard";
-import Navigation from "../components/Navigation";
 import { PlusOutlined } from "@ant-design/icons";
 import workspacesAPI from "../api/workspaces";
-import Error from "../components/Error";
+import Error from "../components/generic/Error";
 import projectsAPI from "../api/projects";
+import PageLayout from "../components/generic/PageLayout";
 
 const Dashboard = () => {
-    const { Sider, Content } = Layout;
     const { activeUser } = useAuth();
     const history = useHistory();
 
@@ -105,22 +104,17 @@ const Dashboard = () => {
     }
 
     return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-            <Content>
-                {projects.length > 0 && (
-                    <Input
-                        className="dashboard-search"
-                        placeholder="Search"
-                        onChange={(e) => filterDashboard(e.target.value)}
-                    />
-                )}
+        <PageLayout>
+            {projects.length > 0 && (
+                <Input
+                    className="dashboard-search"
+                    placeholder="Search"
+                    onChange={(e) => filterDashboard(e.target.value)}
+                />
+            )}
 
-                {pageContent}
-            </Content>
-        </Layout>
+            {pageContent}
+        </PageLayout>
     );
 };
 

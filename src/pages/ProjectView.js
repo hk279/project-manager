@@ -6,8 +6,8 @@ import { EditOutlined } from "@ant-design/icons";
 import Navigation from "../components/Navigation";
 import CommentSection from "../components/CommentSection";
 import EditProject from "../components/EditProject";
-import Loading from "../components/Loading";
-import Error from "../components/Error";
+import Loading from "../components/generic/Loading";
+import Error from "../components/generic/Error";
 import FileUpload from "../components/FileUpload";
 import TaskSection from "../components/TaskSection";
 import usersAPI from "../api/users";
@@ -15,6 +15,7 @@ import projectsAPI from "../api/projects";
 import { useAuth } from "../context/auth";
 import { Link } from "react-router-dom";
 import DeleteButton from "../components/DeleteButton";
+import PageLayout from "../components/generic/PageLayout";
 
 const ProjectView = () => {
     const { Sider, Content } = Layout;
@@ -143,14 +144,7 @@ const ProjectView = () => {
         );
     }
 
-    return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-            <Content>{pageContent}</Content>
-        </Layout>
-    );
+    return <PageLayout>{pageContent}</PageLayout>;
 };
 
 export default ProjectView;

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./customRoutes/PrivateRoute";
 import { AuthProvider } from "./context/auth";

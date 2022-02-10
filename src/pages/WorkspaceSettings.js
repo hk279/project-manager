@@ -1,40 +1,25 @@
 import { useState, useEffect } from "react";
-import {
-    Layout,
-    Collapse,
-    Divider,
-    Button,
-    notification,
-    PageHeader,
-    Popconfirm,
-    Tooltip,
-    Space,
-    Result,
-    Input,
-} from "antd";
+import { Layout, Collapse, Divider, Button, PageHeader, Result } from "antd";
 import { useHistory } from "react-router-dom";
 import Navigation from "../components/Navigation";
-import Error from "../components/Error";
-import RenameWorkspace from "../components/RenameWorkspace";
-import WorkspaceMembers from "../components/WorkspaceMembers";
+import Error from "../components/generic/Error";
 import workspacesAPI from "../api/workspaces";
-import usersAPI from "../api/users";
 import { useAuth } from "../context/auth";
-import { UserDeleteOutlined, PlusOutlined, CopyOutlined } from "@ant-design/icons";
-import Loading from "../components/Loading";
-import DeleteButton from "../components/DeleteButton";
+import { PlusOutlined } from "@ant-design/icons";
+import Loading from "../components/generic/Loading";
+import WorkspaceSettingsPanel from "../components/WorkspaceSettingsPanel";
+import PageLayout from "../components/generic/PageLayout";
 
 const WorkspaceSettings = () => {
     const { Sider, Content } = Layout;
     const { Panel } = Collapse;
 
-    const { activeUser, setActiveUser } = useAuth();
+    const { activeUser } = useAuth();
     const history = useHistory();
 
     const [workspaces, setWorkspaces] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [renameModalVisible, setRenameModalVisible] = useState(false);
 
     useEffect(() => {
         getWorkspaces();
@@ -51,89 +36,6 @@ const WorkspaceSettings = () => {
                 setError(err.response);
                 setLoading(false);
             });
-    };
-
-    const setDefaultWorkspace = (workspaceId) => {
-        usersAPI
-            .updateUser(activeUser.id, { defaultWorkspace: workspaceId }, activeUser.accessToken)
-            .then(() => setActiveUser({ ...activeUser, defaultWorkspace: workspaceId }))
-            .catch((err) =>
-                notification.error({
-                    message: "Setting default workspace failed",
-                    description: err?.response?.data?.messages,
-                })
-            );
-    };
-
-    const deleteWorkspace = (workspaceId) => {
-        workspacesAPI
-            .deleteWorkspace(workspaceId, activeUser.accessToken)
-            .then(() => {
-                // If workspace was the default, remove default workspace from user context.
-                // If workspace was active, remove the active workspace from user context
-                let newDefaultWorkspace =
-                    workspaceId === activeUser.defaultWorkspace ? "" : activeUser.defaultWorkspace;
-                let newActiveWorkspace = workspaceId === activeUser.activeWorkspace ? "" : activeUser.activeWorkspace;
-
-                setActiveUser({
-                    ...activeUser,
-                    defaultWorkspace: newDefaultWorkspace,
-                    activeWorkspace: newActiveWorkspace,
-                });
-            })
-            .catch((err) => setError(err.response));
-    };
-
-    const renameWorkspace = (workspaceId, newName) => {
-        workspacesAPI
-            .updateWorkspace(workspaceId, { name: newName }, activeUser.accessToken)
-            .then(() => {
-                setRenameModalVisible(false);
-                setActiveUser(activeUser); // In order to refresh names in the UI
-            })
-            .catch((err) =>
-                notification.error({
-                    message: "Renaming workspace failed",
-                    description: err?.response?.data?.messages,
-                })
-            );
-    };
-
-    const leaveWorkspace = (workspace) => {
-        const newMembersList = workspace.members.filter((member) => member.userId !== activeUser.id);
-        workspacesAPI
-            .updateWorkspace(workspace.id, { members: newMembersList }, activeUser.accessToken)
-            .then(() => {
-                // If workspace was the default, remove default workspace from user context.
-                // If workspace was active, remove the active workspace from user context
-                let newDefaultWorkspace =
-                    workspace.id === activeUser.defaultWorkspace ? "" : activeUser.defaultWorkspace;
-                let newActiveWorkspace = workspace.id === activeUser.activeWorkspace ? "" : activeUser.activeWorkspace;
-
-                setActiveUser({
-                    ...activeUser,
-                    defaultWorkspace: newDefaultWorkspace,
-                    activeWorkspace: newActiveWorkspace,
-                });
-            })
-            .catch((err) =>
-                notification.error({
-                    message: "Leave workspace failed",
-                    description: err.response.data.messages,
-                })
-            );
-    };
-
-    // WIP
-    const copyLink = (workspaceId) => {
-        let field = document.getElementById("inviteLink");
-
-        field.select();
-        field.setSelectionRange(0, 99999); /* For mobile devices */
-
-        navigator.clipboard.writeText(field.value);
-
-        alert("Copied the link: " + field.value);
     };
 
     let pageContent;
@@ -156,7 +58,6 @@ const WorkspaceSettings = () => {
     } else {
         pageContent = (
             <div className="view-content">
-                <Divider />
                 <Collapse>
                     {workspaces.map((workspace) => (
                         <Panel
@@ -168,70 +69,7 @@ const WorkspaceSettings = () => {
                                 )
                             }
                         >
-                            <WorkspaceMembers workspace={workspace} />
-
-                            <Input.Group>
-                                <Input
-                                    id="inviteLink"
-                                    disabled={true}
-                                    style={{ width: "calc(100% - 300px)" }}
-                                    defaultValue={`${window.location.origin}/invite/1234abcd`}
-                                />
-                                <Space size="middle">
-                                    <Tooltip title="Copy URL">
-                                        <Button icon={<CopyOutlined />} onClick={() => copyLink(workspace.id)} />
-                                    </Tooltip>
-                                    <Button>Generate a new link</Button>
-                                </Space>
-                            </Input.Group>
-
-                            <Divider />
-
-                            <Space size="middle">
-                                <Button
-                                    disabled={activeUser.defaultWorkspace === workspace.id}
-                                    onClick={() => setDefaultWorkspace(workspace.id)}
-                                >
-                                    Set as default
-                                </Button>
-                                {workspace.owner === activeUser.id ? (
-                                    <>
-                                        <Button onClick={() => setRenameModalVisible(true)}>Rename</Button>
-                                        <DeleteButton
-                                            title="Delete workspace"
-                                            description="This will also delete all projects within the workspace."
-                                            tooltip="Delete workspace"
-                                            action={() => deleteWorkspace(workspace.id)}
-                                        />
-                                    </>
-                                ) : (
-                                    <Tooltip title="Leave workspace">
-                                        <Popconfirm
-                                            title={
-                                                <div>
-                                                    <b>Confirm leave workspace?</b>
-                                                    <p>
-                                                        You will also be removed from all projects within the workspace.
-                                                    </p>
-                                                </div>
-                                            }
-                                            onConfirm={() => leaveWorkspace(workspace)}
-                                            okText="Yes"
-                                            cancelText="No"
-                                        >
-                                            <Button danger icon={<UserDeleteOutlined />} />
-                                        </Popconfirm>
-                                    </Tooltip>
-                                )}
-                            </Space>
-
-                            <RenameWorkspace
-                                workspaceId={workspace.id}
-                                currentName={workspace.name}
-                                visible={renameModalVisible}
-                                onConfirm={renameWorkspace}
-                                onCancel={() => setRenameModalVisible(false)}
-                            />
+                            <WorkspaceSettingsPanel workspace={workspace} />
                         </Panel>
                     ))}
                 </Collapse>
@@ -240,16 +78,11 @@ const WorkspaceSettings = () => {
     }
 
     return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-
-            <Content>
-                <PageHeader title="Workspace settings" />
-                {pageContent}
-            </Content>
-        </Layout>
+        <PageLayout>
+            <PageHeader title="Workspace settings" />
+            <Divider />
+            {pageContent}
+        </PageLayout>
     );
 };
 

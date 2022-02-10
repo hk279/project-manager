@@ -1,15 +1,13 @@
 import { useState } from "react";
-import { Layout, Button, Divider, notification, List, PageHeader, Row, Col } from "antd";
+import { Button, Divider, notification, List, PageHeader } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ChangePassword from "../components/ChangePassword";
-import Navigation from "../components/Navigation";
 import EditProfile from "../components/EditProfile";
 import { useAuth } from "../context/auth";
 import AvatarUpload from "../components/AvatarUpload";
 import usersAPI from "../api/users";
-import InfoRow from "../components/InfoRow";
-
-const { Sider, Content } = Layout;
+import InfoRow from "../components/generic/InfoRow";
+import PageLayout from "../components/generic/PageLayout";
 
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -94,14 +92,7 @@ const Profile = () => {
         );
     }
 
-    return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-            <Content>{pageContent}</Content>
-        </Layout>
-    );
+    return <PageLayout>{pageContent}</PageLayout>;
 };
 
 export default Profile;

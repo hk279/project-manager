@@ -1,11 +1,10 @@
-import { Layout, Form, Input, Divider, Radio, Button, notification, PageHeader } from "antd";
-import Navigation from "../components/Navigation";
+import { Form, Input, Divider, Radio, Button, notification, PageHeader } from "antd";
 import { useAuth } from "../context/auth";
 import { useHistory } from "react-router-dom";
 import workspacesAPI from "../api/workspaces";
+import PageLayout from "../components/generic/PageLayout";
 
 const NewWorkspace = () => {
-    const { Sider, Content } = Layout;
     const { Item, useForm } = Form;
 
     const [form] = useForm();
@@ -28,42 +27,36 @@ const NewWorkspace = () => {
     };
 
     return (
-        <Layout className="layout">
-            <Sider collapsible>
-                <Navigation />
-            </Sider>
-
-            <Content>
-                <PageHeader title="New workspace" />
-                <div className="view-content">
-                    <Divider />
-                    <Form
-                        className="form"
-                        layout="vertical"
-                        form={form}
-                        onFinish={handleSubmit}
-                        validateMessages={{
-                            required: "${label} is required!",
-                        }}
-                    >
-                        <Item label="Name" name="name" rules={[{ required: true }]}>
-                            <Input maxLength={80} />
-                        </Item>
-                        <Item label="Type" name="type" rules={[{ required: true }]}>
-                            <Radio.Group>
-                                <Radio.Button value="private">Private</Radio.Button>
-                                <Radio.Button value="business">Business</Radio.Button>
-                            </Radio.Group>
-                        </Item>
-                        <Item>
-                            <Button type="primary" htmlType="submit">
-                                Create Workspace
-                            </Button>
-                        </Item>
-                    </Form>
-                </div>
-            </Content>
-        </Layout>
+        <PageLayout>
+            <PageHeader title="New workspace" />
+            <div className="view-content">
+                <Divider />
+                <Form
+                    className="form"
+                    layout="vertical"
+                    form={form}
+                    onFinish={handleSubmit}
+                    validateMessages={{
+                        required: "${label} is required!",
+                    }}
+                >
+                    <Item label="Name" name="name" rules={[{ required: true }]}>
+                        <Input maxLength={80} />
+                    </Item>
+                    <Item label="Type" name="type" rules={[{ required: true }]}>
+                        <Radio.Group>
+                            <Radio.Button value="private">Private</Radio.Button>
+                            <Radio.Button value="business">Business</Radio.Button>
+                        </Radio.Group>
+                    </Item>
+                    <Item>
+                        <Button type="primary" htmlType="submit">
+                            Create Workspace
+                        </Button>
+                    </Item>
+                </Form>
+            </div>
+        </PageLayout>
     );
 };
 
