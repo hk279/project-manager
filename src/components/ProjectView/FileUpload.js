@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Upload, Button, Modal, notification } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { URLroot } from "../../config/config";
+import { URLroot } from "../../api/config";
 import { useAuth } from "../../context/auth";
 import projectsAPI from "../../api/projects";
 

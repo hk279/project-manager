@@ -4,7 +4,7 @@ import { SendOutlined } from "@ant-design/icons";
 import { Button, Input, Space, List, notification } from "antd";
 import Comment from "./Comment";
 import { useAuth } from "../../context/auth";
-import { URLroot, getAuthHeader } from "../../config/config";
+import { URLroot, getAuthHeader } from "../../api/config";
 
 const CommentSection = ({ project, reRenderParent }) => {
     const { activeUser } = useAuth();

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { getAuthHeader, URLroot } from "../../config/config";
+import { getAuthHeader, URLroot } from "../../api/config";
 import { useAuth } from "../../context/auth";
 import { Button, Space, Switch } from "antd";
 import { PlusOutlined } from "@ant-design/icons";

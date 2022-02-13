@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { notification, Space, Upload, Image, Skeleton } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { getAuthHeader, URLroot } from "../../config/config";
+import { getAuthHeader, URLroot } from "../../api/config";
 import { useAuth } from "../../context/auth";
 
 const AvatarUpload = ({ userId }) => {

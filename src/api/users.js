@@ -1,5 +1,5 @@
 import axios from "axios";
-import { URLroot, getAuthHeader } from "./api";
+import { URLroot, getAuthHeader } from "./config";
 
 const usersAPIroot = URLroot + "/users";
 let url;

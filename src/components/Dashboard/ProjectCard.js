@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Progress, Tag } from "antd";
 import moment from "moment";
-import { URLroot, getAuthHeader } from "../../config/config";
+import { URLroot, getAuthHeader } from "../../api/config";
 import { useAuth } from "../../context/auth";
 
 const ProjectCard = ({ title, type, client, description, deadline, team, tasks, tags }) => {

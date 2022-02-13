@@ -3,7 +3,7 @@ import { Button, Collapse, Popconfirm, Tooltip } from "antd";
 import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import axios from "axios";
-import { getAuthHeader, URLroot } from "../../config/config";
+import { getAuthHeader, URLroot } from "../../api/config";
 import { useAuth } from "../../context/auth";
 
 const { Panel } = Collapse;
