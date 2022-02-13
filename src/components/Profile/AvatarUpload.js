@@ -2,8 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { notification, Space, Upload, Image, Skeleton } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { getAuthHeader, URLroot } from "../config/config";
-import { useAuth } from "../context/auth";
+import { getAuthHeader, URLroot } from "../../config/config";
+import { useAuth } from "../../context/auth";
 
 const AvatarUpload = ({ userId }) => {
     const { activeUser, setActiveUser } = useAuth();

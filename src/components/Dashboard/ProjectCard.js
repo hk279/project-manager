@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Progress, Tag } from "antd";
 import moment from "moment";
-import { URLroot, getAuthHeader } from "../config/config";
-import { useAuth } from "../context/auth";
+import { URLroot, getAuthHeader } from "../../config/config";
+import { useAuth } from "../../context/auth";
 
 const ProjectCard = ({ title, type, client, description, deadline, team, tasks, tags }) => {
     const { activeUser } = useAuth();
@@ -21,7 +21,6 @@ const ProjectCard = ({ title, type, client, description, deadline, team, tasks, 
             userIds.push(member);
         });
 
-        // Request data for a group of employees. Is post request suitable here?
         axios
             .post(`${URLroot}/users/group:search`, { group: userIds }, getAuthHeader(activeUser.accessToken))
             .then((res) => {
@@ -32,9 +31,7 @@ const ProjectCard = ({ title, type, client, description, deadline, team, tasks, 
     // Calculates the progress of the project
     let completedTasks = 0;
     tasks.forEach((task) => {
-        if (task.status === "Completed") {
-            completedTasks++;
-        }
+        if (task.status === "Completed") completedTasks++;
     });
     const progress = Math.round((completedTasks / tasks.length) * 100);
 

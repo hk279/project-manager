@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Upload, Button, Modal, notification } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { URLroot } from "../config/config";
-import { useAuth } from "../context/auth";
-import projectsAPI from "../api/projects";
+import { URLroot } from "../../config/config";
+import { useAuth } from "../../context/auth";
+import projectsAPI from "../../api/projects";
 
 const FileUpload = ({ projectId, files }) => {
     const { confirm } = Modal;

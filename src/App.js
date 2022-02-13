@@ -21,8 +21,6 @@ const App = () => {
             <AuthProvider>
                 <Switch>
                     <PrivateRoute path="/" exact component={Dashboard} />
-                    <Route path="/login" exact component={Login} />
-                    <Route path="/sign-up" exact component={SignUp} />
                     <PrivateRoute path="/new-project" exact component={NewProject} />
                     <PrivateRoute path="/project-history" exact component={ProjectHistory} />
                     <PrivateRoute path="/project/:projectId" exact children={<ProjectView />} />
@@ -30,6 +28,8 @@ const App = () => {
                     <PrivateRoute path="/profile" exact component={Profile} />
                     <PrivateRoute path="/new-workspace" exact component={NewWorkspace} />
                     <PrivateRoute path="/workspace-settings" exact component={WorkspaceSettings} />
+                    <Route path="/login" exact component={Login} />
+                    <Route path="/sign-up" exact component={SignUp} />
                     <Route path="*" exact component={NotFound} />
                 </Switch>
             </AuthProvider>

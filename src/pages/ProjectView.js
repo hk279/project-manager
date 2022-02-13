@@ -1,26 +1,23 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
-import { useHistory, useParams } from "react-router-dom";
-import { PageHeader, Button, Divider, Layout, List, notification, Space, Tag } from "antd";
+import { useHistory, useParams, Link } from "react-router-dom";
+import { PageHeader, Button, Divider, List, notification, Space, Tag } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import Navigation from "../components/Navigation";
-import CommentSection from "../components/CommentSection";
-import EditProject from "../components/EditProject";
+import CommentSection from "../components/ProjectView/CommentSection";
+import EditProject from "../components/ProjectView/EditProject";
 import Loading from "../components/generic/Loading";
 import Error from "../components/generic/Error";
-import FileUpload from "../components/FileUpload";
-import TaskSection from "../components/TaskSection";
+import FileUpload from "../components/ProjectView/FileUpload";
+import TaskSection from "../components/ProjectView/TaskSection";
+import DeleteButton from "../components/generic/DeleteButton";
+import PageLayout from "../components/generic/PageLayout";
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
 import { useAuth } from "../context/auth";
-import { Link } from "react-router-dom";
-import DeleteButton from "../components/DeleteButton";
-import PageLayout from "../components/generic/PageLayout";
 
 const ProjectView = () => {
-    const { Sider, Content } = Layout;
     const { activeUser } = useAuth();
-    let { projectId } = useParams();
+    const { projectId } = useParams();
     const history = useHistory();
 
     const [project, setProject] = useState(null);

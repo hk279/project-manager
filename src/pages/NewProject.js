@@ -1,29 +1,13 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useHistory } from "react-router-dom";
-import { URLroot, getAuthHeader } from "../config/config";
 import { useAuth } from "../context/auth";
-import Navigation from "../components/Navigation";
-import {
-    Layout,
-    Form,
-    Input,
-    DatePicker,
-    Transfer,
-    Button,
-    Divider,
-    Select,
-    Radio,
-    PageHeader,
-    notification,
-} from "antd";
+import { Form, Input, DatePicker, Transfer, Button, Divider, Select, Radio, PageHeader, notification } from "antd";
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
 import Error from "../components/generic/Error";
 import workspacesAPI from "../api/workspaces";
 import PageLayout from "../components/generic/PageLayout";
 
-const { Sider, Content } = Layout;
 const { Item, useForm } = Form;
 const { TextArea } = Input;
 const { Option } = Select;
@@ -73,6 +57,7 @@ const NewProject = () => {
     const onChange = (nextTargetKeys) => {
         setTargetKeys(nextTargetKeys);
     };
+
     /* Used for transfer component */
     const onSelectChange = (sourceSelectedKeys, targetSelectedKeys) => {
         setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);

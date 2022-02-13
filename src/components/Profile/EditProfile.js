@@ -1,6 +1,6 @@
 import { Form, Input, Button, Divider, Space } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import { useAuth } from "../context/auth";
+import { useAuth } from "../../context/auth";
 
 const { Item, useForm, List, ErrorList } = Form;
 

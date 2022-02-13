@@ -2,9 +2,9 @@ import { useState } from "react";
 import moment from "moment";
 import { UserOutlined } from "@ant-design/icons";
 import { Space, List, Avatar } from "antd";
-import DeleteButton from "./DeleteButton";
-import { useAuth } from "../context/auth";
-import { getAuthHeader, URLroot } from "../config/config";
+import DeleteButton from "../generic/DeleteButton";
+import { useAuth } from "../../context/auth";
+import { getAuthHeader, URLroot } from "../../config/config";
 import { useEffect } from "react";
 import axios from "axios";
 

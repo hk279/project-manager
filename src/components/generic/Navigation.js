@@ -11,9 +11,9 @@ import {
     ContainerOutlined,
     SettingOutlined,
 } from "@ant-design/icons";
-import { useAuth } from "../context/auth";
-import Error from "./generic/Error";
-import workspacesAPI from "../api/workspaces";
+import { useAuth } from "../../context/auth";
+import Error from "./Error";
+import workspacesAPI from "../../api/workspaces";
 
 const Navigation = () => {
     const { SubMenu, ItemGroup, Item, Divider } = Menu;

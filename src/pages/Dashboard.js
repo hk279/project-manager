@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../context/auth";
 import { Button, Input, Result } from "antd";
-import ProjectCard from "../components/ProjectCard";
+import ProjectCard from "../components/Dashboard/ProjectCard";
 import { PlusOutlined } from "@ant-design/icons";
 import workspacesAPI from "../api/workspaces";
 import Error from "../components/generic/Error";

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Layout, Divider, List, PageHeader } from "antd";
-import Navigation from "../components/Navigation";
+import { Divider, List, PageHeader } from "antd";
 import Loading from "../components/generic/Loading";
 import Error from "../components/generic/Error";
 import usersAPI from "../api/users";
@@ -9,7 +8,6 @@ import projectsAPI from "../api/projects";
 import { useAuth } from "../context/auth";
 import PageLayout from "../components/generic/PageLayout";
 
-const { Sider, Content } = Layout;
 const { Item } = List;
 
 const UserView = () => {

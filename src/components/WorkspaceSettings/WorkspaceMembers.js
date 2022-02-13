@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Table, Select, Button, notification, Popconfirm } from "antd";
-import Loading from "./generic/Loading";
-import { useAuth } from "../context/auth";
+import Loading from "../generic/Loading";
+import { useAuth } from "../../context/auth";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import workspacesAPI from "../api/workspaces";
-import usersAPI from "../api/users";
+import workspacesAPI from "../../api/workspaces";
+import usersAPI from "../../api/users";
 
 const WorkspaceMembers = ({ workspace }) => {
     const { Option } = Select;

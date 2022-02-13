@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
 import { Form, Input, Transfer, DatePicker, Button, Select, Space, Divider } from "antd";
-import { useAuth } from "../context/auth";
-import { URLroot, getAuthHeader } from "../config/config";
+import { useAuth } from "../../context/auth";
+import { URLroot, getAuthHeader } from "../../config/config";
 
 const { Item, useForm } = Form;
 const { TextArea } = Input;

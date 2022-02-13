@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Form, Input, Button, Alert, Space } from "antd";
-import { useAuth } from "../context/auth";
+import { useAuth } from "../../context/auth";
 
 const LoginForm = () => {
     const { Item } = Form;

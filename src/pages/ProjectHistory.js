@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
-import { Layout, Table, Input, Divider, PageHeader } from "antd";
-import Navigation from "../components/Navigation";
+import { Table, Input, Divider, PageHeader } from "antd";
 import Error from "../components/generic/Error";
 import { useAuth } from "../context/auth";
 import moment from "moment";
 import projectsAPI from "../api/projects";
 import workspacesAPI from "../api/workspaces";
 import PageLayout from "../components/generic/PageLayout";
-
-const { Sider, Content } = Layout;
 
 const ProjectHistory = () => {
     const [projects, setProjects] = useState([]);

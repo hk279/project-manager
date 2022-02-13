@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, Divider, notification, List, PageHeader } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import ChangePassword from "../components/ChangePassword";
-import EditProfile from "../components/EditProfile";
+import ChangePassword from "../components/Profile/ChangePassword";
+import EditProfile from "../components/Profile/EditProfile";
 import { useAuth } from "../context/auth";
-import AvatarUpload from "../components/AvatarUpload";
+import AvatarUpload from "../components/Profile/AvatarUpload";
 import usersAPI from "../api/users";
 import InfoRow from "../components/generic/InfoRow";
 import PageLayout from "../components/generic/PageLayout";

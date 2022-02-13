@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
-import { Layout, Collapse, Divider, Button, PageHeader, Result } from "antd";
+import { Collapse, Divider, Button, PageHeader, Result } from "antd";
 import { useHistory } from "react-router-dom";
-import Navigation from "../components/Navigation";
 import Error from "../components/generic/Error";
 import workspacesAPI from "../api/workspaces";
 import { useAuth } from "../context/auth";
 import { PlusOutlined } from "@ant-design/icons";
 import Loading from "../components/generic/Loading";
-import WorkspaceSettingsPanel from "../components/WorkspaceSettingsPanel";
+import WorkspaceSettingsPanel from "../components/WorkspaceSettings/WorkspaceSettingsPanel";
 import PageLayout from "../components/generic/PageLayout";
 
 const WorkspaceSettings = () => {
-    const { Sider, Content } = Layout;
     const { Panel } = Collapse;
 
     const { activeUser } = useAuth();

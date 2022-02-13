@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import Navigation from "../Navigation";
+import Navigation from "./Navigation";
 
 const PageLayout = ({ children }) => {
     const { Sider, Content } = Layout;

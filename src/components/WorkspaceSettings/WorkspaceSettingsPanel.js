@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Divider, Button, notification, Popconfirm, Tooltip, Space, Input } from "antd";
-import RenameWorkspace from "../components/RenameWorkspace";
-import WorkspaceMembers from "../components/WorkspaceMembers";
-import workspacesAPI from "../api/workspaces";
-import usersAPI from "../api/users";
-import { useAuth } from "../context/auth";
+import RenameWorkspace from "./RenameWorkspace";
+import WorkspaceMembers from "./WorkspaceMembers";
+import workspacesAPI from "../../api/workspaces";
+import usersAPI from "../../api/users";
+import { useAuth } from "../../context/auth";
 import { UserDeleteOutlined, CopyOutlined } from "@ant-design/icons";
-import DeleteButton from "../components/DeleteButton";
+import DeleteButton from "../generic/DeleteButton";
 
 const WorkspaceSettingsPanel = ({ workspace }) => {
     const { activeUser, setActiveUser } = useAuth();
@@ -110,7 +110,7 @@ const WorkspaceSettingsPanel = ({ workspace }) => {
                     id="inviteLink"
                     disabled={true}
                     style={{ width: "calc(100% - 300px)" }}
-                    defaultValue={`${window.location.origin}/${workspace.inviteLinkId}`}
+                    defaultValue={`${window.location.origin}/workspaces/join/${workspace.inviteLinkId}`}
                 />
                 <Space size="middle">
                     <Tooltip title="Copy URL">
