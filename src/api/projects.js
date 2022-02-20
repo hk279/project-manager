@@ -43,6 +43,14 @@ const projectsAPI = {
         url = `${projectsAPIroot}/delete-file:search`;
         return axios.post(url, { projectId, fileKey }, getAuthHeader(accessToken));
     },
+    addComment(projectId, body, accessToken) {
+        url = `${projectsAPIroot}/${projectId}/add-comment/`;
+        return axios.put(url, body, getAuthHeader(accessToken));
+    },
+    deleteComment(projectId, commentId, accessToken) {
+        url = `${projectsAPIroot}/${projectId}/delete-comment/${commentId}`;
+        return axios.put(url, null, getAuthHeader(accessToken));
+    },
 };
 
 export default projectsAPI;

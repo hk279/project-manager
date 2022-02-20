@@ -3,9 +3,7 @@ import moment from "moment";
 import { UserOutlined } from "@ant-design/icons";
 import { Space, List, Avatar } from "antd";
 import { useAuth } from "../../context/auth";
-import { getAuthHeader, URLroot } from "../../api/config";
 import { useEffect } from "react";
-import axios from "axios";
 import DeleteButton from "../_generic/DeleteButton";
 import usersAPI from "../../api/users";
 

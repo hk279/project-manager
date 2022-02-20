@@ -1,10 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
-import { SendOutlined } from "@ant-design/icons";
 import { Button, Input, Space, List, notification } from "antd";
-import Comment from "./Comment";
+import { SendOutlined } from "@ant-design/icons";
 import { useAuth } from "../../context/auth";
-import { URLroot, getAuthHeader } from "../../api/config";
+import projectsAPI from "../../api/projects";
+import Comment from "./Comment";
 
 const CommentSection = ({ project, reRenderParent }) => {
     const { activeUser } = useAuth();
@@ -18,8 +17,8 @@ const CommentSection = ({ project, reRenderParent }) => {
             timestamp: new Date().toISOString(),
         };
 
-        axios
-            .put(`${URLroot}/projects/${project.id}/add-comment`, comment, getAuthHeader(activeUser.accessToken))
+        projectsAPI
+            .addComment(project.id, comment, activeUser.accessToken)
             .then(() => reRenderParent())
             .catch((err) => {
                 notification.error({ message: "Adding comment failed", description: err.response.data.messages });
@@ -27,12 +26,8 @@ const CommentSection = ({ project, reRenderParent }) => {
     };
 
     const deleteComment = (commentId) => {
-        axios
-            .put(
-                `${URLroot}/projects/${project.id}/delete-comment/${commentId}`,
-                {},
-                getAuthHeader(activeUser.accessToken)
-            )
+        projectsAPI
+            .deleteComment(project.id, commentId, activeUser.accessToken)
             .then(() => reRenderParent())
             .catch((err) => {
                 notification.error({ message: "Deleting comment failed", description: err.response.data.messages });
