@@ -6,7 +6,7 @@ const PageLayout = ({ children }) => {
 
     return (
         <Layout className="layout">
-            <Sider collapsible>
+            <Sider collapsible breakpoint="lg">
                 <Navigation />
             </Sider>
             <Content>{children}</Content>

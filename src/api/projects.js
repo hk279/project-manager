@@ -36,6 +36,7 @@ const projectsAPI = {
     getFile(fileKey, accessToken) {
         let config = getAuthHeader(accessToken);
         config.responseType = "arraybuffer";
+
         url = `${projectsAPIroot}/get-file/${fileKey}`;
         return axios.get(url, config);
     },

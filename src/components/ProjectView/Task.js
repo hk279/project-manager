@@ -10,6 +10,7 @@ import {
 import moment from "moment";
 import { useAuth } from "../../context/auth";
 import usersAPI from "../../api/users";
+import DeleteButton from "../_generic/DeleteButton";
 
 const { Panel } = Collapse;
 
@@ -115,15 +116,12 @@ const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
                                 </Tooltip>
                             </td>
 
-                            <td className="task-buttons-cell">
-                                <Popconfirm
-                                    title="Confirm delete task"
-                                    onConfirm={() => deleteTask(task)}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <Button className="delete-task" type="primary" danger icon={<DeleteOutlined />} />
-                                </Popconfirm>
+                            <td className="task-buttons-cell" style={{ textAlign: "right" }}>
+                                <DeleteButton
+                                    title="Confirm delete task?"
+                                    tooltip="Delete task"
+                                    action={() => deleteTask(task)}
+                                />
                             </td>
                         </tr>
                     </tbody>
