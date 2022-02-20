@@ -14,14 +14,10 @@ const AddTask = ({ visible, addTask, onCancel, team }) => {
             cancelText="Cancel"
             onCancel={onCancel}
             onOk={() => {
-                form.validateFields()
-                    .then((values) => {
-                        form.resetFields();
-                        addTask(values);
-                    })
-                    .catch((info) => {
-                        console.log("Validate Failed:", info);
-                    });
+                form.validateFields().then((values) => {
+                    form.resetFields();
+                    addTask(values);
+                });
             }}
         >
             <Form

@@ -148,6 +148,7 @@
 .status-icon {
     font-size: x-large;
     float: right;
+    margin-left: 0.5em;
 }
 .task-details-table {
     margin: auto;

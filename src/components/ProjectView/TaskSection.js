@@ -1,9 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
-import { getAuthHeader, URLroot } from "../../api/config";
-import { useAuth } from "../../context/auth";
-import { Button, Space, Switch } from "antd";
+import { Button, Space, Switch, notification } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import { useAuth } from "../../context/auth";
+import projectsAPI from "../../api/projects";
 import Task from "./Task";
 import AddTask from "./AddTask";
 
@@ -20,13 +19,15 @@ const TaskSection = ({ project, users, reRenderParent }) => {
 
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
-        axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(activeUser.accessToken))
+        projectsAPI
+            .updateProject(project.id, updatedProject, activeUser.accessToken)
             .then(() => {
                 setModalVisible(false);
                 reRenderParent();
             })
-            .catch((err) => console.log(err));
+            .catch((err) =>
+                notification.error({ message: "Add task failed", description: err.response.data.messages })
+            );
     };
 
     /* Changes the status of a task. First, creates an updated task. 
@@ -39,8 +40,8 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedTasks = [...tasksOldRemoved, updatedTask];
         const updatedProject = { ...project, tasks: updatedTasks };
 
-        axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(activeUser.accessToken))
+        projectsAPI
+            .updateProject(project.id, updatedProject, activeUser.accessToken)
             .then(() => reRenderParent())
             .catch((err) => console.log(err));
     };
@@ -50,10 +51,12 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedTasks = [...project.tasks].filter((task) => task.title !== taskToBeDeleted.title);
         const updatedProject = { ...project, tasks: updatedTasks };
 
-        axios
-            .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(activeUser.accessToken))
+        projectsAPI
+            .updateProject(project.id, updatedProject, activeUser.accessToken)
             .then(() => reRenderParent())
-            .catch((err) => console.log(err));
+            .catch((err) =>
+                notification.error({ message: "Delete task failed", description: err.response.data.messages })
+            );
     };
 
     // Show completed tasks toggle switch controller
@@ -76,31 +79,28 @@ const TaskSection = ({ project, users, reRenderParent }) => {
 
     let filteredTasksList = project.tasks;
 
-    if (!showCompletedTasks) {
-        filteredTasksList = project.tasks.filter((task) => task.status !== "Completed");
-    }
+    if (!showCompletedTasks) filteredTasksList = project.tasks.filter((task) => task.status !== "Completed");
 
-    if (showOnlyOwnTasks) {
-        filteredTasksList = filteredTasksList.filter((task) => task.assignedTo === activeUser.id);
-    }
+    if (showOnlyOwnTasks) filteredTasksList = filteredTasksList.filter((task) => task.assignedTo === activeUser.id);
 
     return (
         <>
-            <Space size="middle">
+            <Space>
                 <Space size="middle">
                     Show completed
                     <Switch defaultChecked={false} onChange={onShowCompletedTasksChange} />
                 </Space>
 
-                <Space size="middle" style={{ marginLeft: "2em" }}>
+                <Space size="middle" style={{ marginLeft: "3em" }}>
                     Show only own
                     <Switch defaultChecked={false} onChange={onShowOnlyOwnTasksChange} />
                 </Space>
             </Space>
+
             <div className="tasks-list">
                 {filteredTasksList.map((task) => (
                     <Task
-                        key={task.title}
+                        key={task.id}
                         task={task}
                         project={project}
                         assignedTo={task.assignedTo}
@@ -110,22 +110,14 @@ const TaskSection = ({ project, users, reRenderParent }) => {
                 ))}
             </div>
 
-            <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                    setModalVisible(true);
-                }}
-            >
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalVisible(true)}>
                 New Task
             </Button>
 
             <AddTask
                 visible={modalVisible}
                 addTask={addTask}
-                onCancel={() => {
-                    setModalVisible(false);
-                }}
+                onCancel={() => setModalVisible(false)}
                 project={project}
                 team={users}
             />

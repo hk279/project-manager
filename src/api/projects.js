@@ -33,6 +33,16 @@ const projectsAPI = {
         url = `${projectsAPIroot}/tags/${workspaceId}`;
         return axios.get(url, getAuthHeader(accessToken));
     },
+    // addTask(projectId, updatedProject, accessToken) {
+    //     url = `${projectsAPIroot}/projects/${projectId}`;
+    //     return axios.put(url, updatedProject, getAuthHeader(accessToken));
+    // },
+    // deleteTask() {
+    //     url = `${projectsAPIroot}/projects/${projectId}`;
+
+    //     axios
+    //     .put(`${URLroot}/projects/${project.id}`, updatedProject, getAuthHeader(activeUser.accessToken))
+    // },
     getFile(fileKey, accessToken) {
         let config = getAuthHeader(accessToken);
         config.responseType = "arraybuffer";

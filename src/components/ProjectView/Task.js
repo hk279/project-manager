@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { Button, Collapse, Popconfirm, Tooltip } from "antd";
-import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone, DeleteOutlined } from "@ant-design/icons";
+import {
+    ClockCircleTwoTone,
+    PauseCircleTwoTone,
+    CheckCircleTwoTone,
+    DeleteOutlined,
+    WarningTwoTone,
+} from "@ant-design/icons";
 import moment from "moment";
-import axios from "axios";
-import { getAuthHeader, URLroot } from "../../api/config";
 import { useAuth } from "../../context/auth";
+import usersAPI from "../../api/users";
 
 const { Panel } = Collapse;
 
@@ -18,10 +23,9 @@ const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
     }, []);
 
     const getAssignedToName = () => {
-        axios
-            .get(`${URLroot}/users/id/${assignedTo}`, getAuthHeader(activeUser.accessToken))
-            .then((res) => setAssignedToName(`${res.data.firstName} ${res.data.lastName}`))
-            .catch((err) => console.log(err));
+        usersAPI
+            .getUserById(assignedTo, activeUser.accessToken)
+            .then((res) => setAssignedToName(`${res.data.firstName} ${res.data.lastName}`));
     };
 
     const statusStyle = () => {
@@ -42,14 +46,31 @@ const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
         }
     };
 
+    const overdueIcon = () => {
+        if (task.status !== "Completed") {
+            if (task.estimatedCompletion != null && new Date(task.estimatedCompletion) < new Date()) {
+                return (
+                    <Tooltip title="Overdue">
+                        <WarningTwoTone className="status-icon" twoToneColor="#ff4d4f" />
+                    </Tooltip>
+                );
+            }
+        }
+    };
+
     /* Had to put each individual task into its own collapse container in order to make the expand/collapse functionality work */
 
     return (
         <Collapse>
             <Panel
                 header={<p className="task-title">{task.title}</p>}
-                extra={statusIcon(task)}
-                style={statusStyle(task)}
+                extra={
+                    <>
+                        {statusIcon()}
+                        {overdueIcon()}
+                    </>
+                }
+                style={statusStyle()}
             >
                 <table className="task-details-table">
                     <tbody>
