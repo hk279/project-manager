@@ -1,8 +1,8 @@
 import { Form, Input, Divider, Radio, Button, notification, PageHeader } from "antd";
-import { useAuth } from "../context/auth";
 import { useHistory } from "react-router-dom";
+import { useAuth } from "../context/auth";
 import workspacesAPI from "../api/workspaces";
-import PageLayout from "../components/generic/PageLayout";
+import PageLayout from "../components/_generic/PageLayout";
 
 const NewWorkspace = () => {
     const { Item, useForm } = Form;

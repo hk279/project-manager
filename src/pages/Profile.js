@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Button, Divider, notification, List, PageHeader } from "antd";
 import { EditOutlined } from "@ant-design/icons";
+import { useAuth } from "../context/auth";
+import usersAPI from "../api/users";
 import ChangePassword from "../components/Profile/ChangePassword";
 import EditProfile from "../components/Profile/EditProfile";
-import { useAuth } from "../context/auth";
 import AvatarUpload from "../components/Profile/AvatarUpload";
-import usersAPI from "../api/users";
-import InfoRow from "../components/generic/InfoRow";
-import PageLayout from "../components/generic/PageLayout";
+import InfoRow from "../components/_generic/InfoRow";
+import PageLayout from "../components/_generic/PageLayout";
 
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(false);

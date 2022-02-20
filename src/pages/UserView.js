@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Divider, List, PageHeader } from "antd";
-import Loading from "../components/generic/Loading";
-import Error from "../components/generic/Error";
+import { useAuth } from "../context/auth";
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
-import { useAuth } from "../context/auth";
-import PageLayout from "../components/generic/PageLayout";
+import PageLayout from "../components/_generic/PageLayout";
+import Error from "../components/_generic/Error";
+import Loading from "../components/_generic/Loading";
 
 const { Item } = List;
 

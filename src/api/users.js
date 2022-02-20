@@ -25,6 +25,10 @@ const usersAPI = {
         url = `${usersAPIroot}/change-password/${userId}`;
         return axios.put(url, body, getAuthHeader(accessToken));
     },
+    getAvatar(fileKey, accessToken) {
+        url = `${usersAPIroot}/get-avatar/${fileKey}`;
+        return fetch(url, getAuthHeader(accessToken)); // Using fetch because response is not JSON
+    },
 };
 
 export default usersAPI;

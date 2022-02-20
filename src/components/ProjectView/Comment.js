@@ -2,11 +2,12 @@ import { useState } from "react";
 import moment from "moment";
 import { UserOutlined } from "@ant-design/icons";
 import { Space, List, Avatar } from "antd";
-import DeleteButton from "../generic/DeleteButton";
 import { useAuth } from "../../context/auth";
 import { getAuthHeader, URLroot } from "../../api/config";
 import { useEffect } from "react";
 import axios from "axios";
+import DeleteButton from "../_generic/DeleteButton";
+import usersAPI from "../../api/users";
 
 const Comment = ({ comment, deleteComment }) => {
     const { activeUser } = useAuth();
@@ -14,39 +15,26 @@ const Comment = ({ comment, deleteComment }) => {
     const [avatarObjectUrl, setAvatarObjectUrl] = useState("");
     const [author, setAuthor] = useState(null);
 
-    // Get comment author when component mounts
     useEffect(() => {
         getAuthor();
     }, []);
 
     // Get avatar object URL when author is set
     useEffect(() => {
-        if (author) {
-            createAvatarObjectUrl(author.avatar.fileKey);
-        }
+        if (author && author.avatar.fileKey !== "") createAvatarObjectUrl(author.avatar.fileKey);
     }, [author]);
 
     const getAuthor = () => {
-        axios
-            .get(`${URLroot}/users/id/${comment.authorId}`, getAuthHeader(activeUser.accessToken))
-            .then((res) => {
-                setAuthor(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        usersAPI.getUserById(comment.authorId, activeUser.accessToken).then((res) => {
+            setAuthor(res.data);
+        });
     };
 
     const createAvatarObjectUrl = async (fileKey) => {
         const headers = new Headers();
         headers.set("Authorization", `Bearer ${activeUser.accessToken}`);
 
-        let response;
-        if (fileKey !== "") {
-            response = await fetch(`${URLroot}/users/get-avatar/${fileKey}`, { headers });
-        } else {
-            return;
-        }
+        let response = await usersAPI.getAvatar(fileKey, activeUser.accessToken);
 
         // Create an object URL from the data.
         const blob = await response.blob();

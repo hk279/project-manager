@@ -1,19 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { useHistory, useParams, Link } from "react-router-dom";
 import { PageHeader, Button, Divider, List, notification, Space, Tag } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import CommentSection from "../components/ProjectView/CommentSection";
-import EditProject from "../components/ProjectView/EditProject";
-import Loading from "../components/generic/Loading";
-import Error from "../components/generic/Error";
-import FileUpload from "../components/ProjectView/FileUpload";
-import TaskSection from "../components/ProjectView/TaskSection";
-import DeleteButton from "../components/generic/DeleteButton";
-import PageLayout from "../components/generic/PageLayout";
+import { useAuth } from "../context/auth";
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
-import { useAuth } from "../context/auth";
+import CommentSection from "../components/ProjectView/CommentSection";
+import EditProject from "../components/ProjectView/EditProject";
+import FileUpload from "../components/ProjectView/FileUpload";
+import TaskSection from "../components/ProjectView/TaskSection";
+import DeleteButton from "../components/_generic/DeleteButton";
+import PageLayout from "../components/_generic/PageLayout";
+import Loading from "../components/_generic/Loading";
+import Error from "../components/_generic/Error";
 
 const ProjectView = () => {
     const { activeUser } = useAuth();

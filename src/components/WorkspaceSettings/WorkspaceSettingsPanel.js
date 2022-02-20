@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Divider, Button, notification, Popconfirm, Tooltip, Space, Input } from "antd";
-import RenameWorkspace from "./RenameWorkspace";
-import WorkspaceMembers from "./WorkspaceMembers";
+import { UserDeleteOutlined, CopyOutlined } from "@ant-design/icons";
+import { useAuth } from "../../context/auth";
 import workspacesAPI from "../../api/workspaces";
 import usersAPI from "../../api/users";
-import { useAuth } from "../../context/auth";
-import { UserDeleteOutlined, CopyOutlined } from "@ant-design/icons";
-import DeleteButton from "../generic/DeleteButton";
+import DeleteButton from "../_generic/DeleteButton";
+import RenameWorkspace from "./RenameWorkspace";
+import WorkspaceMembers from "./WorkspaceMembers";
 
 const WorkspaceSettingsPanel = ({ workspace }) => {
     const { activeUser, setActiveUser } = useAuth();

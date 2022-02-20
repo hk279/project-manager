@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { useAuth } from "../context/auth";
 import { Form, Input, DatePicker, Transfer, Button, Divider, Select, Radio, PageHeader, notification } from "antd";
+import { useAuth } from "../context/auth";
 import usersAPI from "../api/users";
 import projectsAPI from "../api/projects";
-import Error from "../components/generic/Error";
 import workspacesAPI from "../api/workspaces";
-import PageLayout from "../components/generic/PageLayout";
+import PageLayout from "../components/_generic/PageLayout";
+import Error from "../components/_generic/Error";
 
 const { Item, useForm } = Form;
 const { TextArea } = Input;
