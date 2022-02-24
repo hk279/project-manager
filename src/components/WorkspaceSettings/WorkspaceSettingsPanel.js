@@ -15,7 +15,7 @@ const WorkspaceSettingsPanel = ({ workspace }) => {
 
     const setDefaultWorkspace = (workspaceId) => {
         usersAPI
-            .updateUser(activeUser.id, { defaultWorkspace: workspaceId }, activeUser.accessToken)
+            .updateUser(activeUser.id, { defaultWorkspace: workspaceId })
             .then(() => setActiveUser({ ...activeUser, defaultWorkspace: workspaceId }))
             .catch((err) =>
                 notification.error({
@@ -27,7 +27,7 @@ const WorkspaceSettingsPanel = ({ workspace }) => {
 
     const deleteWorkspace = (workspaceId) => {
         workspacesAPI
-            .deleteWorkspace(workspaceId, activeUser.accessToken)
+            .deleteWorkspace(workspaceId)
             .then(() => {
                 // If workspace was the default, remove default workspace from user context.
                 // If workspace was active, remove the active workspace from user context
@@ -52,7 +52,7 @@ const WorkspaceSettingsPanel = ({ workspace }) => {
     const leaveWorkspace = (workspace) => {
         const newMembersList = workspace.members.filter((member) => member.userId !== activeUser.id);
         workspacesAPI
-            .updateWorkspace(workspace.id, { members: newMembersList }, activeUser.accessToken)
+            .updateWorkspace(workspace.id, { members: newMembersList })
             .then(() => {
                 // If workspace was the default, remove default workspace from user context.
                 // If workspace was active, remove the active workspace from user context
@@ -76,7 +76,7 @@ const WorkspaceSettingsPanel = ({ workspace }) => {
 
     const renameWorkspace = (workspaceId, newName) => {
         workspacesAPI
-            .updateWorkspace(workspaceId, { name: newName }, activeUser.accessToken)
+            .updateWorkspace(workspaceId, { name: newName })
             .then(() => {
                 setRenameModalVisible(false);
                 setActiveUser(activeUser); // In order to refresh names in the UI

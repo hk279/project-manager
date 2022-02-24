@@ -25,7 +25,7 @@ const UserView = () => {
 
     const getUser = () => {
         usersAPI
-            .getUserById(userId, activeUser.accessToken)
+            .getUserById(userId)
             .then((res) => setUser(res.data))
             .catch((err) => setError(err.response));
     };
@@ -33,7 +33,7 @@ const UserView = () => {
     const getUserProjects = () => {
         // Current projects only
         projectsAPI
-            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken, false, true)
+            .getProjectsByWorkspace(activeUser.activeWorkspace, false, true)
             .then((res) => {
                 let userProjects = [];
                 res.data.forEach((project) => {

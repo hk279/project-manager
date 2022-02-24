@@ -18,7 +18,7 @@ const CommentSection = ({ project, reRenderParent }) => {
         };
 
         projectsAPI
-            .addComment(project.id, comment, activeUser.accessToken)
+            .addComment(project.id, comment)
             .then(() => reRenderParent())
             .catch((err) => {
                 notification.error({ message: "Adding comment failed", description: err.response.data.messages });
@@ -27,7 +27,7 @@ const CommentSection = ({ project, reRenderParent }) => {
 
     const deleteComment = (commentId) => {
         projectsAPI
-            .deleteComment(project.id, commentId, activeUser.accessToken)
+            .deleteComment(project.id, commentId)
             .then(() => reRenderParent())
             .catch((err) => {
                 notification.error({ message: "Deleting comment failed", description: err.response.data.messages });

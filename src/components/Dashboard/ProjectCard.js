@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card, Progress, Tag } from "antd";
 import moment from "moment";
-import { URLroot, getAuthHeader } from "../../api/config";
-import { useAuth } from "../../context/auth";
+import usersAPI from "../../api/users";
 
 const ProjectCard = ({ title, type, client, description, deadline, team, tasks, tags }) => {
-    const { activeUser } = useAuth();
-
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -21,11 +17,7 @@ const ProjectCard = ({ title, type, client, description, deadline, team, tasks, 
             userIds.push(member);
         });
 
-        axios
-            .post(`${URLroot}/users/group:search`, { group: userIds }, getAuthHeader(activeUser.accessToken))
-            .then((res) => {
-                setUsers(res.data);
-            });
+        usersAPI.getGroupOfUsers(userIds).then((res) => setUsers(res.data));
     };
 
     // Calculates the progress of the project

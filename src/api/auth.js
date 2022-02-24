@@ -1,17 +1,20 @@
-import axios from "axios";
-import { URLroot } from "./config";
+import instance from "./api";
 
-const authAPIroot = URLroot + "/auth";
+const authAPIpath = "auth";
 let url;
 
 const authAPI = {
     login(body) {
-        url = `${authAPIroot}/login`;
-        return axios.post(url, body);
+        url = `${authAPIpath}/login`;
+        return instance.post(url, body);
     },
     signup(body) {
-        url = `${authAPIroot}/signup`;
-        return axios.post(url, body);
+        url = `${authAPIpath}/signup`;
+        return instance.post(url, body);
+    },
+    refreshToken(body) {
+        url = `${authAPIpath}/refresh-token`;
+        return instance.post(url, body);
     },
 };
 

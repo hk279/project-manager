@@ -29,7 +29,7 @@ const Navigation = () => {
 
     const getWorkspaces = () => {
         workspacesAPI
-            .getWorkspacesByUser(activeUser.id, activeUser.accessToken)
+            .getWorkspacesByUser(activeUser.id)
             .then((res) => setWorkspaces(res.data))
             .catch((err) => setError(err.response));
     };

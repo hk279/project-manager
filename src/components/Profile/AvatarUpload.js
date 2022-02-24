@@ -37,7 +37,7 @@ const AvatarUpload = ({ userId }) => {
 
     // Custom upload request
     const uploadAvatar = (info) => {
-        let requestConfig = getAuthHeader(activeUser.accessToken);
+        let requestConfig = getAuthHeader();
         requestConfig.headers["content-type"] = "multipart/form-data";
 
         const data = new FormData();

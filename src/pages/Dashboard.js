@@ -20,8 +20,11 @@ const Dashboard = () => {
 
     useEffect(() => {
         getWorkspaces();
-        getProjects();
     }, []);
+
+    useEffect(() => {
+        getProjects();
+    }, [workspaces]);
 
     useEffect(() => {
         setFilteredProjects(projects);
@@ -29,7 +32,7 @@ const Dashboard = () => {
 
     const getWorkspaces = () => {
         workspacesAPI
-            .getWorkspacesByUser(activeUser.id, activeUser.accessToken)
+            .getWorkspacesByUser(activeUser.id)
             .then((res) => setWorkspaces(res.data))
             .catch((err) => setError(err.response));
     };
@@ -38,7 +41,7 @@ const Dashboard = () => {
         if (activeUser.activeWorkspace) {
             // Get only projects with deadline after current date
             projectsAPI
-                .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken, false)
+                .getProjectsByWorkspace(activeUser.activeWorkspace, false)
                 .then((res) => setProjects(res.data))
                 .catch((err) => setError(err.response));
         }

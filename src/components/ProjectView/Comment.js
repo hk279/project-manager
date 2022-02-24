@@ -23,16 +23,13 @@ const Comment = ({ comment, deleteComment }) => {
     }, [author]);
 
     const getAuthor = () => {
-        usersAPI.getUserById(comment.authorId, activeUser.accessToken).then((res) => {
+        usersAPI.getUserById(comment.authorId).then((res) => {
             setAuthor(res.data);
         });
     };
 
     const createAvatarObjectUrl = async (fileKey) => {
-        const headers = new Headers();
-        headers.set("Authorization", `Bearer ${activeUser.accessToken}`);
-
-        let response = await usersAPI.getAvatar(fileKey, activeUser.accessToken);
+        let response = await usersAPI.getAvatar(fileKey);
 
         // Create an object URL from the data.
         const blob = await response.blob();

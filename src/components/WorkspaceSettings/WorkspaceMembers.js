@@ -69,7 +69,7 @@ const WorkspaceMembers = ({ workspace }) => {
 
     const getWorkspaceUsers = () => {
         usersAPI
-            .getWorkspaceUsers(workspace.id, activeUser.accessToken)
+            .getWorkspaceUsers(workspace.id)
             .then((res) => setMembers(res.data))
             .catch((err) =>
                 notification.error({
@@ -98,7 +98,7 @@ const WorkspaceMembers = ({ workspace }) => {
         });
 
         workspacesAPI
-            .updateWorkspace(workspace.id, { members: updatedMembers }, activeUser.accessToken)
+            .updateWorkspace(workspace.id, { members: updatedMembers })
             .then(() => getWorkspaceUsers())
             .catch((err) =>
                 notification.error({
@@ -115,7 +115,7 @@ const WorkspaceMembers = ({ workspace }) => {
     const removeUserFromWorkspace = (userId) => {
         const newMembersList = workspace.members.filter((member) => member.userId !== userId);
         workspacesAPI
-            .updateWorkspace(workspace.id, { members: newMembersList }, activeUser.accessToken)
+            .updateWorkspace(workspace.id, { members: newMembersList })
             .then(() => getWorkspaceUsers())
             .catch((err) =>
                 notification.error({

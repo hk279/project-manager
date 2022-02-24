@@ -1,56 +1,48 @@
-import axios from "axios";
-import { URLroot, getAuthHeader } from "./config";
+import instance from "./api";
 
-const projectsAPIroot = URLroot + "/projects";
+const projectsAPIpath = "projects";
 let url;
 
 const projectsAPI = {
-    getProjectById(projectId, accessToken) {
-        url = `${projectsAPIroot}/id/${projectId}`;
-        return axios.get(url, getAuthHeader(accessToken));
+    getProjectById(projectId) {
+        url = `${projectsAPIpath}/id/${projectId}`;
+        return instance.get(url);
     },
     // Parameters for getting only past or current project specifically. Gets all by default.
-    getProjectsByWorkspace(workspaceId, accessToken, getPastProjects = true, getCurrentProjects = true) {
+    getProjectsByWorkspace(workspaceId, getPastProjects = true, getCurrentProjects = true) {
         const pastProjectsInQuery = getPastProjects ? "1" : "0";
         const currentProjectsInQuery = getCurrentProjects ? "1" : "0";
 
-        url = `${projectsAPIroot}/workspace/${workspaceId}?past=${pastProjectsInQuery}&current=${currentProjectsInQuery}`;
-        return axios.get(url, getAuthHeader(accessToken));
+        url = `${projectsAPIpath}/workspace/${workspaceId}?past=${pastProjectsInQuery}&current=${currentProjectsInQuery}`;
+        return instance.get(url);
     },
-    createProject(body, accessToken) {
-        url = projectsAPIroot;
-        return axios.post(url, body, getAuthHeader(accessToken));
+    createProject(body) {
+        url = projectsAPIpath;
+        return instance.post(url, body);
     },
-    updateProject(projectId, body, accessToken) {
-        url = `${projectsAPIroot}/${projectId}`;
-        return axios.put(url, body, getAuthHeader(accessToken));
+    updateProject(projectId, body) {
+        url = `${projectsAPIpath}/${projectId}`;
+        return instance.put(url, body);
     },
-    deleteProject(projectId, accessToken) {
-        url = `${projectsAPIroot}/${projectId}`;
-        return axios.delete(url, getAuthHeader(accessToken));
+    deleteProject(projectId) {
+        url = `${projectsAPIpath}/${projectId}`;
+        return instance.delete(url);
     },
-    getProjectTagsByWorkspace(workspaceId, accessToken) {
-        url = `${projectsAPIroot}/tags/${workspaceId}`;
-        return axios.get(url, getAuthHeader(accessToken));
+    getProjectTagsByWorkspace(workspaceId) {
+        url = `${projectsAPIpath}/tags/${workspaceId}`;
+        return instance.get(url);
     },
-    getFile(fileKey, accessToken) {
-        let config = getAuthHeader(accessToken);
-        config.responseType = "arraybuffer";
-
-        url = `${projectsAPIroot}/get-file/${fileKey}`;
-        return axios.get(url, config);
+    deleteFile(projectId, fileKey) {
+        url = `${projectsAPIpath}/delete-file:search`;
+        return instance.post(url, { projectId, fileKey });
     },
-    deleteFile(projectId, fileKey, accessToken) {
-        url = `${projectsAPIroot}/delete-file:search`;
-        return axios.post(url, { projectId, fileKey }, getAuthHeader(accessToken));
+    addComment(projectId, body) {
+        url = `${projectsAPIpath}/${projectId}/add-comment/`;
+        return instance.put(url, body);
     },
-    addComment(projectId, body, accessToken) {
-        url = `${projectsAPIroot}/${projectId}/add-comment/`;
-        return axios.put(url, body, getAuthHeader(accessToken));
-    },
-    deleteComment(projectId, commentId, accessToken) {
-        url = `${projectsAPIroot}/${projectId}/delete-comment/${commentId}`;
-        return axios.put(url, null, getAuthHeader(accessToken));
+    deleteComment(projectId, commentId) {
+        url = `${projectsAPIpath}/${projectId}/delete-comment/${commentId}`;
+        return instance.put(url, null);
     },
 };
 

@@ -16,8 +16,6 @@ import WorkspaceSettings from "./pages/WorkspaceSettings";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
-    console.log("App rendered");
-
     return (
         <Router>
             <AuthProvider>

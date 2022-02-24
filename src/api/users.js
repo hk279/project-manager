@@ -1,33 +1,34 @@
-import axios from "axios";
-import { URLroot, getAuthHeader } from "./config";
+import instance from "./api";
+import { getAuthHeader } from "./config";
 
-const usersAPIroot = URLroot + "/users";
+const URLroot = "http://localhost:3001";
+const usersAPIpath = "users";
 let url;
 
 const usersAPI = {
-    getUserById(userId, accessToken) {
-        url = `${usersAPIroot}/id/${userId}`;
-        return axios.get(url, getAuthHeader(accessToken));
+    getUserById(userId) {
+        url = `${usersAPIpath}/id/${userId}`;
+        return instance.get(url);
     },
-    getWorkspaceUsers(workspaceId, accessToken) {
-        url = `${usersAPIroot}/workspace/${workspaceId}`;
-        return axios.get(url, getAuthHeader(accessToken));
+    getWorkspaceUsers(workspaceId) {
+        url = `${usersAPIpath}/workspace/${workspaceId}`;
+        return instance.get(url);
     },
-    getGroupOfUsers(userIdsList, accessToken) {
-        url = `${usersAPIroot}/group:search`;
-        return axios.post(url, { group: userIdsList }, getAuthHeader(accessToken));
+    getGroupOfUsers(userIdsList) {
+        url = `${usersAPIpath}/group:search`;
+        return instance.post(url, { group: userIdsList });
     },
-    updateUser(userId, body, accessToken) {
-        url = `${usersAPIroot}/${userId}`;
-        return axios.put(url, body, getAuthHeader(accessToken));
+    updateUser(userId, body) {
+        url = `${usersAPIpath}/${userId}`;
+        return instance.put(url, body);
     },
-    changePassword(userId, body, accessToken) {
-        url = `${usersAPIroot}/change-password/${userId}`;
-        return axios.put(url, body, getAuthHeader(accessToken));
+    changePassword(userId, body) {
+        url = `${usersAPIpath}/change-password/${userId}`;
+        return instance.put(url, body);
     },
-    getAvatar(fileKey, accessToken) {
-        url = `${usersAPIroot}/get-avatar/${fileKey}`;
-        return fetch(url, getAuthHeader(accessToken)); // Using fetch because response is not JSON
+    getAvatar(fileKey) {
+        url = `${URLroot}/${usersAPIpath}/get-avatar/${fileKey}`;
+        return fetch(url, getAuthHeader()); // Using fetch because response is not JSON
     },
 };
 

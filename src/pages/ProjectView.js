@@ -46,21 +46,21 @@ const ProjectView = () => {
 
     const getProject = () => {
         projectsAPI
-            .getProjectById(projectId, activeUser.accessToken)
+            .getProjectById(projectId)
             .then((res) => setProject(res.data))
             .catch((err) => setError(err.response));
     };
 
     const getUsers = () => {
         usersAPI
-            .getGroupOfUsers(project.team, activeUser.accessToken)
+            .getGroupOfUsers(project.team)
             .then((res) => setUsers(res.data))
             .catch((err) => setError(err.response));
     };
 
     const editProject = (newData) => {
         projectsAPI
-            .updateProject(project.id, newData, activeUser.accessToken)
+            .updateProject(project.id, newData)
             .then(() => {
                 setEditMode(false);
                 notification.success({ message: "Edit project successful" });
@@ -72,7 +72,7 @@ const ProjectView = () => {
 
     const deleteProject = () => {
         projectsAPI
-            .deleteProject(project.id, activeUser.accessToken)
+            .deleteProject(project.id)
             .then(() => {
                 history.push("/");
                 notification.success({ message: "Project successfully deleted" });

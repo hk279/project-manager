@@ -25,7 +25,7 @@ const WorkspaceSettings = () => {
 
     const getWorkspaces = () => {
         workspacesAPI
-            .getWorkspacesByUser(activeUser.id, activeUser.accessToken)
+            .getWorkspacesByUser(activeUser.id)
             .then((res) => {
                 setWorkspaces(res.data);
                 setLoading(false);

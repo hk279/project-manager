@@ -20,7 +20,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedProject = { ...project, tasks: [...project.tasks, newTask] };
 
         projectsAPI
-            .updateProject(project.id, updatedProject, activeUser.accessToken)
+            .updateProject(project.id, updatedProject)
             .then(() => {
                 setModalVisible(false);
                 reRenderParent();
@@ -41,7 +41,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         projectsAPI
-            .updateProject(project.id, updatedProject, activeUser.accessToken)
+            .updateProject(project.id, updatedProject)
             .then(() => reRenderParent())
             .catch((err) => console.log(err));
     };
@@ -52,7 +52,7 @@ const TaskSection = ({ project, users, reRenderParent }) => {
         const updatedProject = { ...project, tasks: updatedTasks };
 
         projectsAPI
-            .updateProject(project.id, updatedProject, activeUser.accessToken)
+            .updateProject(project.id, updatedProject)
             .then(() => reRenderParent())
             .catch((err) =>
                 notification.error({ message: "Delete task failed", description: err.response.data.messages })

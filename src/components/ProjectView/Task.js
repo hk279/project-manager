@@ -1,22 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button, Collapse, Popconfirm, Tooltip } from "antd";
-import {
-    ClockCircleTwoTone,
-    PauseCircleTwoTone,
-    CheckCircleTwoTone,
-    DeleteOutlined,
-    WarningTwoTone,
-} from "@ant-design/icons";
+import { ClockCircleTwoTone, PauseCircleTwoTone, CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
 import moment from "moment";
-import { useAuth } from "../../context/auth";
 import usersAPI from "../../api/users";
 import DeleteButton from "../_generic/DeleteButton";
 
 const { Panel } = Collapse;
 
 const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
-    const { activeUser } = useAuth();
-
     const [assignedToName, setAssignedToName] = useState("");
 
     useEffect(() => {
@@ -24,9 +15,7 @@ const Task = ({ task, assignedTo, deleteTask, setTaskStatus }) => {
     }, []);
 
     const getAssignedToName = () => {
-        usersAPI
-            .getUserById(assignedTo, activeUser.accessToken)
-            .then((res) => setAssignedToName(`${res.data.firstName} ${res.data.lastName}`));
+        usersAPI.getUserById(assignedTo).then((res) => setAssignedToName(`${res.data.firstName} ${res.data.lastName}`));
     };
 
     const statusStyle = () => {

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import moment from "moment";
 import { Form, Input, Transfer, DatePicker, Button, Select, Space, Divider } from "antd";
 import { useAuth } from "../../context/auth";
-import { URLroot, getAuthHeader } from "../../api/config";
+import usersAPI from "../../api/users";
+import projectsAPI from "../../api/projects";
 
 const { Item, useForm } = Form;
 const { TextArea } = Input;
@@ -25,15 +25,12 @@ const EditProject = ({ project, editProject, cancelEdit }) => {
     }, []);
 
     const getUsers = () => {
-        let url = `${URLroot}/users/workspace/${activeUser.activeWorkspace}`;
-        axios.get(url, getAuthHeader(activeUser.accessToken)).then((res) => {
-            setUsers(res.data);
-        });
+        usersAPI.getWorkspaceUsers(activeUser.activeWorkspace).then((res) => setUsers(res.data));
     };
 
+    // Get tags used in other projects in the workspace as suggested options
     const getTags = () => {
-        const url = `${URLroot}/projects/tags/${activeUser.activeWorkspace}`;
-        axios.get(url, getAuthHeader(activeUser.accessToken)).then((res) => {
+        projectsAPI.getProjectTagsByWorkspace(activeUser.activeWorkspace).then((res) => {
             setTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>));
         });
     };

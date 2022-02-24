@@ -50,14 +50,14 @@ const ProjectHistory = () => {
 
     const getWorkspace = () => {
         workspacesAPI
-            .getWorkspaceById(activeUser.activeWorkspace, activeUser.accessToken)
+            .getWorkspaceById(activeUser.activeWorkspace)
             .then((res) => setWorkspace(res.data))
             .catch((err) => setError(err.response));
     };
 
     const getProjects = () => {
         projectsAPI
-            .getProjectsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken, true, false)
+            .getProjectsByWorkspace(activeUser.activeWorkspace, true, false)
             .then((res) => setProjects(res.data))
             .catch((err) => setError(err.response));
     };

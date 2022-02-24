@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Upload, Button, Modal, notification } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { URLroot } from "../../api/config";
+import { getAuthHeader, URLroot } from "../../api/config";
 import { useAuth } from "../../context/auth";
 import projectsAPI from "../../api/projects";
 
@@ -25,7 +25,7 @@ const FileUpload = ({ projectId, files }) => {
                 icon: <ExclamationCircleOutlined />,
                 onOk() {
                     projectsAPI
-                        .deleteFile(projectId, file.uid, activeUser.accessToken)
+                        .deleteFile(projectId, file.uid)
                         .then(() => notification.success({ message: `'${file.name}' deleted successfully` }))
                         .catch((err) =>
                             notification.error({
@@ -74,7 +74,7 @@ const FileUpload = ({ projectId, files }) => {
     const uploadProps = {
         name: "file",
         action: `${URLroot}/projects/${projectId}/upload-file`,
-        headers: { Authorization: "Bearer " + activeUser.accessToken },
+        headers: getAuthHeader().headers,
         defaultFileList: initialFileList,
         onRemove: async (file) => await showConfirm(file),
         onChange: handleChange,

@@ -19,7 +19,7 @@ const Profile = () => {
     // TODO: rewrite
     const onFinishChangePassword = (values) => {
         usersAPI
-            .changePassword(activeUser.id, values, activeUser.accessToken)
+            .changePassword(activeUser.id, values)
             .then(() => {
                 notification.success({
                     message: "Password change successful",
@@ -36,7 +36,7 @@ const Profile = () => {
 
     const editProfile = (newData) => {
         usersAPI
-            .updateUser(activeUser.id, newData, activeUser.accessToken)
+            .updateUser(activeUser.id, newData)
             .then((res) => {
                 // Update new profile info into activeUser
                 setActiveUser({ ...activeUser, ...res.data });

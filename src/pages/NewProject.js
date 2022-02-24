@@ -33,7 +33,7 @@ const NewProject = () => {
 
     const getUsers = () => {
         usersAPI
-            .getWorkspaceUsers(activeUser.activeWorkspace, activeUser.accessToken)
+            .getWorkspaceUsers(activeUser.activeWorkspace)
             .then((res) => setUsers(res.data))
             .catch((err) => setError(err.response));
     };
@@ -41,14 +41,14 @@ const NewProject = () => {
     // Get tags previously used in the workspace to show as options in the tag select component.
     const getExistingTags = () => {
         projectsAPI
-            .getProjectTagsByWorkspace(activeUser.activeWorkspace, activeUser.accessToken)
+            .getProjectTagsByWorkspace(activeUser.activeWorkspace)
             .then((res) => setExistingTags(res.data.map((tag) => <Option key={tag}>{tag}</Option>)))
             .catch((err) => setError(err.response));
     };
 
     const getWorkspace = () => {
         workspacesAPI
-            .getWorkspaceById(activeUser.activeWorkspace, activeUser.accessToken)
+            .getWorkspaceById(activeUser.activeWorkspace)
             .then((res) => setWorkspace(res.data))
             .catch((err) => setError(err.response));
     };
@@ -87,7 +87,7 @@ const NewProject = () => {
         }
 
         projectsAPI
-            .createProject(body, activeUser.accessToken)
+            .createProject(body)
             .then(() => {
                 history.push("/");
                 notification.success({ message: "Project created successfully" });

@@ -16,7 +16,7 @@ const NewWorkspace = () => {
         const newWorkspace = { ...values, owner: activeUser.id, members: [{ userId: activeUser.id, role: "owner" }] };
 
         workspacesAPI
-            .createWorkspace(newWorkspace, activeUser.accessToken)
+            .createWorkspace(newWorkspace)
             .then((res) => {
                 setActiveUser({ ...activeUser, activeWorkspace: res.data.id });
                 history.push("/");
